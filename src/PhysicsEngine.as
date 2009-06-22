@@ -5,7 +5,9 @@ class PhysicsEngine {
     private var bodies : Array = []; // : <Body>
     private var connectors : Array = []; // : <Connector>
 
-    
+    public function addBody(body : Body) : Void {
+        bodies.append(body);
+    }
 
     public function stepFrame() : Void {
         calculateForces();
