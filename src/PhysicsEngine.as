@@ -1,18 +1,25 @@
 
 class PhysicsEngine {
-    private var gravity : Number = 1; // TODO: units
+    private var gravity : Number; // TODO: units
 
-    private var bodies : Array = []; // : <Body>
-    private var connectors : Array = []; // : <Connector>
+    private var bodies : Array; // : <Body>
+    private var connectors : Array; // : <Connector>
+    
+    public function PhysicsEngine() {
+    	gravity = 1;
+    	bodies = new Array();
+    	connectors = new Array();
+    }
 
     public function addBody(body : Body) : Void {
-        bodies.append(body);
+        bodies.push(body);
     }
 
     public function stepFrame() : Void {
         calculateForces();
         applyGravity();
         move();
+        paint();
     }
     private function calculateForces() : Void {
         for (var i : Number = 0; i < bodies.length; i++) {
@@ -21,7 +28,7 @@ class PhysicsEngine {
     }
     private function applyGravity() : Void {
         for (var i : Number = 0; i < bodies.length; i++) {
-            bodies[i].applyForce(gravity, 0);
+            bodies[i].applyForce(0, gravity);
         }
     }
     private function move() : Void {
@@ -29,9 +36,9 @@ class PhysicsEngine {
             bodies[i].move();
         }
     }
-    private function something() : Void {
+    private function paint() : Void {
         for (var i : Number = 0; i < bodies.length; i++) {
-            bodies[i].move();
+            bodies[i].paint();
         }
     }
 }

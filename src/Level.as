@@ -79,6 +79,7 @@ class Level {
 	private var startedLoad : Boolean;
 	private var progressVisible : Boolean;
 	
+	private var engine : PhysicsEngine;
 
 	function Level (number : Number, 
 					root_mc : MovieClip, 
@@ -99,6 +100,9 @@ class Level {
 		
 		this.startedLoad = false;
 		this.progressVisible = false;
+		
+		this.engine = new PhysicsEngine();
+		
 		
 		// create the movie clip containers in root_mc
 		//1. background 
@@ -124,7 +128,7 @@ class Level {
 		beginLoadIntro();
 	}
 	
-	function beginLoadIntro() {
+	function beginLoadIntro() : Void {
 		
 		// it might not be necessary to show progress bar
 		progressVisible = false;
@@ -164,7 +168,7 @@ class Level {
 
 	}
 	
-	function beginLoadLevel() {
+	function beginLoadLevel() : Void {
 		var level = this;
 		
 		if ( ! startedLoad) {
@@ -300,8 +304,9 @@ class Level {
 		}
 	}
 	
-	function startGamePlay ()
-	{
+	function startGamePlay() : Void	{
+		var level = this;
+		
 		//xml has already been parsed
 		//initialize level
 		jeepX = startX * pixelsPerMeter;
@@ -348,6 +353,10 @@ class Level {
 		root_mc.obj_mc.wheelFront_mc._height = wheelHeight;
 		root_mc.obj_mc.wheelBack_mc._width = wheelWidth;
 		root_mc.obj_mc.wheelBack_mc._height = wheelHeight;
+		
+		var jeep = new Jeep( startX * pixelsPerMeter, startY * pixelsPerMeter, root_mc.obj_mc.jeep_mc);
+		engine.addBody( jeep );
+		
 		//initialize physics variables
 		jeepVelX = 0;
 		jeepVelY = 0
@@ -355,10 +364,13 @@ class Level {
 		curSquX = startSquX;
 		curSquY = startSquY;
 		//GO!
-		root_mc.onEnterFrame = stepFrame;
-		startStreamingSong ();
-		stepFrame ();
+		
+		root_mc.onEnterFrame = function() {
+			level.engine.stepFrame();
+		}
+		startStreamingSong();
 	}
+	
 
 	function startStreamingSong() : Void {
 		//stream bg music
@@ -491,8 +503,7 @@ class Level {
 				if (x == curSquX - 2 || x == curSquX + 2 || y == curSquY - 2 || y == curSquY + 2)
 				{
 					root_mc.level_mc ["sx" + x + "y" + y]._visible = false;
-				}else
-				{
+				} else {
 					root_mc.level_mc ["sx" + x + "y" + y]._visible = true;
 					root_mc.level_mc ["mx" + x + "y" + y]._x = relX (x * squWidth);
 					root_mc.level_mc ["mx" + x + "y" + y]._y = relY (y * squHeight);
@@ -574,18 +585,13 @@ class Level {
 		jeepY = bwAbsY / pixelsPerMeter;
 	}
 	
-	function hit (ptx, pty)
-	{
+	function hit (ptx, pty) : Boolean {
 		var x;
 		var y;
-		for (y = curSquY - 1; y <= curSquY + 1; y ++)
-		{
-			for (x = curSquX - 1; x <= curSquX + 1; x ++)
-			{
+		for (y = curSquY - 1; y <= curSquY + 1; y++) {
+			for (x = curSquX - 1; x <= curSquX + 1; x++) {
 				if (root_mc.level_mc ["mx" + x + "y" + y].hitTest (ptx, pty, 1))
-				{
 					return true;
-				}
 			}
 		}
 		return false;
@@ -662,7 +668,7 @@ class Level {
 
 	
 	
-	function dispose() {
+	function dispose() : Void {
 		// remove movie clips from screen and data from memory
 		
 		root_mc.bg_mc.removeMovieClip();

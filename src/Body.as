@@ -1,6 +1,6 @@
 
 class Body {
-    public var mass = 1;
+    public var mass;
 
     private var pos : Vector; // px
     private var posAng : Number; // rad
@@ -12,7 +12,12 @@ class Body {
     private var graphics_mc : MovieClip;
 
     function Body(x : Number, y : Number, graphics_mc : MovieClip) {
-        netForce = new Vector(0, 0);
+    	mass = 1;
+    	pos = new Vector(x, y);
+    	posAng = 0;
+    	vel = new Vector(0, 0);
+    	velAng = 0;
+    	netForce = new Vector(0, 0);
         this.graphics_mc = graphics_mc;
     }
 
