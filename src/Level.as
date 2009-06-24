@@ -213,19 +213,17 @@ class Level {
 				
 				// set up background
 				
-				//root_mc.bg_mc.createEmptyMovieClip("bgleft_mc",bg_mc.getNextHighestDepth());
-				this.level.root_mc.bg_mc.createEmptyMovieClip("bgright_mc", 
-					this.level.root_mc.bg_mc.getNextHighestDepth());
-				//bg_mc.bgleft_mc._x = -defSquWidth;
-				//bg_mc.bgleft_mc._y = 0;
-				//bg_mc.bgleft_mc._visible = true;
-				//bg_mc.bgleft_mc.loadMovie("levels/level" + number +  "bg.swf");
+
 				this.level.root_mc.bg_mc.bgcenter_mc._x = 0;
 				this.level.root_mc.bg_mc.bgcenter_mc._y = 0;
 				this.level.root_mc.bg_mc.bgcenter_mc._visible = true;
+                
+				this.level.root_mc.bg_mc.createEmptyMovieClip("bgright_mc",
+                    this.level.root_mc.bg_mc.getNextHighestDepth());
 				this.level.root_mc.bg_mc.bgright_mc._x = defSquWidth;
 				this.level.root_mc.bg_mc.bgright_mc._y = 0;
 				this.level.root_mc.bg_mc.bgright_mc._visible = true;
+                // load already cached swf
 				this.level.root_mc.bg_mc.bgright_mc.loadMovie ("levels/level" + this.level.number + "bg.swf");
 				// hide for now
 				this.level.root_mc.bg_mc._visible = false;
@@ -283,7 +281,6 @@ class Level {
 		//initialize level
 		//turn on background
 		root_mc.bg_mc._visible = true;
-		root_mc.bg_mc.bgleft_mc._visible = true;
 		root_mc.bg_mc.bgcenter_mc._visible = true;
 		root_mc.bg_mc.bgright_mc._visible = true;
 		//set up squares and mask
@@ -442,9 +439,9 @@ class Level {
 	
 	function paint() : Void {	
 		//background
-		root_mc.bg_mc._x = - (scrollX % (defSquWidth * 4)) / 4 ;
-		
-		//move sectors into place
+		root_mc.bg_mc.bgcenter_mc._x = - (scrollX % (defSquWidth * 4)) / 4 ;
+		root_mc.bg_mc.bgright_mc._x = root_mc.bg_mc.bgcenter_mc._x + squWidth;
+        //move sectors into place
 		for (var y = curSquY - 2; y <= curSquY + 2; y++) {
 			for (var x = curSquX - 2; x <= curSquX + 2; x++){
 				if (x == curSquX - 2 || x == curSquX + 2 || 
