@@ -22,9 +22,9 @@ class Body {
         netForce = new Vector(0, 0);
         this.graphics_mc = graphics_mc;
         // TODO depends on shape of object. the following is a square
-        hitCheckPoints = [new Vector(-1, -1), new Vector(1, -1), new Vector(1, 1), new Vector(-1, 1)];
+        hitCheckPoints = [new Vector(0,0)];//[new Vector(-1, -1), new Vector(1, -1), new Vector(1, 1), new Vector(-1, 1)];
     }
-    
+
     public function hitTest(level : Level) {
         // TODO angles
         for (var i : Number = 0; i < hitCheckPoints.length; i++) {
@@ -33,9 +33,28 @@ class Body {
             var prevPoint : Vector = relativeVector.plus(this.prevPos); // TODO angles go here or something
             var contactPoint : Vector = level.getContactPoint(prevPoint, currentPoint);
             if (contactPoint != null) {
+                // there is contact
                 var surfaceNormal : Vector = level.getSurfaceNormal(contactPoint);
-                // TODO dot product with momentum or velocity or something
-                netForce.translate(surfaceNormal.x, surfaceNormal.y);
+
+                // TODO don't treat it like a particle
+                var offset : Vector = contactPoint.minus(currentPoint);
+                var velocity : Vector = pos.minus(prevPos);
+
+                var impactMagnitude : Number = surfaceNormal.dotProduct(velocity);
+
+                // compute momentum of particle perpendicular to normal
+                var persistentVelocity : Vector = velocity.minus(surfaceNormal.times(impactMagnitude*.7));
+                var bounceVelocity : Vector =  surfaceNormal.times(impactMagnitude * 0.1);
+                trace(bounceVelocity);
+                var newVelocity = persistentVelocity.minus(bounceVelocity);
+
+                trace(velocity + " -> " + newVelocity);
+
+                // snap to surrface
+                this.pos = contactPoint.plus(offset);
+                this.prevPos = pos.minus(newVelocity);
+
+                break;
             }
         }
     }

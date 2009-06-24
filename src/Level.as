@@ -326,6 +326,8 @@ class Level {
 		curSquY = startSquY;
 		//GO!
 		
+		scroll();
+		paint();
 		root_mc.onEnterFrame = function() {
 			level.scroll();
 			level.engine.stepFrame();
