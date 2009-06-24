@@ -28,7 +28,7 @@ class Vector {
     
     public function normalize() : Void {
         var magnitude : Number = getMagnitude();
-        x /= mangitude;
+        x /= magnitude;
         y /= magnitude;
     }
     
