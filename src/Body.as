@@ -48,7 +48,7 @@ class Body {
     }
     
     public function getY() : Number {
-    	return pos.y;
+        return pos.y;
     }
     
     public function getPosAng() : Number {
@@ -57,7 +57,7 @@ class Body {
     
     public function paint(level : Level) : Void {
 		graphics_mc._x = level.relX(pos.x);
-		grahpics_mc._y = level.relY(pos.y);
+		graphics_mc._y = level.relY(pos.y);
 		graphics_mc._rotation = radToDeg(posAng);
     }
     

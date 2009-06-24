@@ -76,7 +76,7 @@ class Level {
 		this.startedLoad = false;
 		this.progressVisible = false;
 		
-		this.engine = new PhysicsEngine();
+		this.engine = new PhysicsEngine(this);
 		
 		this.jeep = null; // we initialize the jeep after the level is loaded
 		
@@ -329,7 +329,7 @@ class Level {
 		root_mc.obj_mc.wheelBack_mc._height = wheelHeight;
 		
 		// add jeep to physics engine
-		jeep = new Jeep(startX, startY, root_mc.obj_mc.jeep_mc);
+		jeep = new Jeep(startX, startY, 0, root_mc.obj_mc.jeep_mc);
 		engine.addBody(jeep);
 		
 		curSquX = startSquX;
@@ -429,8 +429,8 @@ class Level {
 		curSquY = int(jeep.getY() / squHeight);
 
 		//scroll window
-		scrollX = bwAbsX - movieWidth / 2;
-		scrollY = bwAbsY - movieHeight / 2;
+		scrollX = jeep.getX() - movieWidth / 2;
+		scrollY = jeep.getY() - movieHeight / 2;
 	
 	}
 	
@@ -439,8 +439,8 @@ class Level {
 		root_mc.bg_mc._x = - (scrollX % (defSquWidth * 4)) / 4 ;
 		
 		//move sectors into place
-		for (y = curSquY - 2; y <= curSquY + 2; y++) {
-			for (x = curSquX - 2; x <= curSquX + 2; x++){
+		for (var y = curSquY - 2; y <= curSquY + 2; y++) {
+			for (var x = curSquX - 2; x <= curSquX + 2; x++){
 				if (x == curSquX - 2 || x == curSquX + 2 || 
 					y == curSquY - 2 || y == curSquY + 2)
 				{
@@ -509,27 +509,21 @@ class Level {
 		return distcheck;
 	}
 	
-	function relX (absX)
-	{
+	public function relX(absX : Number) : Number {
 		return absX - scrollX;
 	}
 	
-	function relY (absY)
-	{
+	public function relY(absY : Number) : Number {
 		return absY - scrollY;
 	}
 	
-	function absX (relX)
-	{
+	public function absX(relX : Number) : Number {
 		return relX + scrollX;
 	}
 	
-	function absY (relY)
-	{
+	public function absY(relY : Number) : Number {
 		return relY + scrollY;
 	}
-
-	
 	
 	function dispose() : Void {
 		// remove movie clips from screen and data from memory

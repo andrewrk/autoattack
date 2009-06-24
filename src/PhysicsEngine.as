@@ -8,6 +8,7 @@ class PhysicsEngine {
     private var level : Level;
     
     public function PhysicsEngine(level : Level) {
+        trace("constructor. level="+level);
     	this.level = level;
     	gravity = 1;
     	bodies = new Array();
@@ -40,6 +41,7 @@ class PhysicsEngine {
         }
     }
     private function paint() : Void {
+        trace("level="+level);
         for (var i : Number = 0; i < bodies.length; i++) {
             bodies[i].paint(level);
         }
