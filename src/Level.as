@@ -281,11 +281,6 @@ class Level {
 		
 		//xml has already been parsed
 		//initialize level
-		/*
-		bwAbsX = squWidth * startSquX + startX - wheelDist / 2;
-		bwAbsY = squHeight * startSquY + startY;
-		fwAbsX = bwAbsX + wheelDist;
-		fwAbsY = bwAbsY;*/
 		//turn on background
 		root_mc.bg_mc._visible = true;
 		root_mc.bg_mc.bgleft_mc._visible = true;
@@ -335,6 +330,20 @@ class Level {
 			level.scroll();
 			level.engine.stepFrame();
 			level.paint();
+
+            /*
+            // test getSurfaceNormal
+            var edge : Vector = level.getContactPoint(
+                new Vector(level.absX(_root.dc1_mc._x), level.absY(_root.dc1_mc._y)), 
+                new Vector(level.absX(_root.dc2_mc._x), level.absY(_root.dc2_mc._y)));
+            var vec : Vector = level.getSurfaceNormal(edge);
+            
+            _root.dx_mc._x = level.relX(edge.x);
+            _root.dx_mc._y = level.relY(edge.y);
+
+            _root.darrow_mc._rotation = Math.atan2(vec.y, vec.x) / Math.PI * 180;
+            */
+
 		}
 		startStreamingSong();
 	}
@@ -395,7 +404,7 @@ class Level {
 		}
 		if ( ! foundLevelTag )
 		{
-			errorLoadingLevel ();
+			errorLoadingLevel();
 			return;
 		}
 		var obj_xmlnode : XML = my_xml.childNodes [i];
@@ -453,10 +462,10 @@ class Level {
         engine.paint();
 	}
 
-    // TODO: unit test
     function getContactPoint(oldLoc : Vector, newLoc : Vector) : Vector {
         // given an old position of something and a new position of something,
         // figure out where the object entered the level mask
+        var accuracy : Number = 2; //pixels
 
         // check if newLoc is hitting
         if( hit(newLoc) ){
@@ -476,8 +485,7 @@ class Level {
                 } else {
                     upper = dist;
                 }
-            } while (Math.abs(upper - lower) > 2);
-            //accurate to 1 pixel
+            } while (Math.abs(upper - lower) > accuracy);
 
             // normalize dir and multiply it by dist
             dir.normalize();
@@ -493,10 +501,65 @@ class Level {
     function getSurfaceNormal(pos : Vector) : Vector {
         // return a normal vector perpendicular to the surface at pos
         
-        return new Vector(0, -1);
+        // stick out a feeler and find one of the edges
+        var feelerRadius : Number = 8;
+        var accuracy : Number = 0.03; // radians
+        var f1ang : Number;
+        var f1vec : Vector;
+        var upper : Number = Math.PI * 2;
+        var lower : Number = 0;
+        
+        do {
+            f1ang = (upper + lower) / 2;
+
+            f1vec = extendRadius(pos, f1ang, feelerRadius);
+            if( hit(f1vec) ){
+                lower = f1ang;
+            } else {
+                upper = f1ang;
+            }
+        } while(Math.abs(upper - lower) > accuracy); 
+        
+        _root.dc3_mc._x = relX(f1vec.x);
+        _root.dc3_mc._y = relY(f1vec.y);
+        
+        // we have one surface, now set the upper and lower just around
+        // it to find the other side
+        var f2ang : Number;
+        var f2vec : Vector;
+        upper = f1ang + Math.PI * 2 - accuracy;
+        lower = f1ang + accuracy;
+        do {
+            f2ang = (upper + lower) / 2;
+
+            f2vec = extendRadius(pos, f2ang, feelerRadius);
+            if( ! hit(f2vec) ){
+                lower = f2ang;
+            } else {
+                upper = f2ang;
+            }
+        } while(Math.abs(upper - lower) > accuracy); 
+
+        _root.dc4_mc._x = relX(f2vec.x);
+        _root.dc4_mc._y = relY(f2vec.y);
+
+        // both feelers found surfaces, now find slope between points
+        var slope : Vector = f2vec.minus(f1vec);
+
+        // normalize and make it perpindicular
+        slope.normalize();
+        slope = new Vector(slope.y, -slope.x);
+        
+        return slope;
+    }
+
+    function extendRadius(
+        pos : Vector, angle : Number, radius : Number) : Vector
+    {
+        return pos.plus(
+            new Vector(radius * Math.cos(angle), radius * Math.sin(angle)));
     }
 	
-    // TODO: unit test
 	function hit (pos : Vector) : Boolean {
         var rx : Number = relX(pos.x);
         var ry : Number = relY(pos.y);
