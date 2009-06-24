@@ -33,8 +33,20 @@ class Vector {
         y /= magnitude;
     }
 
+    public function times(factor : Number) : Vector {
+        return new Vector (x * factor, y * factor);
+    }
+
     public function scale(factor : Number) : Void {
         x *= factor;
         y *= factor;
+    }
+
+    public function dotProduct(v2 : Vector) : Number {
+        return x * v2.x + y * v2.y;
+    }
+    
+    public function toString() {
+        return "v(" + x + "," + y + ")";
     }
 }
