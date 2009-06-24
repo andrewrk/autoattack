@@ -384,19 +384,19 @@ class Level {
 				lvlScale = parseFloat (my_xml.childNodes [i].attributes.scale);
 				squWidth = defSquWidth * lvlScale;
 				squHeight = defSquHeight * lvlScale;
-				jeepWidth = defJeepWidth * lvlScale;
-				jeepHeight = defJeepHeight * lvlScale;
-				wheelWidth = defWheelWidth * lvlScale;
-				wheelHeight = defWheelHeight * lvlScale;
-				wheelDist = defWheelDist * lvlScale;
-				startSquX = lvlScale * parseInt (my_xml.childNodes [i].attributes.sx);
-				startSquY = lvlScale * parseInt (my_xml.childNodes [i].attributes.sy);
+				jeepWidth = defJeepWidth; // * lvlScale;
+				jeepHeight = defJeepHeight; // * lvlScale;
+				wheelWidth = defWheelWidth;// * lvlScale;
+				wheelHeight = defWheelHeight;// * lvlScale;
+				wheelDist = defWheelDist;// * lvlScale;
+				startSquX = parseInt (my_xml.childNodes [i].attributes.sx);
+				startSquY = parseInt (my_xml.childNodes [i].attributes.sy);
 				startX = lvlScale * parseInt (my_xml.childNodes [i].attributes.spx);
 				startY = lvlScale * parseInt (my_xml.childNodes [i].attributes.spy);
-				lvlSquLeft = lvlScale * parseInt (my_xml.childNodes [i].attributes.sl);
-				lvlSquRight = lvlScale * parseInt (my_xml.childNodes [i].attributes.sr);
-				lvlSquTop = lvlScale * parseInt (my_xml.childNodes [i].attributes.st);
-				lvlSquBottom = lvlScale * parseInt (my_xml.childNodes [i].attributes.sb);
+				lvlSquLeft = parseInt (my_xml.childNodes [i].attributes.sl);
+				lvlSquRight = parseInt (my_xml.childNodes [i].attributes.sr);
+				lvlSquTop = parseInt (my_xml.childNodes [i].attributes.st);
+				lvlSquBottom = parseInt (my_xml.childNodes [i].attributes.sb);
 				foundLevelTag = true;
 				break;
 			}
@@ -440,7 +440,7 @@ class Level {
 	function paint() : Void {	
 		//background
 		root_mc.bg_mc.bgcenter_mc._x = - (scrollX % (defSquWidth * 4)) / 4 ;
-		root_mc.bg_mc.bgright_mc._x = root_mc.bg_mc.bgcenter_mc._x + squWidth;
+		root_mc.bg_mc.bgright_mc._x = root_mc.bg_mc.bgcenter_mc._x + defSquWidth;
         //move sectors into place
 		for (var y = curSquY - 2; y <= curSquY + 2; y++) {
 			for (var x = curSquX - 2; x <= curSquX + 2; x++){
