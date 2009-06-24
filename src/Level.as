@@ -458,8 +458,24 @@ class Level {
 			}
 		}
 
+        paintGunner();
+
+        // paint each body in physics engine
         engine.paint();
 	}
+
+    function paintGunner() : Void {
+        // point the gunner at the mouse cursor 
+        var x2 : Number = _root._xmouse;
+        var y2 : Number = _root._ymouse;
+        var x1 : Number = jeep.graphics_mc.gun_mc._x + jeep.graphics_mc._x;
+        var y1 : Number = jeep.graphics_mc.gun_mc._y + jeep.graphics_mc._y;
+
+        var theta : Number = Math.atan2(y2-y1,x2-x1);
+        var angle : Number = (180*theta) / Math.PI;
+        angle += 180 - jeep.graphics_mc._rotation
+        jeep.graphics_mc.gun_mc.gotoAndStop(Math.round(angle));
+    }
 
     function getContactPoint(oldLoc : Vector, newLoc : Vector) : Vector {
         // given an old position of something and a new position of something,

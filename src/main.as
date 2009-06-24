@@ -50,6 +50,9 @@ keyListener.onKeyUp = function() {
 	}
 }
 
+mouseListener.onMouseMove = function() {
+}
+
 // accept transmission callback
 function acceptTransmission():Void {
 	// forward to level object

@@ -1,6 +1,7 @@
 
 class Body {
     public var mass;
+    public var graphics_mc : MovieClip;
 
     private var pos : Vector; // px
     private var angle : Number; // rad
@@ -8,7 +9,6 @@ class Body {
     private var prevAngle : Number; // rad
     private var netForce : Vector; // TODO units
 
-    private var graphics_mc : MovieClip;
 
     private var hitCheckPoints : Array; // <Vector> relative to c.o.m.
     public function Body(
@@ -45,10 +45,8 @@ class Body {
                 // compute momentum of particle perpendicular to normal
                 var persistentVelocity : Vector = velocity.minus(surfaceNormal.times(impactMagnitude*.7));
                 var bounceVelocity : Vector =  surfaceNormal.times(impactMagnitude * 0.1);
-                trace(bounceVelocity);
                 var newVelocity = persistentVelocity.minus(bounceVelocity);
 
-                trace(velocity + " -> " + newVelocity);
 
                 // snap to surrface
                 this.pos = contactPoint.plus(offset);
