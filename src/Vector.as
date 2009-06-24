@@ -9,11 +9,12 @@ class Vector {
         this.x = x;
         this.y = y;
     }
+
     public function translate(dx : Number, dy : Number) : Void {
         x += dx;
         y += dy;
     }
-    
+
     public function plus(vector : Vector) : Vector {
         return new Vector(x + vector.x, y + vector.y);
     }
@@ -25,13 +26,13 @@ class Vector {
     public function getMagnitude() : Number {
         return Math.sqrt(x*x + y*y);
     }
-    
+
     public function normalize() : Void {
         var magnitude : Number = getMagnitude();
         x /= magnitude;
         y /= magnitude;
     }
-    
+
     public function scale(factor : Number) : Void {
         x *= factor;
         y *= factor;

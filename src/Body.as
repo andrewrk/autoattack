@@ -83,18 +83,6 @@ class Body {
     	return radians * 180 / Math.PI;
     }
 
-    public function getPos() : Vector {
-        return pos;
-    }
-
-    public function getX() : Number {
-        return pos.x;
-    }
-
-    public function getY() : Number {
-        return pos.y;
-    }
-
     public function getPosAng() : Number {
         return posAng;
     }
