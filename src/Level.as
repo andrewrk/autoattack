@@ -1,59 +1,31 @@
 
 class Level {
-	// LEGACY VARS
 	
-	
-	//level variables
-	var bg_sound;
-	var bgMusicURL;
-	var startSquX, startSquY;
-	var startX, startY;
-	var lvlSquLeft, lvlSquRight, lvlSquTop, lvlSquBottom;
-	var lvlScale;
+	// variables loaded from level XML file
+	private var bg_sound;
+	private var bgMusicURL;
+	private var startSquX, startSquY;
+	private var startX, startY;
+	private var lvlSquLeft, lvlSquRight, lvlSquTop, lvlSquBottom;
+	private var lvlScale;
 	
 	//game constants
-	var jeepWidth, jeepHeight;
-	var wheelWidth, wheelHeight;
-	var wheelDist;
-	var defJeepWidth = 137, defJeepHeight = 61;
-	var defWheelWidth = 25, defWheelHeight = 25;
-	var defWheelDist = 79;
-	var squWidth;
-	var squHeight;
-	var defSquWidth = 550;
-	var defSquHeight = 400;
-	//physics variables
-	var gravConstant = 6.67300e-11;
-	var earthMass = 5.9742e24; //kgs
-	var earthRadius = 6.3781e6; //m
-	var gravAccel = 9.504558726; // m/s2
+	private var jeepWidth, jeepHeight;
+	private var wheelWidth, wheelHeight;
+	private var wheelDist;
+	private var defJeepWidth = 137, defJeepHeight = 61;
+	private var defWheelWidth = 25, defWheelHeight = 25;
+	private var defWheelDist = 79;
+	private var squWidth;
+	private var squHeight;
+	private var defSquWidth = 550;
+	private var defSquHeight = 400;
 
-
-	var jeepWeight = 1814.36948; //kgs
-	var pixelsPerMeter =   140 /140;
-	var wheelAccelAccuracy = 4;
-
-	var jeepX; //pixels, from center of gravity
-	var jeepY; //pixels, from center of gravity
-	var jeepRotation; //radians
-
-	var jeepVelX; // m/s
-	var jeepVelY; // m/s
-	var jeepAngVel; // rad/s
-
-
-	var bwAbsX; //pixels
-	var bwAbsY; //pixels
-	var fwAbsX; //pixels
-	var fwAbsY; //pixels
-
-
-	var curSquX;
-	var curSquY;
-	var scrollX;
-	var scrollY;
-	
-	// END LEGACY VARS
+	// for scrolling through sectors
+	private var curSquX;
+	private var curSquY;
+	private var scrollX;
+	private var scrollY;
 	
 	
 	private var number : Number;
@@ -80,6 +52,9 @@ class Level {
 	private var progressVisible : Boolean;
 	
 	private var engine : PhysicsEngine;
+	
+	// jeep handle
+	private var jeep : Jeep;
 
 	function Level (number : Number, 
 					root_mc : MovieClip, 
@@ -102,6 +77,8 @@ class Level {
 		this.progressVisible = false;
 		
 		this.engine = new PhysicsEngine();
+		
+		this.jeep = null; // we initialize the jeep after the level is loaded
 		
 		
 		// create the movie clip containers in root_mc
@@ -309,9 +286,6 @@ class Level {
 		
 		//xml has already been parsed
 		//initialize level
-		jeepX = startX * pixelsPerMeter;
-		jeepY = startY * pixelsPerMeter;
-		jeepRotation = 0;
 		/*
 		bwAbsX = squWidth * startSquX + startX - wheelDist / 2;
 		bwAbsY = squHeight * startSquY + startY;
@@ -354,19 +328,18 @@ class Level {
 		root_mc.obj_mc.wheelBack_mc._width = wheelWidth;
 		root_mc.obj_mc.wheelBack_mc._height = wheelHeight;
 		
-		var jeep = new Jeep( startX * pixelsPerMeter, startY * pixelsPerMeter, root_mc.obj_mc.jeep_mc);
-		engine.addBody( jeep );
+		// add jeep to physics engine
+		jeep = new Jeep(startX, startY, root_mc.obj_mc.jeep_mc);
+		engine.addBody(jeep);
 		
-		//initialize physics variables
-		jeepVelX = 0;
-		jeepVelY = 0
-		jeepAngVel = 0;
 		curSquX = startSquX;
 		curSquY = startSquY;
 		//GO!
 		
 		root_mc.onEnterFrame = function() {
+			level.scroll();
 			level.engine.stepFrame();
+			level.paint();
 		}
 		startStreamingSong();
 	}
@@ -433,7 +406,7 @@ class Level {
 		var obj_xmlnode : XML = my_xml.childNodes [i];
 		for (i = 0; i < obj_xmlnode.childNodes.length; i ++)
 		{
-			//level object
+			// TODO: level object
 		}
 	}
 	
@@ -450,139 +423,37 @@ class Level {
 		root_mc.transmission_mc.removeMovieClip ();
 	}
 	
-	function stepFrame() : Void {
-		//main function
-		var x;
-		var y;
-		curSquX = int (bwAbsX / squWidth);
-		curSquY = int (bwAbsY / squHeight);
-		//-------PHYSICS--------------------------
-		//time: seconds
-		//weight: kg
-		//distance: m
-		//force: N
-		//angle: radians
-	
-		var timePassed = 4 / 24; //s
-		var nFX = 0; // N
-		var nFY = 0; // N
-	
-		//gravity
-		nFY += gravAccel * timePassed * jeepWeight;
-	
-		//
-	
-	
-		// COMPUTE ACCELERATION
-		var accelX = nFX / jeepWeight;
-		var accelY = nFY / jeepWeight;
-		// APPLY ACCELERATION TO VELOCITY
-		jeepVelX += accelX;
-		jeepVelY += accelY;
-		// APPLY VELOCITY TO JEEP COORDINATES
-		jeepX += jeepVelX;
-		jeepY += jeepVelY;
-		//----------------------------------------
-		//convert physics varibles to pixel coordinates
-	
-		bwAbsX = (jeepX*pixelsPerMeter) - wheelDist / 2;
-		bwAbsY = (jeepY*pixelsPerMeter);
-		fwAbsX = bwAbsX + wheelDist;
-		fwAbsY = bwAbsY;
-	
+	function scroll() : Void {
+		// determine what sector we're in
+		curSquX = int(jeep.getX() / squWidth);
+		curSquY = int(jeep.getY() / squHeight);
+
 		//scroll window
 		scrollX = bwAbsX - movieWidth / 2;
 		scrollY = bwAbsY - movieHeight / 2;
+	
+	}
+	
+	function paint() : Void {	
 		//background
 		root_mc.bg_mc._x = - (scrollX % (defSquWidth * 4)) / 4 ;
-		//move squares into place
-		for (y = curSquY - 2; y <= curSquY + 2; y ++)
-		{
-			for (x = curSquX - 2; x <= curSquX + 2; x ++)
-			{
-				if (x == curSquX - 2 || x == curSquX + 2 || y == curSquY - 2 || y == curSquY + 2)
+		
+		//move sectors into place
+		for (y = curSquY - 2; y <= curSquY + 2; y++) {
+			for (x = curSquX - 2; x <= curSquX + 2; x++){
+				if (x == curSquX - 2 || x == curSquX + 2 || 
+					y == curSquY - 2 || y == curSquY + 2)
 				{
-					root_mc.level_mc ["sx" + x + "y" + y]._visible = false;
+					root_mc.level_mc["sx" + x + "y" + y]._visible = false;
 				} else {
-					root_mc.level_mc ["sx" + x + "y" + y]._visible = true;
-					root_mc.level_mc ["mx" + x + "y" + y]._x = relX (x * squWidth);
-					root_mc.level_mc ["mx" + x + "y" + y]._y = relY (y * squHeight);
-					root_mc.level_mc ["sx" + x + "y" + y]._x = relX (x * squWidth);
-					root_mc.level_mc ["sx" + x + "y" + y]._y = relY (y * squHeight);
+					root_mc.level_mc["sx" + x + "y" + y]._visible = true;
+					root_mc.level_mc["mx" + x + "y" + y]._x = relX(x * squWidth);
+					root_mc.level_mc["mx" + x + "y" + y]._y = relY(y * squHeight);
+					root_mc.level_mc["sx" + x + "y" + y]._x = relX(x * squWidth);
+					root_mc.level_mc["sx" + x + "y" + y]._y = relY(y * squHeight);
 				}
 			}
 		}
-		//move jeep into place
-		root_mc.obj_mc.wheelBack_mc._x = relX (bwAbsX);
-		root_mc.obj_mc.wheelBack_mc._y = relY (bwAbsY);
-		root_mc.obj_mc.wheelFront_mc._x = relX (fwAbsX);
-		root_mc.obj_mc.wheelFront_mc._y = relY (fwAbsY);
-		root_mc.obj_mc.jeep_mc._x = relX (bwAbsX);
-		root_mc.obj_mc.jeep_mc._y = relY (bwAbsY);
-		root_mc.obj_mc.jeep_mc._rotation = (180 * getJeepRotation ()) / Math.PI;
-		//put the wheels on the correct setting
-		var mult : Number = getJeepRotation () < Math.PI ? 1 : - 1;
-		if (jeepVelX * mult < - 20)
-		{
-			root_mc.obj_mc.wheelBack_mc.gotoAndStop ("bw_fast");
-			root_mc.obj_mc.wheelFront_mc.gotoAndStop ("bw_fast");
-		} else if (jeepVelX * mult < - 10 )
-		{
-			root_mc.obj_mc.wheelBack_mc.gotoAndStop ("bw_medium");
-			root_mc.obj_mc.wheelFront_mc.gotoAndStop ("bw_medium");
-		} else if (jeepVelX * mult < 0 )
-		{
-			root_mc.obj_mc.wheelBack_mc.gotoAndStop ("bw_slow");
-			root_mc.obj_mc.wheelFront_mc.gotoAndStop ("bw_slow");
-		} else if (jeepVelX * mult == 0)
-		{
-			root_mc.obj_mc.wheelBack_mc.gotoAndStop ("still");
-			root_mc.obj_mc.wheelFront_mc.gotoAndStop ("still");
-		} else if (jeepVelX * mult < 10 )
-		{
-			root_mc.obj_mc.wheelBack_mc.gotoAndStop ("fw_slow");
-			root_mc.obj_mc.wheelFront_mc.gotoAndStop ("fw_slow");
-		} else if (jeepVelX * mult < 20)
-		{
-			root_mc.obj_mc.wheelBack_mc.gotoAndStop ("fw_medium");
-			root_mc.obj_mc.wheelFront_mc.gotoAndStop ("fw_medium");
-		} else 
-		{
-			root_mc.obj_mc.wheelBack_mc.gotoAndStop ("fw_fast");
-			root_mc.obj_mc.wheelFront_mc.gotoAndStop ("fw_fast");
-		}
-	
-		//hit test
-		var wheelFrontHit:Boolean = hit(root_mc.obj_mc.wheelFront_mc._x,root_mc.obj_mc.wheelBack_mc._y );
-		var wheelBackHit:Boolean = hit(root_mc.obj_mc.wheelBack_mc._x,root_mc.obj_mc.wheelBack_mc._y);
-	
-		var moveDir = Math.atan(jeepVelY/jeepVelX);
-		if(wheelFrontHit){
-			//move front wheel to top
-			var backDist = getSurfaceEdge(relX(fwAbsX),relY(fwAbsY),moveDir);
-			fwAbsY = backDist*Math.sin(moveDir);
-			fwAbsX = backDist*Math.cos(moveDir);
-		
-			//absorb momentum into radial momentum
-			//jeepAngVel += Math.atan(jeepVelY/jeepVelX);
-			jeepVelY = 0;
-			jeepVelX = 0;
-		}
-	
-		if(wheelBackHit){
-			//move back wheel to top
-			var backDist = getSurfaceEdge(relX(bwAbsX),relY(bwAbsY),moveDir);
-			bwAbsY = backDist*Math.sin(moveDir);
-			bwAbsX = backDist*Math.cos(moveDir);
-		
-			//absorb momentum into radial momentum
-			//jeepAngVel += Math.atan(jeepVelY/jeepVelX);
-			jeepVelY = 0;
-			jeepVelX = 0;
-		}
-	
-		jeepX = (bwAbsX + wheelDist / 2 ) / pixelsPerMeter;
-		jeepY = bwAbsY / pixelsPerMeter;
 	}
 	
 	function hit (ptx, pty) : Boolean {
@@ -636,14 +507,6 @@ class Level {
 		} while (Math.abs (leftcheck - rightcheck) > 2);
 		//accurate to 1 pixel
 		return distcheck;
-	}
-	
-	function getJeepRotation ()
-	{
-		var x1 = fwAbsX - bwAbsX;
-		var y1 = fwAbsY - bwAbsY;
-		var theta = Math.atan (y1 / x1);
-		return theta;
 	}
 	
 	function relX (absX)

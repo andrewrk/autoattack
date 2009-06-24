@@ -5,7 +5,10 @@ class PhysicsEngine {
     private var bodies : Array; // : <Body>
     private var connectors : Array; // : <Connector>
     
-    public function PhysicsEngine() {
+    private var level : Level;
+    
+    public function PhysicsEngine(level : Level) {
+    	this.level = level;
     	gravity = 1;
     	bodies = new Array();
     	connectors = new Array();
@@ -38,7 +41,7 @@ class PhysicsEngine {
     }
     private function paint() : Void {
         for (var i : Number = 0; i < bodies.length; i++) {
-            bodies[i].paint();
+            bodies[i].paint(level);
         }
     }
 }

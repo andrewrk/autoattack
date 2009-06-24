@@ -11,14 +11,17 @@ class Body {
     
     private var graphics_mc : MovieClip;
 
-    function Body(x : Number, y : Number, graphics_mc : MovieClip) {
+    function Body(
+    	x : Number, y : Number, posAng : Number, graphics_mc : MovieClip)
+    {
     	mass = 1;
     	pos = new Vector(x, y);
-    	posAng = 0;
+    	this.posAng = posAng;
+    	this.graphics_mc = graphics_mc;
     	vel = new Vector(0, 0);
     	velAng = 0;
     	netForce = new Vector(0, 0);
-        this.graphics_mc = graphics_mc;
+        
     }
 
     public function calculateForces() : Void {
@@ -35,9 +38,31 @@ class Body {
         vel.translate(netForce.x / mass, netForce.y / mass);
         pos.translate(vel.x, vel.y);
     }
-
-    public function paint() {
-        graphics_mc._x = pos.x;
-        graphics_mc._y = pos.y;
+    
+    public function getPos() : Vector {
+		return pos;
+    }
+    
+    public function getX() : Number {
+    	return pos.x;
+    }
+    
+    public function getY() : Number {
+    	return pos.y;
+    }
+    
+    public function getPosAng() : Number {
+    	return posAng;
+    }
+    
+    public function paint(level : Level) : Void {
+		graphics_mc._x = level.relX(pos.x);
+		grahpics_mc._y = level.relY(pos.y);
+		graphics_mc._rotation = radToDeg(posAng);
+    }
+    
+    // TODO: where does this function belong?
+    private function radToDeg(radians : Number) : Number {
+    	return radians * 180 / Math.PI;
     }
 }
