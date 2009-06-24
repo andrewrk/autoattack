@@ -5,12 +5,35 @@
 class Vector {
     public var x : Number;
     public var y : Number;
-    function Vector(x : Number, y : Number) {
+    public function Vector(x : Number, y : Number) {
         this.x = x;
         this.y = y;
     }
-    function translate(dx : Number, dy : Number) {
+    public function translate(dx : Number, dy : Number) : Void {
         x += dx;
         y += dy;
+    }
+    
+    public function plus(vector : Vector) : Vector {
+        return new Vector(x + vector.x, y + vector.y);
+    }
+
+    public function minus(vector : Vector) : Vector {
+        return new Vector(x - vector.x, y - vector.y);
+    }
+
+    public function getMagnitude() : Number {
+        return Math.sqrt(x*x + y*y);
+    }
+    
+    public function normalize() : Void {
+        var magnitude : Number = getMagnitude();
+        x /= mangitude;
+        y /= magnitude;
+    }
+    
+    public function scale(factor : Number) : Void {
+        x *= factor;
+        y *= factor;
     }
 }
