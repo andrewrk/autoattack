@@ -5,7 +5,7 @@ class Body {
     private var pos : Vector; // px
     private var angle : Number; // rad
     private var prevPos : Vector; // px
-    private var prevAngle
+    private var prevAngle : Number; // rad
     private var netForce : Vector; // TODO units
 
     private var graphics_mc : MovieClip;
@@ -35,7 +35,7 @@ class Body {
             if (contactPoint != null) {
                 var surfaceNormal : Vector = level.getSurfaceNormal(contactPoint);
                 // TODO dot product with momentum or velocity or something
-                netForce.translate(surfaceNormal);
+                netForce.translate(surfaceNormal.x, surfaceNormal.y);
             }
         }
     }
@@ -68,29 +68,14 @@ class Body {
         return pos.y;
     }
     
-    public function getPosAng() : Number {
-    	return posAng;
+    public function getAngle() : Number {
+    	return angle;
     }
     
-    public function paint(level : Level) : Void {
-		graphics_mc._x = level.relX(pos.x);
-		graphics_mc._y = level.relY(pos.y);
-		graphics_mc._rotation = radToDeg(posAng);
-    }
-    
-    // TODO: where does this function belong?
-    private function radToDeg(radians : Number) : Number {
-    	return radians * 180 / Math.PI;
-    }
-
-    public function getPosAng() : Number {
-        return posAng;
-    }
-
     public function paint(level : Level) : Void {
         graphics_mc._x = level.relX(pos.x);
-        grahpics_mc._y = level.relY(pos.y);
-        graphics_mc._rotation = radToDeg(posAng);
+        graphics_mc._y = level.relY(pos.y);
+        graphics_mc._rotation = radToDeg(angle);
     }
 
     // TODO: where does this function belong?
