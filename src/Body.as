@@ -53,7 +53,8 @@ class Body {
         // TODO angles
         var velocity = pos.minus(prevPos);
         velocity.translate(netForce.x / mass, netForce.y / mass);
-        pos.translate(velocity.x, velocity.y);
+        prevPos = pos;
+        pos = pos.plus(velocity);
     }
     
     public function getPos() : Vector {

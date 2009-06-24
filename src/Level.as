@@ -160,11 +160,6 @@ class Level {
 			progressXML = 0.0;
 			progressBG = 0.0;
 			
-			// set up background mc
-
-
-
-
 			//begin load process
 			my_xml.onLoad = function(success : Boolean) {
 				level.loadedXML = true;
@@ -454,59 +449,64 @@ class Level {
 				}
 			}
 		}
+
+        engine.paint();
 	}
+
+    // TODO: unit test
+    function getContactPoint(oldLoc : Vector, newLoc : Vector) : Vector {
+        // given an old position of something and a new position of something,
+        // figure out where the object entered the level mask
+
+        // check if newLoc is hitting
+        if( hit(newLoc) ){
+            // create a direction vector towards the old location
+            var dir : Vector = oldLoc.minus(newLoc);
+            var dist : Number;
+            var upper : Number = dir.getMagnitude();
+            var lower : Number = 1;
+
+            do {
+                dir.normalize();
+                dist = (upper + lower) / 2;
+                dir.scale(dist);
+
+                if( hit(newLoc.plus(dir)) ){
+                    lower = dist;
+                } else {
+                    upper = dist;
+                }
+            } while (Math.abs(upper - lower) > 2);
+            //accurate to 1 pixel
+
+            // normalize dir and multiply it by dist
+            dir.normalize();
+            dir.scale(dist);
+            
+            return newLoc.plus(dir);
+
+        } else {
+            return null;
+        }
+    }
+
+    function getSurfaceNormal(pos : Vector) : Vector {
+        // return a normal vector perpendicular to the surface at pos
+        
+        return new Vector(0, -1);
+    }
 	
-	function hit (ptx, pty) : Boolean {
-		var x;
-		var y;
-		for (y = curSquY - 1; y <= curSquY + 1; y++) {
-			for (x = curSquX - 1; x <= curSquX + 1; x++) {
-				if (root_mc.level_mc ["mx" + x + "y" + y].hitTest (ptx, pty, 1))
+    // TODO: unit test
+	function hit (pos : Vector) : Boolean {
+        var rx : Number = relX(pos.x);
+        var ry : Number = relY(pos.y);
+		for (var sy : Number = curSquY - 1; sy <= curSquY + 1; sy++) {
+			for (var sx : Number = curSquX - 1; sx <= curSquX + 1; sx++) {
+				if (root_mc.level_mc["mx" + sx + "y" + sy].hitTest(rx, ry, 1))
 					return true;
 			}
 		}
 		return false;
-	}
-	
-	function getSurfaceEdge ( x, y, dir)
-	{
-		var distcheck = 1;
-		var dirx;
-		var diry;
-		var steps = 0;
-		do 
-		{
-			dirx = distcheck * Math.cos (dir);
-			diry = - distcheck * Math.sin (dir);
-			distcheck *= 2;
-			steps ++;
-			if (steps >= 12)
-			{
-				return undefined;
-			}
-		} while (hit (x + dirx, y + diry));
-		var rightcheck = distcheck / 2;
-		var leftcheck = distcheck / 4;
-		do 
-		{
-			distcheck = leftcheck + (rightcheck - leftcheck) / 2;
-			dirx = distcheck * Math.cos (dir);
-			diry = - distcheck * Math.sin (dir);
-			if (hit (x + dirx, y + diry))
-			{
-				leftcheck = distcheck;
-			} else 
-			{
-				rightcheck = distcheck;
-			}
-			steps ++;
-			if (steps >= 24)
-			{
-				return undefined;
-			}
-		} while (Math.abs (leftcheck - rightcheck) > 2);
-		//accurate to 1 pixel
-		return distcheck;
 	}
 	
 	public function relX(absX : Number) : Number {

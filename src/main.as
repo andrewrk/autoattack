@@ -17,15 +17,19 @@ keyListener.onKeyDown = function() {
 	switch (Key.getCode()) {
 		case leftKey :
 			moveLeft = true;
+            level.jeep.pos.x -= 100;
 			break;
 		case upKey :
 			moveUp = true;
+            level.jeep.pos.y -= 100;
 			break;
 		case rightKey :
 			moveRight = true;
+            level.jeep.pos.x += 100;
 			break;
 		case downKey :
 			moveDown = true;
+            level.jeep.pos.y += 100;
 			break;
 	}
 }
@@ -51,3 +55,30 @@ function acceptTransmission():Void {
 	// forward to level object
 	level.acceptTransmission();
 }
+
+
+// debugging stuff
+/*_root.attachMovie("debugcircle", "dc1_mc", _root.getNextHighestDepth());
+_root.attachMovie("debugcircle", "dc2_mc", _root.getNextHighestDepth());
+_root.attachMovie("debugx", "dx_mc", _root.getNextHighestDepth());
+
+
+_root.dc1_mc.onPress = function(){
+    trace("this goes outside");
+    this.startDrag();
+}
+
+_root.dc1_mc.onRelease = function(){
+    this.stopDrag();
+}
+
+_root.dc2_mc.onPress = function(){
+    trace("this goes inside the wall");
+    this.startDrag();
+}
+
+_root.dc2_mc.onRelease = function(){
+    this.stopDrag();
+}
+
+*/
