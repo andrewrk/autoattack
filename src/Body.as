@@ -27,7 +27,21 @@ class Body {
 
     public function hitTest(level : Level) {
         // TODO angles
-        for (var i : Number = 0; i < hitCheckPoints.length; i++) {
+        var velocity = pos.minus(prevPos);
+
+        var contactPoint : Vector = level.getContactPoint(prevPos, pos);
+        if (contactPoint == null)
+            return;
+        // we has kontakt
+        var oldPos = pos;
+        pos = contactPoint;
+        var surfaceNormal : Vector = level.getSurfaceNormal(contactPoint);
+        var newVelocity : Vector = velocity.minus(surfaceNormal.times(2 * velocity.dotProduct(surfaceNormal)));
+        newVelocity.scale(0.5);
+        prevPos = pos.minus(newVelocity);
+
+
+/*        for (var i : Number = 0; i < hitCheckPoints.length; i++) {
             var relativeVector : Vector = hitCheckPoints[i];
             var currentPoint : Vector = relativeVector.plus(this.pos); // TODO angles go here or something
             var prevPoint : Vector = relativeVector.plus(this.prevPos); // TODO angles go here or something
@@ -55,6 +69,7 @@ class Body {
                 break;
             }
         }
+*/
     }
 
     public function resetNetForce() : Void {
@@ -94,6 +109,8 @@ class Body {
         graphics_mc._x = level.relX(pos.x);
         graphics_mc._y = level.relY(pos.y);
         graphics_mc._rotation = radToDeg(angle);
+        _root.dx_mc._x = graphics_mc._x;
+        _root.dx_mc._y = graphics_mc._y;
     }
 
     // TODO: where does this function belong?
