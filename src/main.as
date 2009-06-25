@@ -1,4 +1,4 @@
-﻿// MAIN - run when the player clicks New Game
+// MAIN - run when the player clicks New Game
 
 
 
@@ -17,19 +17,19 @@ keyListener.onKeyDown = function() {
 	switch (Key.getCode()) {
 		case leftKey :
 			moveLeft = true;
-            level.jeep.pos.x -= 10;
+            level.jeep.nextPos.x -= 10;
 			break;
 		case upKey :
 			moveUp = true;
-            level.jeep.pos.y -= 10;
+            level.jeep.nextPos.y -= 10;
 			break;
 		case rightKey :
 			moveRight = true;
-            level.jeep.pos.x += 10;
+            level.jeep.nextPos.x += 10;
 			break;
 		case downKey :
 			moveDown = true;
-            level.jeep.pos.y += 10;
+            level.jeep.nextPos.y += 10;
 			break;
 	}
 }

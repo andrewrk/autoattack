@@ -5,8 +5,8 @@ class Body {
 
     private var pos : Vector; // px
     private var angle : Number; // rad
-    private var prevPos : Vector; // px
-    private var prevAngle : Number; // rad
+    private var nextPos : Vector; // px
+    private var nextAngle : Number; // rad
     private var netForce : Vector; // TODO units
 
 
@@ -17,8 +17,8 @@ class Body {
         mass = 1;
         pos = new Vector(x, y);
         this.angle = angle;
-        prevPos = pos;
-        prevAngle = angle;
+        nextPos = pos.plus(new Vector(0, 1)); // TODO parameterize
+        nextAngle = angle;
         netForce = new Vector(0, 0);
         this.graphics_mc = graphics_mc;
         // TODO depends on shape of object. the following is a square
@@ -27,18 +27,17 @@ class Body {
 
     public function hitTest(level : Level) {
         // TODO angles
-        var velocity = pos.minus(prevPos);
+        var velocity = nextPos.minus(pos);
 
-        var contactPoint : Vector = level.getContactPoint(prevPos, pos);
+        var contactPoint : Vector = level.getContactPoint(pos, nextPos);
         if (contactPoint == null)
             return;
         // we has kontakt
-        var oldPos = pos;
-        pos = contactPoint;
+        nextPos = contactPoint;
         var surfaceNormal : Vector = level.getSurfaceNormal(contactPoint);
         var newVelocity : Vector = velocity.minus(surfaceNormal.times(2 * velocity.dotProduct(surfaceNormal)));
-        newVelocity.scale(0.5);
-        prevPos = pos.minus(newVelocity);
+        newVelocity.scale(0.5); // TODO bounce dampening here
+        pos = nextPos.minus(newVelocity);
 
 
 /*        for (var i : Number = 0; i < hitCheckPoints.length; i++) {
@@ -83,10 +82,10 @@ class Body {
 
     public function move() : Void {
         // TODO angles
-        var velocity = pos.minus(prevPos);
+        var velocity = nextPos.minus(pos);
         velocity.translate(netForce.x / mass, netForce.y / mass);
-        prevPos = pos;
-        pos = pos.plus(velocity);
+        pos = nextPos;
+        nextPos = nextPos.plus(velocity);
     }
     
     public function getPos() : Vector {
