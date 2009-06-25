@@ -1,5 +1,22 @@
+// Level object - game code for a level
 
 class Level {
+    // static constants
+    public static var LAYER_BG : Number = 0;
+    public static var LAYER_BGOBJ : Number = 1;
+    public static var LAYER_LEVEL : Number = 2;
+    public static var LAYER_OBJ : Number = 3;
+    public static var LAYER_FOREOBJ : Number = 4;
+    public static var LAYER_FORE : Number = 5;
+
+    private var layers : Array = [
+        "bg_mc",
+        "bgobj_mc",
+        "level_mc",
+        "obj_mc",
+        "foreobj_mc",
+        "fore_mc"
+    ];
 	
 	// variables loaded from level XML file
 	private var bg_sound;
@@ -56,6 +73,9 @@ class Level {
 	// jeep handle
 	private var jeep : Jeep;
 
+    // a list of all the objects in the level (bad guys, decorations, etc)
+    private var objects : Array;
+
 	function Level (number : Number, 
 					root_mc : MovieClip, 
 					movieWidth : Number, 
@@ -79,22 +99,13 @@ class Level {
 		this.engine = new PhysicsEngine(this);
 		
 		this.jeep = null; // we initialize the jeep after the level is loaded
-		
+		this.objects = new Array();
 		
 		// create the movie clip containers in root_mc
-		//1. background 
-		root_mc.createEmptyMovieClip("bg_mc",root_mc.getNextHighestDepth());
-		//2. bg objects
-		root_mc.createEmptyMovieClip("bgobj_mc",root_mc.getNextHighestDepth());
-		//3. level squares
-		root_mc.createEmptyMovieClip("level_mc",root_mc.getNextHighestDepth());
-		//4. normal objects
-		root_mc.createEmptyMovieClip("obj_mc",root_mc.getNextHighestDepth());
-		//5. fore objects
-		root_mc.createEmptyMovieClip("foreobj_mc",root_mc.getNextHighestDepth());
-		//6. foreground
-		root_mc.createEmptyMovieClip("fore_mc",root_mc.getNextHighestDepth());
-		
+        for( var i : Number = 0; i < layers.length; i++ ){
+            root_mc.createEmptyMovieClip(layers[i], 
+                root_mc.getNextHighestDepth());
+        }
 		
 		//initialize XML object
 		my_xml = new XML();
@@ -365,23 +376,22 @@ class Level {
 	function loadLevelFromXML() : Void {
 		//parse the xml file and get ready
 		//look for "jclevel" tag
-		var i;
-		var foundLevelTag = false;
-		for (i = 0; i < my_xml.childNodes.length; i ++)
+		var foundLevelTag : Boolean = false;
+		for (var i : Number = 0; i < my_xml.childNodes.length; i ++)
 		{
-			if (my_xml.childNodes [i].nodeName == "jclevel")
+			if (my_xml.childNodes[i].nodeName == "jclevel")
 			{
 				//read level properties
 				//is the game over?
-				var gameOver = parseInt (my_xml.childNodes [i].attributes.gameover);
+				var gameOver = parseInt (my_xml.childNodes[i].attributes.gameover);
 				if (gameOver == 1)
 				{
 					gotoAndStop ("winGame");
 					return;
 				}
 				//level propertes
-				bgMusicURL = my_xml.childNodes [i].attributes.bgmusic;
-				lvlScale = parseFloat (my_xml.childNodes [i].attributes.scale);
+				bgMusicURL = my_xml.childNodes[i].attributes.bgmusic;
+				lvlScale = parseFloat (my_xml.childNodes[i].attributes.scale);
 				squWidth = defSquWidth * lvlScale;
 				squHeight = defSquHeight * lvlScale;
 				jeepWidth = defJeepWidth; // * lvlScale;
@@ -389,14 +399,14 @@ class Level {
 				wheelWidth = defWheelWidth;// * lvlScale;
 				wheelHeight = defWheelHeight;// * lvlScale;
 				wheelDist = defWheelDist;// * lvlScale;
-				startSquX = parseInt (my_xml.childNodes [i].attributes.sx);
-				startSquY = parseInt (my_xml.childNodes [i].attributes.sy);
-				startX = lvlScale * parseInt (my_xml.childNodes [i].attributes.spx);
-				startY = lvlScale * parseInt (my_xml.childNodes [i].attributes.spy);
-				lvlSquLeft = parseInt (my_xml.childNodes [i].attributes.sl);
-				lvlSquRight = parseInt (my_xml.childNodes [i].attributes.sr);
-				lvlSquTop = parseInt (my_xml.childNodes [i].attributes.st);
-				lvlSquBottom = parseInt (my_xml.childNodes [i].attributes.sb);
+				startSquX = parseInt (my_xml.childNodes[i].attributes.sx);
+				startSquY = parseInt (my_xml.childNodes[i].attributes.sy);
+				startX = lvlScale * parseInt (my_xml.childNodes[i].attributes.spx);
+				startY = lvlScale * parseInt (my_xml.childNodes[i].attributes.spy);
+				lvlSquLeft = parseInt (my_xml.childNodes[i].attributes.sl);
+				lvlSquRight = parseInt (my_xml.childNodes[i].attributes.sr);
+				lvlSquTop = parseInt (my_xml.childNodes[i].attributes.st);
+				lvlSquBottom = parseInt (my_xml.childNodes[i].attributes.sb);
 				foundLevelTag = true;
 				break;
 			}
@@ -406,10 +416,21 @@ class Level {
 			errorLoadingLevel();
 			return;
 		}
-		var obj_xmlnode : XML = my_xml.childNodes [i];
-		for (i = 0; i < obj_xmlnode.childNodes.length; i ++)
-		{
-			// TODO: level object
+		var obj_xmlnode : XML = my_xml.childNodes[i];
+		for (var i : Number = 0; i < obj_xmlnode.childNodes.length; i++) {
+            // get level object
+            var objClass : Number = parseInt(obj_xmlnode.childNodes[i].attributes.cls);
+            var objId : Number = parseInt(obj_xmlnode.childNodes[i].attributes.id);
+
+            var objX : Number = parseFloat(obj_xmlnode.childNodes[i].attributes.x);
+            var objY : Number = parseFloat(obj_xmlnode.childNodes[i].attributes.y);
+
+            //var objW : Number = parseFloat(obj_xmlnode.childNotes[i].attributes.w);
+            //var objH : Number = parseFloat(obj_xmlnode.childNotes[i].attributes.h);
+
+
+			// push it into array
+            //objects.push();
 		}
 	}
 	
@@ -431,6 +452,14 @@ class Level {
 		curSquX = int(jeep.getX() / squWidth);
 		curSquY = int(jeep.getY() / squHeight);
 
+        // move masks into place
+		for (var y = curSquY - 2; y <= curSquY + 2; y++) {
+			for (var x = curSquX - 2; x <= curSquX + 2; x++){
+                root_mc.level_mc["mx" + x + "y" + y]._x = relX(x * squWidth);
+                root_mc.level_mc["mx" + x + "y" + y]._y = relY(y * squHeight);
+			}
+		}
+
 		//scroll window
 		scrollX = jeep.getX() - movieWidth / 2;
 		scrollY = jeep.getY() - movieHeight / 2;
@@ -450,8 +479,6 @@ class Level {
 					root_mc.level_mc["sx" + x + "y" + y]._visible = false;
 				} else {
 					root_mc.level_mc["sx" + x + "y" + y]._visible = true;
-					root_mc.level_mc["mx" + x + "y" + y]._x = relX(x * squWidth);
-					root_mc.level_mc["mx" + x + "y" + y]._y = relY(y * squHeight);
 					root_mc.level_mc["sx" + x + "y" + y]._x = relX(x * squWidth);
 					root_mc.level_mc["sx" + x + "y" + y]._y = relY(y * squHeight);
 				}
@@ -605,14 +632,8 @@ class Level {
 	
 	function dispose() : Void {
 		// remove movie clips from screen and data from memory
-		
-		root_mc.bg_mc.removeMovieClip();
-		root_mc.bgobj_mc.removeMovieClip();
-		root_mc.level_mc.removeMovieClip();
-		root_mc.obj_mc.removeMovieClip();
-		root_mc.foreobj_mc.removeMovieClip();
-		root_mc.fore_mc.removeMovieClip();
-		
+        for(var i : Number; i < layers.length; i++)
+           root_mc[layers[i]].removeMovieClip();
 	}
 }
 
