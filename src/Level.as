@@ -337,6 +337,7 @@ class Level {
 		scroll();
 		paint();
 		root_mc.onEnterFrame = function() {
+            level.scroll();
 			level.engine.stepFrame();
 			level.paint();
 
@@ -352,7 +353,6 @@ class Level {
             _root.darrow_mc._rotation = Math.atan2(vec.y, vec.x) / Math.PI * 180;
             */
             
-            level.scroll();
 
 		}
 		startStreamingSong();
@@ -617,22 +617,18 @@ class Level {
 	}
 	
 	public function relX(absX : Number) : Number {
-        return absX;
 		return absX - scrollX;
 	}
 	
 	public function relY(absY : Number) : Number {
-        return absY;
 		return absY - scrollY;
 	}
 	
 	public function absX(relX : Number) : Number {
-        return relX;
 		return relX + scrollX;
 	}
 	
 	public function absY(relY : Number) : Number {
-        return relY;
 		return relY + scrollY;
 	}
 	
