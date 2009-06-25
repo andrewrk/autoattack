@@ -337,22 +337,22 @@ class Level {
 		scroll();
 		paint();
 		root_mc.onEnterFrame = function() {
-			level.scroll();
 			level.engine.stepFrame();
 			level.paint();
 
-            /*
-            // test getSurfaceNormal
+            /*// test getSurfaceNormal
             var edge : Vector = level.getContactPoint(
                 new Vector(level.absX(_root.dc1_mc._x), level.absY(_root.dc1_mc._y)), 
                 new Vector(level.absX(_root.dc2_mc._x), level.absY(_root.dc2_mc._y)));
             var vec : Vector = level.getSurfaceNormal(edge);
             
-            _root.dx_mc._x = level.relX(edge.x);
-            _root.dx_mc._y = level.relY(edge.y);
+            //_root.dx_mc._x = level.relX(edge.x);
+            //_root.dx_mc._y = level.relY(edge.y);
 
             _root.darrow_mc._rotation = Math.atan2(vec.y, vec.x) / Math.PI * 180;
             */
+            
+            level.scroll();
 
 		}
 		startStreamingSong();
@@ -452,18 +452,20 @@ class Level {
 		curSquX = int(jeep.getX() / squWidth);
 		curSquY = int(jeep.getY() / squHeight);
 
-        // move masks into place
-		for (var y = curSquY - 2; y <= curSquY + 2; y++) {
-			for (var x = curSquX - 2; x <= curSquX + 2; x++){
-                root_mc.level_mc["mx" + x + "y" + y]._x = relX(x * squWidth);
-                root_mc.level_mc["mx" + x + "y" + y]._y = relY(y * squHeight);
-			}
-		}
-
 		//scroll window
 		scrollX = jeep.getX() - movieWidth / 2;
 		scrollY = jeep.getY() - movieHeight / 2;
-	
+
+        // move masks into place
+		for (var y = curSquY - 2; y <= curSquY + 2; y++) {
+			for (var x = curSquX - 2; x <= curSquX + 2; x++){
+                    root_mc.level_mc["mx" + x + "y" + y]._x = relX(x * squWidth);
+                    root_mc.level_mc["mx" + x + "y" + y]._y = relY(y * squHeight);
+			}
+		}
+        
+        updateAfterEvent();
+
 	}
 	
 	function paint() : Void {	
@@ -615,18 +617,22 @@ class Level {
 	}
 	
 	public function relX(absX : Number) : Number {
+        return absX;
 		return absX - scrollX;
 	}
 	
 	public function relY(absY : Number) : Number {
+        return absY;
 		return absY - scrollY;
 	}
 	
 	public function absX(relX : Number) : Number {
+        return relX;
 		return relX + scrollX;
 	}
 	
 	public function absY(relY : Number) : Number {
+        return relY;
 		return relY + scrollY;
 	}
 	
