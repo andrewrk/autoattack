@@ -5,9 +5,16 @@ class LevelObject {
     private var classNum : Number;
     private var idNum : Number;
     private var pos : Vector; // where is it
-    private var destroyed : Boolean; // is it still in the level?
     private var layer : Number; // which layer to display on 
     private var scrollFactor : Number; // scroll faster or slower than normal
+
+    private var attrs : Object;
+
+    private var mcString : String;
+
+    private var objId : Number; // unique number used to reference movie clips
+
+    private var mc : MovieClip; // the movie clip used to paint this
 
     private static var mcMap : Object = {
         class12id1 : "baseCampEntrance",
@@ -60,23 +67,23 @@ class LevelObject {
     };
 
     public static function mcName(
-        classNum : Number, idNum : Number) : MovieClip {
+        classNum : Number, idNum : Number) : String {
         return mcMap["class" + classNum + "id" + idNum];
     }
 
     function LevelObject(
-        pos : Vector, classNum : Number, idNum : Number)
+        classNum : Number, idNum : Number, pos : Vector, layer : Number,
+        scrollFactor : Number, attrs : Object, objId : Number )
     {
-        this.pos = pos;
         this.classNum = classNum;
         this.idNum = idNum;
-    }
-
-    function takeActions(level : Level) : Void {
-        // perform any actions that we might want to do, 
-        // for example bad guy AI
-
-        // we leave this blank here but extend it in other classes.
+        this.pos = pos;
+        this.layer = layer;
+        this.scrollFactor = scrollFactor;
+        this.attrs = attrs;
+        this.mcString = mcName(classNum, idNum);
+        this.objId = objId;
+        this.mc = null;
     }
 
 }

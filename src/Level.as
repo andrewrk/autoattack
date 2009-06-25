@@ -74,7 +74,8 @@ class Level {
 	private var jeep : Jeep;
 
     // a list of all the objects in the level (bad guys, decorations, etc)
-    private var objects : Array;
+    private var activeObjects : Array;
+    private var inactiveObjects : Array;
 
 	function Level (number : Number, 
 					root_mc : MovieClip, 
@@ -99,7 +100,8 @@ class Level {
 		this.engine = new PhysicsEngine(this);
 		
 		this.jeep = null; // we initialize the jeep after the level is loaded
-		this.objects = new Array();
+		this.inactiveObjects = new Array();
+		this.activeObjects = new Array();
 		
 		// create the movie clip containers in root_mc
         for( var i : Number = 0; i < layers.length; i++ ){
@@ -339,6 +341,7 @@ class Level {
 		root_mc.onEnterFrame = function() {
             level.scroll();
 			level.engine.stepFrame();
+            level.computeObjects();
 			level.paint();
 
             /*// test getSurfaceNormal
@@ -372,6 +375,59 @@ class Level {
 			}
 		}
 	}
+
+    function computeObjects() : Void {
+        // loop through active objects
+        for( var i : Number = 0; i < activeObjects.length; i++) {
+            // if it's no longer relevant, remove the movie clip
+            // and move the element to inactive objects
+            if( ! inScreenRange(activeObjects[i].pos) ){
+                activeObjects[i].mc.removeMovieClip();       
+                inactiveObjects.push(activeObjects.splice(i, 1)[0]);
+            } else {
+                // move the object into place
+                activeObjects[i].mc._x = relX(activeObjects[i].pos.x);
+                activeObjects[i].mc._y = relY(activeObjects[i].pos.y);
+            }
+        }
+
+        // loop through inactive objects
+        for( var i : Number = 0; i < inactiveObjects.length; i++) {
+            // if it should be on screen, add it to active objects
+            // and create a movie clip
+            if( inScreenRange(inactiveObjects[i].pos) ){
+
+                var layer_mc : MovieClip = 
+                    root_mc[layers[inactiveObjects[i].layer]];
+                var str : String = "obj" + inactiveObjects[i].objId;
+
+                layer_mc.attachMovie(inactiveObjects[i].mcString, 
+                    str, layer_mc.getNextHighestDepth());
+
+                inactiveObjects[i].mc = layer_mc[str];
+
+                inactiveObjects[i].mc._x = relX(inactiveObjects[i].pos.x);
+                inactiveObjects[i].mc._y = relY(inactiveObjects[i].pos.y);
+
+                if( inactiveObjects[i].attrs.width ){
+                    inactiveObjects[i].mc._width = 
+                        parseFloat(inactiveObjects[i].attrs.width);
+                }
+                if( inactiveObjects[i].attrs.height ){
+                    inactiveObjects[i].mc._height = 
+                        parseFloat(inactiveObjects[i].attrs.height);
+                }
+                
+                activeObjects.push(inactiveObjects.splice(i, 1)[0]);
+            }
+        }
+    }
+
+    function inScreenRange(pos : Vector) : Boolean {
+        // return true if the position is considered close 
+        // enough to need to be rendered on screen
+        return pos.minus(jeep.getPos()).getMagnitude() < squWidth * 2;
+    }
 	
 	function loadLevelFromXML() : Void {
 		//parse the xml file and get ready
@@ -418,26 +474,51 @@ class Level {
 		}
 		var obj_xmlnode : XML = my_xml.childNodes[i];
 		for (var i : Number = 0; i < obj_xmlnode.childNodes.length; i++) {
-            // get level object
-            var objClass : Number = parseInt(obj_xmlnode.childNodes[i].attributes.cls);
-            var objId : Number = parseInt(obj_xmlnode.childNodes[i].attributes.id);
-
-            var objX : Number = parseFloat(obj_xmlnode.childNodes[i].attributes.x);
-            var objY : Number = parseFloat(obj_xmlnode.childNodes[i].attributes.y);
-
-            //var objW : Number = parseFloat(obj_xmlnode.childNotes[i].attributes.w);
-            //var objH : Number = parseFloat(obj_xmlnode.childNotes[i].attributes.h);
-
-
-			// push it into array
-            //objects.push();
+            // get level object and push it into array
+            inactiveObjects.push(createLevelObject(obj_xmlnode.childNodes[i], i));
 		}
 	}
+
+    private function createLevelObject(node : XML, objId : Number) {
+        var cls : Number = parseInt(node.attributes.cls);
+        var id : Number = parseInt(node.attributes.id);
+       
+        var x : Number = parseFloat(node.attributes.x);
+        var y : Number = parseFloat(node.attributes.y);
+        var w : Number = parseFloat(node.attributes.w);
+        var h : Number = parseFloat(node.attributes.h);
+
+        var sx : Number = parseInt(node.attributes.sx);
+        var sy : Number = parseInt(node.attributes.sy);
+        
+        var code : Number = parseInt(node.attributes.code);
+        var srange : Number = parseFloat(node.attributes.srange);
+        var erange : Number = parseFloat(node.attributes.erange);
+        var yrange : Number = parseFloat(node.attributes.yrange);
+        var pspace : Number = parseFloat(node.attributes.pspace);
+        var dir : Number = parseFloat(node.attributes.dir);
+
+        var layer : Number;
+        var scrollFactor : Number = 1;
+        
+        if( cls == 1 ) {
+            layer = LAYER_FORE;
+            scrollFactor = 2; // scroll by twice as fast
+        } else if( cls == 13 ) {
+            layer = LAYER_FOREOBJ;
+        } else {
+            layer = LAYER_OBJ;
+        }
+        
+        return new LevelObject(cls, id, 
+            new Vector(sx*squWidth+x, sy*squHeight+y), 
+            layer, scrollFactor, node.attributes, objId);
+    }
 	
 	function errorLoadingLevel() : Void {
 		bg_sound.stop ();
 		bg_sound = new Sound ();
-		root_mc.attachMovie ("loadLevelError", "error_mc", root_mc.getNextHighestDepth ());
+		root_mc.attachMovie("loadLevelError", "error_mc", root_mc.getNextHighestDepth());
 		root_mc.error_mc._x = movieWidth / 2 - root_mc.error_mc._width / 2;
 		root_mc.error_mc._y = movieHeight / 2 - root_mc.error_mc._height / 2;
 		root_mc.onEnterFrame = null;
@@ -457,10 +538,13 @@ class Level {
 		scrollY = jeep.getY() - movieHeight / 2;
 
         // move masks into place
-		for (var y = curSquY - 2; y <= curSquY + 2; y++) {
-			for (var x = curSquX - 2; x <= curSquX + 2; x++){
-                    root_mc.level_mc["mx" + x + "y" + y]._x = relX(x * squWidth);
-                    root_mc.level_mc["mx" + x + "y" + y]._y = relY(y * squHeight);
+		for (var y = curSquY - 1; y <= curSquY + 1; y++) {
+			for (var x = curSquX - 1; x <= curSquX + 1; x++){
+                // move masks into place
+                root_mc.level_mc["mx" + x + "y" + y]._x = 
+                    relX(x * squWidth);
+                root_mc.level_mc["mx" + x + "y" + y]._y = 
+                    relY(y * squHeight);
 			}
 		}
         
