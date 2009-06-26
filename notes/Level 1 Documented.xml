@@ -251,23 +251,7 @@
 
 </jclevel>
 <!--
-  class 0 = decoration
-  class 1 = foreground
-  class 2 = breakable objects
-  class 3 = item pickup
-  class 4 = road modifiers
-  class 5 = bad guys - field soldiers
-  class 6 = bad guys - hanging from a rope
-  class 7 = hazards
-  class 8 = interactive objects
-  class 9 = bad guys - parachuters
-  class 10 = enemy mechanisms
-  class 11 = physical objects
-  class 12 = special
-  
-  
-  
-  CLASS 0 - DECORATION
+  CLASS 0 - BACKGROUND DECORATION (scrolls slowly)
     ID 0 = Cloud
   
   CLASS 1 - FOREGROUND
@@ -340,6 +324,8 @@
   CLASS 13 - FOREGROUND, STATIC
     ID 0 = Base camp gate
 
+  CLASS 14 - DECORATION
+    
 
 
 --OBJECT PROPERTIES--

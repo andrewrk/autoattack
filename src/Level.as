@@ -496,30 +496,36 @@ class Level {
        
         var x : Number = parseFloat(node.attributes.x);
         var y : Number = parseFloat(node.attributes.y);
-        var w : Number = parseFloat(node.attributes.w);
-        var h : Number = parseFloat(node.attributes.h);
 
         var sx : Number = parseInt(node.attributes.sx);
         var sy : Number = parseInt(node.attributes.sy);
         
-        var code : Number = parseInt(node.attributes.code);
-        var srange : Number = parseFloat(node.attributes.srange);
-        var erange : Number = parseFloat(node.attributes.erange);
-        var yrange : Number = parseFloat(node.attributes.yrange);
-        var pspace : Number = parseFloat(node.attributes.pspace);
-        var dir : Number = parseFloat(node.attributes.dir);
+        //var code : Number = parseInt(node.attributes.code);
+        //var srange : Number = parseFloat(node.attributes.srange);
+        //var erange : Number = parseFloat(node.attributes.erange);
+        //var yrange : Number = parseFloat(node.attributes.yrange);
+        //var pspace : Number = parseFloat(node.attributes.pspace);
+        //var dir : Number = parseFloat(node.attributes.dir);
+        //var w : Number = parseFloat(node.attributes.w);
+        //var h : Number = parseFloat(node.attributes.h);
 
         var layer : Number;
         var scrollFactor : Vector = new Vector(1,1);
         
-        if( cls == 1 ) {
+        if( cls == 1 ) 
             layer = LAYER_FORE;
-            scrollFactor = new Vector(1.5,1); // scroll by slightly faster
-        } else if( cls == 13 ) {
+        else if( cls == 13 ) 
             layer = LAYER_FOREOBJ;
-        } else {
+        else if( cls == 0 )
+            layer = LAYER_BGOBJ;
+        else 
             layer = LAYER_OBJ;
-        }
+
+        if( cls == 1 )
+            scrollFactor = new Vector(1.5, 1); // scroll by slightly faster
+        else if( cls == 0 )
+            scrollFactor = new Vector(0.5, 0.5);
+           
         
         return new LevelObject(cls, id, 
             new Vector(sx*squWidth+x, sy*squHeight+y), 
