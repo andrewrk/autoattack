@@ -6,7 +6,7 @@ class LevelObject {
     private var idNum : Number;
     private var pos : Vector; // where is it
     private var layer : Number; // which layer to display on 
-    private var scrollFactor : Number; // scroll faster or slower than normal
+    private var scrollFactor : Vector; // scroll faster or slower than normal
 
     private var attrs : Object;
 
@@ -73,7 +73,7 @@ class LevelObject {
 
     function LevelObject(
         classNum : Number, idNum : Number, pos : Vector, layer : Number,
-        scrollFactor : Number, attrs : Object, objId : Number )
+        scrollFactor : Vector, attrs : Object, objId : Number )
     {
         this.classNum = classNum;
         this.idNum = idNum;

@@ -1,6 +1,8 @@
 Andy:
-* make level load objects
 * add movie clips for the bad guys
+* create a level editor
+* fix up level1
+* start adding code to make level objects work
 
 Josh:
 * make jeep physics work

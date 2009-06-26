@@ -384,10 +384,19 @@ class Level {
             if( ! inScreenRange(activeObjects[i].pos) ){
                 activeObjects[i].mc.removeMovieClip();       
                 inactiveObjects.push(activeObjects.splice(i, 1)[0]);
+                i--;
             } else {
                 // move the object into place
-                activeObjects[i].mc._x = relX(activeObjects[i].pos.x);
-                activeObjects[i].mc._y = relY(activeObjects[i].pos.y);
+                activeObjects[i].mc._x = relX(
+                    activeObjects[i].pos.x + 
+                    (activeObjects[i].pos.x - jeep.getPos().x) * 
+                    (activeObjects[i].scrollFactor.x - 1)
+                );
+                activeObjects[i].mc._y = relY(
+                    activeObjects[i].pos.y +
+                    (activeObjects[i].pos.y - jeep.getPos().y) * 
+                    (activeObjects[i].scrollFactor.y - 1)
+                );
             }
         }
 
@@ -419,6 +428,8 @@ class Level {
                 }
                 
                 activeObjects.push(inactiveObjects.splice(i, 1)[0]);
+                i--;
+
             }
         }
     }
@@ -499,11 +510,11 @@ class Level {
         var dir : Number = parseFloat(node.attributes.dir);
 
         var layer : Number;
-        var scrollFactor : Number = 1;
+        var scrollFactor : Vector = new Vector(1,1);
         
         if( cls == 1 ) {
             layer = LAYER_FORE;
-            scrollFactor = 2; // scroll by twice as fast
+            scrollFactor = new Vector(1.5,1); // scroll by slightly faster
         } else if( cls == 13 ) {
             layer = LAYER_FOREOBJ;
         } else {
