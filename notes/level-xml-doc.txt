@@ -1,0 +1,130 @@
+Structure:
+    <jclevel
+        gameover =
+            true: this isn't really a level. you beat the game.
+            false: this is a level
+        sx = which square to start in x
+        sy = which square to start in y
+        sl = x index of the leftmost square
+        st = y index of the topmost square
+        sr = x index of the rightmost square
+        sb = y index of the bottommost square
+        spx = starting x point within the starting square
+        spy = starting y point within the starting square
+        scale = scale the map bigger or smaller
+    >
+        # for each object:
+        <obj
+            # mandatory
+            cls = what class of object is this
+            id = which item in the class is this
+            x = x location of the object from beginning of containing square
+            y = y location of the object from beginning of containing square
+            sx = x index of square that contains the object
+            sy = y index of square that contains the object
+            
+            # optional
+            w = width of object
+            h = height of object
+            dir = direction that the object is facing
+            
+            # present depending on class
+        />
+    </jclevel>
+
+Classification
+    CLASS 0 - BACKGROUND, DYNAMIC - LevelObject.CLASS_BG_DYN
+        * objects are behind the level and scroll by slowly
+        ID 0 = Cloud
+
+    CLASS 6 - BACKGROUND, STATIC - LevelObject.CLASS_BG_ST
+        * objects are stationary and scroll normally, behind the jeep
+        ID 0 = Base camp entrance bg
+
+    CLASS 7 - FOREGROUND, STATIC - LevelObject.CLASS_FG_ST
+        * objects are stationary and scroll normally, in front of the jeep
+        ID 0 = Base camp fence
+        ID 1 = Base camp entrance fg
+
+    CLASS 1 - FOREGROUND, DYNAMIC - LevelObject.CLASS_FG_DYN
+        * objects are in front of the level and scroll by quickly
+        ID 0 = Cactus
+        ID 1 = Skeleton Bush
+        ID 2 = Good-looking bush
+        ID 3 = Christmas Tree
+        ID 4 = Big Saguaro Cactus
+        ID 5 = Big Dead Bush
+        ID 6 = Black bar
+
+    CLASS 2 - STATIONARY PHYSICAL OBJECT - LevelObject.CLASS_OBSTACLE
+        * these objects are locked in place and are obstructions
+        * properties:
+            destructable = true/false
+            hp = how much damage does it take to destroy it
+        ID 0 = Boulder
+        ID 1 = Defense shelf (for enemies to hide behind)
+        ID 2 = Glass Pane
+        ID 3 = Mountain Exit
+        ID 4 = Up Ramp 
+        ID 5 = Down Ramp
+        ID 6 = Trap door
+            code = number that matches it with a switch
+        ID 7 = Platforms Moving Up
+            yrange = how far up (pixels) a platform moves before it disappears
+            pspace = the space in between moving platforms
+        ID 8 = Up Ramp #2
+        ID 9 = One-way spike
+        ID 10 = Activation Gate
+
+    CLASS 8 - STATIONARY NON PHYSICAL OBJECTS - LevelObject.CLASS_STATIC
+        * these objects do not move and have no physical presence
+        ID 0 = Upside-down Switch
+            code = number that matches it with something to switch
+        ID 1 = Vent that drops goodies
+            weapon
+            rate = how many frames to count before dropping
+
+    CLASS 9 - DYNAMIC PHYSICAL OBJECTS - LevelObject.CLASS_ENTITY
+        * these suckers get put in the physics engine
+        ID 0 = Explosive Barrel
+        ID 1 = Mine
+
+    CLASS 3 - POWER UPS - LevelObject.CLASS_POWERUP
+        * collectables that you get once and they disappear
+        ID 0 = Gas can
+        ID 1 = Speed Booster
+        ID 2 = Health Pack
+        ID 3 = Time Bonus
+        ID 4 = Extra life
+
+    CLASS 5 - BAD GUYS - LevelObject.CLASS_ENEMY
+        * these are in the physics engine and require AI
+        * properties:
+        ID 0 = foot soldier
+            arrival =
+                0: they appear as if they have been standing there
+                1: hanging from a rope
+                2: parachuting from the sky
+            weapon =
+                0: Pistol
+                1: Grenade
+                2: Bazooka
+                3: Guided missile launcher
+                4: Bombs
+                5: Mines
+        ID 1 = Helicopter
+            weapon
+            weapon2 = same as weapon - helicopters can dual wield
+        ID 2 = Auto-turret
+            srange = starting angle (degrees) at which the object can point
+            erange = ending angle (degrees) at which the object can point
+        ID 3 = Cannon
+        ID 4 = Bad guy chucking bombs at the player
+            
+    CLASS 4 - TRIGGERS - LevelObject.CLASS_TRIGGER
+        ID 0 = Instant Death (jeep explodes)
+        ID 1 = Helicopter attack from above
+            code =  if provided, the helicopter attack is triggered by
+                    a switch rather than a hit area
+        ID 2 = Level complete
+        ID 3 = jeep explodes and but the driver hops out unharmed

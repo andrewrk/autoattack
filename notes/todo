@@ -1,9 +1,9 @@
 Andy:
-* implement dir to change direction
-* move booster thing down and to the right a little
-* add movie clips for the bad guys
+* change inactive LevelObject array to indexed by square x,y
 * create a level editor
 * fix up level1
+    - move booster thing down and to the right a little
+* add movie clips for the bad guys
 * start adding code to make level objects work
 
 Josh:

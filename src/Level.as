@@ -430,6 +430,9 @@ class Level {
                     inactiveObjects[i].mc._xscale = 100 *
                         parseFloat(inactiveObjects[i].attrs.dir);
                 }
+
+                // depending on class type, add to physics engine
+                
                 
                 activeObjects.push(inactiveObjects.splice(i, 1)[0]);
                 i--;
@@ -514,21 +517,24 @@ class Level {
         //var h : Number = parseFloat(node.attributes.h);
 
         var layer : Number;
-        var scrollFactor : Vector = new Vector(1,1);
         
-        if( cls == 1 ) 
+        if( cls == LevelObject.CLASS_FG_DYN ) 
             layer = LAYER_FORE;
-        else if( cls == 13 ) 
+        else if( cls == LevelObject.CLASS_FG_ST ) 
             layer = LAYER_FOREOBJ;
-        else if( cls == 0 )
+        else if( cls == LevelObject.CLASS_BG_DYN || 
+                 cls == LevelObject.CLASS_BG_ST )
             layer = LAYER_BGOBJ;
         else 
             layer = LAYER_OBJ;
 
-        if( cls == 1 )
+        var scrollFactor : Vector;
+        if( cls == LevelObject.CLASS_FG_DYN )
             scrollFactor = new Vector(1.5, 1); // scroll by slightly faster
-        else if( cls == 0 )
+        else if( cls == LevelObject.CLASS_BG_DYN )
             scrollFactor = new Vector(0.5, 0.5);
+        else
+            scrollFactor = new Vector(1, 1);
            
         
         return new LevelObject(cls, id, 
