@@ -56,10 +56,10 @@ class LevelObject {
         class5id4 : "debugx",
 
         // triggers
-        class4id0 : "debugx",
-        class4id1 : "debugx",
-        class4id2 : "debugx",
-        class4id3 : "debugx"
+        class4id0 : "trigger",
+        class4id1 : "trigger",
+        class4id2 : "trigger",
+        class4id3 : "trigger"
     };
 
     public static function mcName(

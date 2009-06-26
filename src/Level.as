@@ -403,6 +403,19 @@ class Level {
                         continue;
                     }
                     break;
+                case LevelObject.CLASS_TRIGGER:
+                    // check if we hit the trigger
+                    if( jeep.graphics_mc.hitTest(activeObjects[i].mc) ){
+                        trace("hit a trigger: " + activeObjects[i].idNum);
+
+                        // remove from objects
+                        activeObjects[i].mc.removeMovieClip();
+                        activeObjects.splice(i, 1);
+                        i--;
+                        continue;
+                    }
+                    
+                    break;
             }
         }
 
@@ -427,24 +440,30 @@ class Level {
                 inactiveObjects[i].mc._x = relX(inactiveObjects[i].pos.x);
                 inactiveObjects[i].mc._y = relY(inactiveObjects[i].pos.y);
 
-                if( inactiveObjects[i].attrs.width ){
+                // optional attributes
+                if( inactiveObjects[i].attrs.w ){
                     inactiveObjects[i].mc._width = 
-                        parseFloat(inactiveObjects[i].attrs.width);
+                        parseFloat(inactiveObjects[i].attrs.w);
                 }
-                if( inactiveObjects[i].attrs.height ){
+                if( inactiveObjects[i].attrs.h ){
                     inactiveObjects[i].mc._height = 
-                        parseFloat(inactiveObjects[i].attrs.height);
+                        parseFloat(inactiveObjects[i].attrs.h);
                 }
                 if( inactiveObjects[i].attrs.dir ) {
                     inactiveObjects[i].mc._xscale = 100 *
                         parseFloat(inactiveObjects[i].attrs.dir);
                 }
 
+                // some classes get added to physics engine
                 if( inactiveObjects[i].classNum == LevelObject.CLASS_ENTITY ){
-                    // add to physics engine
                     inactiveObjects[i].body = new Body(
                         inactiveObjects[i].pos, 0, inactiveObjects[i].mc);
                     engine.addBody(inactiveObjects[i].body);
+                }
+
+                // triggers are invisible
+                if( inactiveObjects[i].classNum == LevelObject.CLASS_TRIGGER ){
+                    inactiveObjects[i].mc._visible = false;
                 }
                 
                 // which array to put active items in 
