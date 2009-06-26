@@ -388,6 +388,24 @@ class Level {
         moveIntoPlace(activeObjects);
         moveIntoPlace(obstacles);
 
+        // perform actions on objects
+        for( var i : Number = 0; i < activeObjects.length; i++){
+            switch( activeObjects[i].classNum ){
+                case LevelObject.CLASS_POWERUP:
+                    // check if we picked up the powerup
+                    if( jeep.graphics_mc.hitTest(activeObjects[i].mc) ){
+                        trace("got a powerup: " + activeObjects[i].idNum);
+
+                        // remove from objects
+                        activeObjects[i].mc.removeMovieClip();
+                        activeObjects.splice(i, 1);
+                        i--;
+                        continue;
+                    }
+                    break;
+            }
+        }
+
         // loop through inactive objects
         for( var i : Number = 0; i < inactiveObjects.length; i++) {
             // if it should be on screen, add it to active objects
@@ -489,7 +507,6 @@ class Level {
     function inScreenRangeF(pos : Vector, scrollFactor : Number ) : Boolean {
         // return true if the position is considered close 
         // enough to need to be rendered on screen
-        trace(scrollFactor);
         return pos.minus(jeep.getPos()).getMagnitude() 
             < squWidth * (1 / scrollFactor);
     }
