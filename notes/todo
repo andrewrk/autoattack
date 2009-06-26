@@ -1,4 +1,5 @@
 Andy:
+* start implementing the different class types
 * change inactive LevelObject array to indexed by square x,y
 * create a level editor
 * fix up level1
