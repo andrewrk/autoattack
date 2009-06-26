@@ -15,7 +15,7 @@ class PhysicsEngine {
     }
 
     public function addBody(body : Body) : Void {
-        bodies.push(body);
+        bodies.push(body);  
     }
 
     public function removeBody(body : Body) : Void {
@@ -29,14 +29,14 @@ class PhysicsEngine {
     }
 
     public function stepFrame() : Void {
-        calculateForces();
-        applyGravity();
         move();
-    }
-    private function calculateForces() : Void {
         for (var i : Number = 0; i < bodies.length; i++) {
             bodies[i].resetNetForce();
         }
+        applyGravity();
+        calculateForces();
+    }
+    private function calculateForces() : Void {
         for (var i : Number = 0; i < connectors.length; i++) {
             connectors[i].applyForces();
         }
@@ -48,7 +48,7 @@ class PhysicsEngine {
         for (var i : Number = 0; i < bodies.length; i++) {
             var body : Body = bodies[i];
             if (body.needsGravity()) {
-                body.applyForce(0, body.mass * gravity);
+                body.applyForce(new Vector(0, body.mass * gravity));
             }
         }
     }
