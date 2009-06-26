@@ -392,9 +392,9 @@ class Level {
         for( var i : Number = 0; i < inactiveObjects.length; i++) {
             // if it should be on screen, add it to active objects
             // and create a movie clip
-            if( inScreenRange(inactiveObjects[i].pos, 
-                Math.max(inactiveObjects[i].scrollFactorX, 
-                    inactiveObjects[i].scrollFactorY) ) )
+            if( inScreenRangeF(inactiveObjects[i].pos, 
+                Math.max(inactiveObjects[i].scrollFactor.x, 
+                    inactiveObjects[i].scrollFactor.y) ) )
             {
 
                 var layer_mc : MovieClip = 
@@ -460,9 +460,9 @@ class Level {
 
     function removeDistantObjects(objects : Array) : Void {
         for( var i : Number = 0; i < objects.length; i++ ){
-            if( ! inScreenRange(objects[i].pos, 
-                Math.max(objects[i].scrollFactorX, 
-                    objects[i].scrollFactorY)) ){
+            if( ! inScreenRangeF(objects[i].pos, 
+                Math.max(objects[i].scrollFactor.x, 
+                    objects[i].scrollFactor.y)) ){
                 objects[i].mc.removeMovieClip();       
                 inactiveObjects.push(objects.splice(i, 1)[0]);
                 i--;
@@ -489,8 +489,9 @@ class Level {
     function inScreenRangeF(pos : Vector, scrollFactor : Number ) : Boolean {
         // return true if the position is considered close 
         // enough to need to be rendered on screen
+        trace(scrollFactor);
         return pos.minus(jeep.getPos()).getMagnitude() 
-            < squWidth / scrollFactor;
+            < squWidth * (1 / scrollFactor);
     }
 
     function inScreenRange(pos : Vector) : Boolean {
