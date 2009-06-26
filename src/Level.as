@@ -339,8 +339,8 @@ class Level {
 		scroll();
 		paint();
 		root_mc.onEnterFrame = function() {
-            level.scroll();
 			level.engine.stepFrame();
+            level.scroll();
             level.computeObjects();
 			level.paint();
 
@@ -425,6 +425,10 @@ class Level {
                 if( inactiveObjects[i].attrs.height ){
                     inactiveObjects[i].mc._height = 
                         parseFloat(inactiveObjects[i].attrs.height);
+                }
+                if( inactiveObjects[i].attrs.dir ) {
+                    inactiveObjects[i].mc._xscale = 100 *
+                        parseFloat(inactiveObjects[i].attrs.dir);
                 }
                 
                 activeObjects.push(inactiveObjects.splice(i, 1)[0]);

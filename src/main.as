@@ -15,22 +15,26 @@ level = new Level(1, _root, movieWidth, movieHeight);
 // Input handlers
 keyListener.onKeyDown = function() {
 	switch (Key.getCode()) {
-		case leftKey :
+		case leftKey:
 			moveLeft = true;
             level.jeep.nextPos.x -= 10;
 			break;
-		case upKey :
+		case upKey:
 			moveUp = true;
             level.jeep.nextPos.y -= 10;
 			break;
-		case rightKey :
+		case rightKey:
 			moveRight = true;
             level.jeep.nextPos.x += 10;
 			break;
-		case downKey :
+		case downKey:
 			moveDown = true;
             level.jeep.nextPos.y += 10;
 			break;
+        case Key.SPACE:
+            if( _root.transmission_mc )
+                level.acceptTransmission();
+            break;
 	}
 }
 keyListener.onKeyUp = function() {

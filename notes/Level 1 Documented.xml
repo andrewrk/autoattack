@@ -294,8 +294,8 @@
   
   CLASS 7 - HAZARDS
     ID 0 = Mine
-    ID 1 = One-way spike facing left
-    ID 2 = One-way spike facing right
+    ID 1 = One-way spike
+    ID 2 = Deprecated
     ID 3 = Grenade dropping vent
     ID 4 = Bomb dropping vent
 

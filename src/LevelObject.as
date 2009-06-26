@@ -40,7 +40,7 @@ class LevelObject {
         class3id2 : "healthPack",
         class7id0 : "mine",
         class7id1 : "oneWaySpike",
-        class7id2 : "oneWaySpike",
+        class7id2 : "debugx",
         class4id0 : "ramp",
         class4id4 : "ramp2",
         class1id4 : "saguaro",
