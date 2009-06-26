@@ -12,10 +12,10 @@ class Body {
 
     private var hitCheckPoints : Array; // <Vector> relative to c.o.m.
     public function Body(
-        x : Number, y : Number, angle : Number, graphics_mc : MovieClip)
+        pos : Vector, angle : Number, graphics_mc : MovieClip)
     {
         mass = 1;
-        pos = new Vector(x, y);
+        this.pos = pos;
         this.angle = angle;
         nextPos = pos.plus(new Vector(0, 1)); // TODO parameterize
         nextAngle = angle;
@@ -80,12 +80,15 @@ class Body {
         netForce.translate(x, y);
     }
 
-    public function move() : Void {
+    public function move(level : Level) : Void {
         // TODO angles
         var velocity = nextPos.minus(pos);
         velocity.translate(netForce.x / mass, netForce.y / mass);
         pos = nextPos;
         nextPos = nextPos.plus(velocity);
+
+        if( ! level.inScreenRange(nextPos) )
+            level.expireBody(this);
     }
     
     public function getPos() : Vector {

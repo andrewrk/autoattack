@@ -74,6 +74,7 @@ Classification
             pspace = the space in between moving platforms
         ID 8 = Up Ramp #2
         ID 9 = One-way spike
+            rate = how many frames to count before popping back up
         ID 10 = Activation Gate
 
     CLASS 8 - STATIONARY NON PHYSICAL OBJECTS - LevelObject.CLASS_STATIC
@@ -86,8 +87,9 @@ Classification
 
     CLASS 9 - DYNAMIC PHYSICAL OBJECTS - LevelObject.CLASS_ENTITY
         * these suckers get put in the physics engine
-        ID 0 = Explosive Barrel
-        ID 1 = Mine
+        ID 0 = Explosive Barrel - big firey explosion if damaged
+        ID 1 = Mine - explodes if you get too close
+        ID 2 = Rubble - a little useless piece of rubble
 
     CLASS 3 - POWER UPS - LevelObject.CLASS_POWERUP
         * collectables that you get once and they disappear

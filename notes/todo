@@ -1,6 +1,10 @@
 Andy:
+* entities fall off the map because they are put on the screen before the masks
 * start implementing the different class types
 * change inactive LevelObject array to indexed by square x,y
+* make it so if you hit the spike, it goes away, into the ground, and then
+  after some specified time it pops back up
+* I foresee a bug: in body.move, it calls level.expireBody which calls engine.removeBody which deletes the item from the array, then it goes to the next index, skipping a body in the physics update
 * create a level editor
 * fix up level1
     - move booster thing down and to the right a little

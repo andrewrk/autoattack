@@ -18,6 +18,16 @@ class PhysicsEngine {
         bodies.push(body);
     }
 
+    public function removeBody(body : Body) : Void {
+        for( var i : Number = 0; i < bodies.length; i++ ){
+            if( bodies[i] == body ){ // I think this checks the reference hash
+                bodies.splice(i, 1);
+                break;
+            }
+        }
+        trace("Unstable condition: engine.removeBody() failed!");
+    }
+
     public function stepFrame() : Void {
         calculateForces();
         applyGravity();
@@ -44,7 +54,7 @@ class PhysicsEngine {
     }
     private function move() : Void {
         for (var i : Number = 0; i < bodies.length; i++) {
-            bodies[i].move();
+            bodies[i].move(level);
         }
     }
     public function paint() : Void {

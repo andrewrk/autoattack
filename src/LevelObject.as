@@ -79,7 +79,8 @@ class LevelObject {
 
     private var objId : Number; // unique number used to reference movie clips
 
-    private var mc : MovieClip; // the movie clip used to paint this
+    private var mc : MovieClip; // the movie clip (if any) used to paint this
+    private var body : Body; // the physics body (if any) used for physics
 
     function LevelObject(
         classNum : Number, idNum : Number, pos : Vector, layer : Number,
@@ -94,6 +95,7 @@ class LevelObject {
         this.mcString = mcName(classNum, idNum);
         this.objId = objId;
         this.mc = null;
+        this.body = null;
     }
 
 }

@@ -77,6 +77,7 @@ class Level {
     private var activeObjects : Array;
     private var inactiveObjects : Array;
     private var obstacles : Array;
+    private var entities : Array;
 
 	function Level (number : Number, 
 					root_mc : MovieClip, 
@@ -331,7 +332,7 @@ class Level {
 		root_mc.obj_mc.wheelBack_mc._height = wheelHeight;
 		
 		// add jeep to physics engine
-		jeep = new Jeep(startX, startY, 0, root_mc.obj_mc.jeep_mc);
+		jeep = new Jeep(new Vector(startX, startY), 0, root_mc.obj_mc.jeep_mc);
 		engine.addBody(jeep);
 		
 		curSquX = startSquX;
@@ -391,7 +392,10 @@ class Level {
         for( var i : Number = 0; i < inactiveObjects.length; i++) {
             // if it should be on screen, add it to active objects
             // and create a movie clip
-            if( inScreenRange(inactiveObjects[i].pos) ){
+            if( inScreenRange(inactiveObjects[i].pos, 
+                Math.max(inactiveObjects[i].scrollFactorX, 
+                    inactiveObjects[i].scrollFactorY) ) )
+            {
 
                 var layer_mc : MovieClip = 
                     root_mc[layers[inactiveObjects[i].layer]];
@@ -418,7 +422,12 @@ class Level {
                         parseFloat(inactiveObjects[i].attrs.dir);
                 }
 
-                // depending on class type, add to physics engine
+                if( inactiveObjects[i].classNum == LevelObject.CLASS_ENTITY ){
+                    // add to physics engine
+                    inactiveObjects[i].body = new Body(
+                        inactiveObjects[i].pos, 0, inactiveObjects[i].mc);
+                    engine.addBody(inactiveObjects[i].body);
+                }
                 
                 // which array to put active items in 
                 var dest : Array;
@@ -426,10 +435,13 @@ class Level {
                     case LevelObject.CLASS_OBSTACLE:
                         dest = obstacles;
                         break;
+                    case LevelObject.CLASS_ENTITY:
+                        dest = entities;
+                        break;
                     default:
                         dest = activeObjects;
                 }
-
+                
                 dest.push(inactiveObjects.splice(i, 1)[0]);
                 i--;
 
@@ -437,9 +449,20 @@ class Level {
         }
     }
 
+    function expireBody(body : Body) : Void {
+        for( var i : Number = 0; i < entities.length; i++){
+            entities[i].pos = entities[i].body.getPos();
+            engine.removeBody(entities[i].body);
+            inactiveObjects.push(entities.splice(i, 1)[0]);
+            break;
+        }
+    }
+
     function removeDistantObjects(objects : Array) : Void {
         for( var i : Number = 0; i < objects.length; i++ ){
-            if( ! inScreenRange(objects[i].pos) ){
+            if( ! inScreenRange(objects[i].pos, 
+                Math.max(objects[i].scrollFactorX, 
+                    objects[i].scrollFactorY)) ){
                 objects[i].mc.removeMovieClip();       
                 inactiveObjects.push(objects.splice(i, 1)[0]);
                 i--;
@@ -463,10 +486,15 @@ class Level {
         }
     }
 
-    function inScreenRange(pos : Vector) : Boolean {
+    function inScreenRangeF(pos : Vector, scrollFactor : Number ) : Boolean {
         // return true if the position is considered close 
         // enough to need to be rendered on screen
-        return pos.minus(jeep.getPos()).getMagnitude() < squWidth * 2;
+        return pos.minus(jeep.getPos()).getMagnitude() 
+            < squWidth / scrollFactor;
+    }
+
+    function inScreenRange(pos : Vector) : Boolean {
+        return inScreenRangeF(pos, 1);
     }
 	
 	function loadLevelFromXML() : Void {
@@ -529,15 +557,6 @@ class Level {
         var sx : Number = parseInt(node.attributes.sx);
         var sy : Number = parseInt(node.attributes.sy);
         
-        //var code : Number = parseInt(node.attributes.code);
-        //var srange : Number = parseFloat(node.attributes.srange);
-        //var erange : Number = parseFloat(node.attributes.erange);
-        //var yrange : Number = parseFloat(node.attributes.yrange);
-        //var pspace : Number = parseFloat(node.attributes.pspace);
-        //var dir : Number = parseFloat(node.attributes.dir);
-        //var w : Number = parseFloat(node.attributes.w);
-        //var h : Number = parseFloat(node.attributes.h);
-
         var layer : Number;
         
         if( cls == LevelObject.CLASS_FG_DYN ) 
