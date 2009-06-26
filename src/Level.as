@@ -76,6 +76,7 @@ class Level {
     // a list of all the objects in the level (bad guys, decorations, etc)
     private var activeObjects : Array;
     private var inactiveObjects : Array;
+    private var obstacles : Array;
 
 	function Level (number : Number, 
 					root_mc : MovieClip, 
@@ -102,6 +103,7 @@ class Level {
 		this.jeep = null; // we initialize the jeep after the level is loaded
 		this.inactiveObjects = new Array();
 		this.activeObjects = new Array();
+        this.obstacles = new Array();
 		
 		// create the movie clip containers in root_mc
         for( var i : Number = 0; i < layers.length; i++ ){
@@ -377,28 +379,13 @@ class Level {
 	}
 
     function computeObjects() : Void {
-        // loop through active objects
-        for( var i : Number = 0; i < activeObjects.length; i++) {
-            // if it's no longer relevant, remove the movie clip
-            // and move the element to inactive objects
-            if( ! inScreenRange(activeObjects[i].pos) ){
-                activeObjects[i].mc.removeMovieClip();       
-                inactiveObjects.push(activeObjects.splice(i, 1)[0]);
-                i--;
-            } else {
-                // move the object into place
-                activeObjects[i].mc._x = relX(
-                    activeObjects[i].pos.x + 
-                    (activeObjects[i].pos.x - jeep.getPos().x) * 
-                    (activeObjects[i].scrollFactor.x - 1)
-                );
-                activeObjects[i].mc._y = relY(
-                    activeObjects[i].pos.y +
-                    (activeObjects[i].pos.y - jeep.getPos().y) * 
-                    (activeObjects[i].scrollFactor.y - 1)
-                );
-            }
-        }
+        // if it's no longer relevant, remove the movie clip
+        // and move the element to inactive objects
+        removeDistantObjects(activeObjects);
+        removeDistantObjects(obstacles);
+
+        moveIntoPlace(activeObjects);
+        moveIntoPlace(obstacles);
 
         // loop through inactive objects
         for( var i : Number = 0; i < inactiveObjects.length; i++) {
@@ -433,11 +420,46 @@ class Level {
 
                 // depending on class type, add to physics engine
                 
-                
-                activeObjects.push(inactiveObjects.splice(i, 1)[0]);
+                // which array to put active items in 
+                var dest : Array;
+                switch( inactiveObjects[i].classNum ){
+                    case LevelObject.CLASS_OBSTACLE:
+                        dest = obstacles;
+                        break;
+                    default:
+                        dest = activeObjects;
+                }
+
+                dest.push(inactiveObjects.splice(i, 1)[0]);
                 i--;
 
             }
+        }
+    }
+
+    function removeDistantObjects(objects : Array) : Void {
+        for( var i : Number = 0; i < objects.length; i++ ){
+            if( ! inScreenRange(objects[i].pos) ){
+                objects[i].mc.removeMovieClip();       
+                inactiveObjects.push(objects.splice(i, 1)[0]);
+                i--;
+            }
+        }
+    }
+
+    function moveIntoPlace(objects : Array) : Void {
+        for( var i : Number = 0; i < objects.length; i++ ){
+            // move the object into place
+            objects[i].mc._x = relX(
+                objects[i].pos.x + 
+                (objects[i].pos.x - jeep.getPos().x) * 
+                (objects[i].scrollFactor.x - 1)
+            );
+            objects[i].mc._y = relY(
+                objects[i].pos.y +
+                (objects[i].pos.y - jeep.getPos().y) * 
+                (objects[i].scrollFactor.y - 1)
+            );
         }
     }
 
@@ -724,6 +746,10 @@ class Level {
 					return true;
 			}
 		}
+        for( var i : Number = 0; i < obstacles.length; i++ ){
+            if( obstacles[i].mc.hitTest(rx, ry, 1) )
+                return true;
+        }
 		return false;
 	}
 	

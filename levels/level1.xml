@@ -56,7 +56,7 @@
 <obj cls="2" id="9" x="141" y="332" sx="6" sy="1" dir="1" />
 <obj cls="2" id="1" x="281" y="297" w="36" h="44" sx="6" sy="1" />
 <obj cls="2" id="1" x="281" y="252" w="36" h="44" sx="6" sy="1" />
-<obj cls="4" id="1" x="105" y="151" w="60" h="31" sx="6" sy="1" code="0" />
+<obj cls="8" id="0" x="105" y="151" w="60" h="31" sx="6" sy="1" code="0" />
 <obj cls="3" id="1" x="255" y="151" sx="6" sy="2" />
 <obj cls="5" id="2" x="75" y="334" w="52" h="60" srange="280" erange="170" sx="7" sy="-1" />
 <obj cls="3" id="0" x="106" y="60" sx="7" sy="0" />
