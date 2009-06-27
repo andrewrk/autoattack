@@ -3,7 +3,7 @@ Andy:
     - add movie clips for the bad guys
     - add behavior for the bad guys
 * change inactive LevelObject array to indexed by square x,y
-* I foresee a bug: in body.move, it calls level.expireBody which calls engine.removeBody which deletes the item from the array, then it goes to the next index, skipping a body in the physics update
+* move body.paint to level
 * I foresee a bug: stuff references jeep, thinking it is the player, when really they should reference level.getPlayerPos() because the dude can get out of the jeep.
 * create a level editor
 * fix up level1
@@ -17,6 +17,7 @@ Andy:
       after some specified time it pops back up
 * if the jeep blows up, the soldier gets out and you control him
 * make turrets not overshoot their angle when rotating
+* entities are still on the screen when masks aren't. this is a problem.
 
 Josh:
 * make jeep physics work

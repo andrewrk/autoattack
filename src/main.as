@@ -17,19 +17,19 @@ keyListener.onKeyDown = function() {
 	switch (Key.getCode()) {
 		case leftKey:
 			moveLeft = true;
-            level.jeep.applyForce(new Vector(-10, 0)); //.nextPos.x -= 10;
+            level.jeep.bodyBody.applyForce(new Vector(-10, 0));
 			break;
 		case upKey:
 			moveUp = true;
-            level.jeep.applyForce(new Vector(0, -10));
+            level.jeep.bodyBody.applyForce(new Vector(0, -10));
 			break;
 		case rightKey:
 			moveRight = true;
-            level.jeep.applyForce(new Vector(10, 0));
+            level.jeep.bodyBody.applyForce(new Vector(10, 0));
 			break;
 		case downKey:
 			moveDown = true;
-            level.jeep.applyForce(new Vector(0, 10));
+            level.jeep.bodyBody.applyForce(new Vector(0, 10));
 			break;
         case Key.SPACE:
             if( _root.transmission_mc )

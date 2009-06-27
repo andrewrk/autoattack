@@ -27,12 +27,6 @@ class Level {
 	private var lvlScale;
 	
 	//game constants
-	private var jeepWidth, jeepHeight;
-	private var wheelWidth, wheelHeight;
-	private var wheelDist;
-	private var defJeepWidth = 137, defJeepHeight = 61;
-	private var defWheelWidth = 25, defWheelHeight = 25;
-	private var defWheelDist = 79;
 	private var squWidth;
 	private var squHeight;
 	private var defSquWidth = 550;
@@ -320,20 +314,9 @@ class Level {
 				root_mc.level_mc ["mx" + x + "y" + y]._yscale = lvlScale * 100;
 			}
 		}
-		//add jeep to stage
-		root_mc.obj_mc.attachMovie ("wheel", "wheelBack_mc", root_mc.obj_mc.getNextHighestDepth ());
-		root_mc.obj_mc.attachMovie ("wheel", "wheelFront_mc", root_mc.obj_mc.getNextHighestDepth ());
-		root_mc.obj_mc.attachMovie ("jeep", "jeep_mc", root_mc.obj_mc.getNextHighestDepth ());
-		root_mc.obj_mc.jeep_mc._width = jeepWidth;
-		root_mc.obj_mc.jeep_mc._height = jeepHeight;
-		root_mc.obj_mc.wheelFront_mc._width = wheelWidth;
-		root_mc.obj_mc.wheelFront_mc._height = wheelHeight;
-		root_mc.obj_mc.wheelBack_mc._width = wheelWidth;
-		root_mc.obj_mc.wheelBack_mc._height = wheelHeight;
 		
 		// add jeep to physics engine
-		jeep = new Jeep(new Vector(startX, startY), 0, root_mc.obj_mc.jeep_mc);
-		engine.addBody(jeep);
+		jeep = new Jeep(new Vector(startX, startY), 0, this);
 		
 		curSquX = startSquX;
 		curSquY = startSquY;
@@ -380,10 +363,15 @@ class Level {
 	}
 
     function computeObjects() : Void {
+        // sync physics engine objects with entities
+        for(var i : Number = 0; i < entities.length; i++)
+            entities[i].pos = entities[i].body.getPos();
+
         // if it's no longer relevant, remove the movie clip
         // and move the element to inactive objects
         removeDistantObjects(activeObjects);
         removeDistantObjects(obstacles);
+        removeDistantObjects(entities);
 
         moveIntoPlace(activeObjects);
         moveIntoPlace(obstacles);
@@ -393,9 +381,9 @@ class Level {
             switch( activeObjects[i].classNum ){
                 case LevelObject.CLASS_POWERUP:
                     // check if we picked up the powerup
-                    if( jeep.graphics_mc.hitTest(activeObjects[i].mc) ){
+                    if( jeep.hitMC(activeObjects[i].mc) ){
                         // TODO: do something with this powerup
-                        //trace("got a powerup: " + activeObjects[i].idNum);
+                        trace("got a powerup: " + activeObjects[i].idNum);
 
                         // remove from objects
                         activeObjects[i].mc.removeMovieClip();
@@ -406,9 +394,9 @@ class Level {
                     break;
                 case LevelObject.CLASS_TRIGGER:
                     // check if we hit the trigger
-                    if( jeep.graphics_mc.hitTest(activeObjects[i].mc) ){
+                    if( jeep.hitMC(activeObjects[i].mc) ){
                         // TODO: do something with this trigger
-                        //trace("hit a trigger: " + activeObjects[i].idNum);
+                        trace("hit a trigger: " + activeObjects[i].idNum);
 
                         // remove from objects
                         activeObjects[i].mc.removeMovieClip();
@@ -487,17 +475,9 @@ class Level {
                 
                 dest.push(inactiveObjects.splice(i, 1)[0]);
                 i--;
+                continue;
 
             }
-        }
-    }
-
-    function expireBody(body : Body) : Void {
-        for( var i : Number = 0; i < entities.length; i++){
-            entities[i].pos = entities[i].body.getPos();
-            engine.removeBody(entities[i].body);
-            inactiveObjects.push(entities.splice(i, 1)[0]);
-            break;
         }
     }
 
@@ -507,8 +487,11 @@ class Level {
                 Math.max(objects[i].scrollFactor.x, 
                     objects[i].scrollFactor.y)) ){
                 objects[i].mc.removeMovieClip();       
+                if( objects[i].body )
+                    engine.removeBody(objects[i].body);
                 inactiveObjects.push(objects.splice(i, 1)[0]);
                 i--;
+                continue;
             }
         }
     }
@@ -561,11 +544,6 @@ class Level {
 				lvlScale = parseFloat (my_xml.childNodes[i].attributes.scale);
 				squWidth = defSquWidth * lvlScale;
 				squHeight = defSquHeight * lvlScale;
-				jeepWidth = defJeepWidth; // * lvlScale;
-				jeepHeight = defJeepHeight; // * lvlScale;
-				wheelWidth = defWheelWidth;// * lvlScale;
-				wheelHeight = defWheelHeight;// * lvlScale;
-				wheelDist = defWheelDist;// * lvlScale;
 				startSquX = parseInt (my_xml.childNodes[i].attributes.sx);
 				startSquY = parseInt (my_xml.childNodes[i].attributes.sy);
 				startX = lvlScale * parseInt (my_xml.childNodes[i].attributes.spx);
@@ -665,12 +643,13 @@ class Level {
 	
 	function scroll() : Void {
 		// determine what sector we're in
-		curSquX = int(jeep.getX() / squWidth);
-		curSquY = int(jeep.getY() / squHeight);
+        var jeepPos : Vector = jeep.getPos();
+		curSquX = int(jeepPos.x / squWidth);
+		curSquY = int(jeepPos.y / squHeight);
 
 		//scroll window
-		scrollX = jeep.getX() - movieWidth / 2;
-		scrollY = jeep.getY() - movieHeight / 2;
+		scrollX = jeepPos.x - movieWidth / 2;
+		scrollY = jeepPos.y - movieHeight / 2;
 
         // move masks into place
 		for (var y = curSquY - 1; y <= curSquY + 1; y++) {
@@ -682,9 +661,6 @@ class Level {
                     relY(y * squHeight);
 			}
 		}
-        
-        updateAfterEvent();
-
 	}
 	
 	function paint() : Void {	
@@ -706,24 +682,8 @@ class Level {
 			}
 		}
 
-        paintGunner();
-
-        // paint each body in physics engine
-        engine.paint();
+        jeep.paint();
 	}
-
-    function paintGunner() : Void {
-        // point the gunner at the mouse cursor 
-        var x2 : Number = _root._xmouse;
-        var y2 : Number = _root._ymouse;
-        var x1 : Number = jeep.graphics_mc.gun_mc._x + jeep.graphics_mc._x;
-        var y1 : Number = jeep.graphics_mc.gun_mc._y + jeep.graphics_mc._y;
-
-        var theta : Number = Math.atan2(y2-y1,x2-x1);
-        var angle : Number = (180*theta) / Math.PI;
-        angle += 180 - jeep.graphics_mc._rotation
-        jeep.graphics_mc.gun_mc.gotoAndStop(Math.round(angle));
-    }
 
     function getContactPoint(oldLoc : Vector, newLoc : Vector) : Vector {
         // given an old position of something and a new position of something,
@@ -873,6 +833,15 @@ class Level {
         // TODO: return something else when the dude is out of the jeep.
         return jeep.getPos();
     }
+
+    public function getMovieClip() : MovieClip {
+        return root_mc;
+    }
+
+    public function getEngine() : PhysicsEngine {
+        return engine;
+    }
+
 }
 
 

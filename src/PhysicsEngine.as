@@ -57,11 +57,6 @@ class PhysicsEngine {
             bodies[i].move(level);
         }
     }
-    public function paint() : Void {
-        for (var i : Number = 0; i < bodies.length; i++) {
-            bodies[i].paint(level);
-        }
-    }
 }
 
 
