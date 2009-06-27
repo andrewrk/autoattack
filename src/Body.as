@@ -76,11 +76,11 @@ class Body {
     
     // TODO betting naming
     public function getPos() : Vector {
-		return pos;
+        return pos;
     }
     
     public function getX() : Number {
-    	return pos.x;
+        return pos.x;
     }
     
     public function getY() : Number {
@@ -88,7 +88,7 @@ class Body {
     }
     
     public function getAngle() : Number {
-    	return angle;
+        return angle;
     }
     
     public function needsGravity() : Boolean {

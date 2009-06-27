@@ -8,10 +8,10 @@ class PhysicsEngine {
     private var level : Level;
 
     public function PhysicsEngine(level : Level) {
-    	this.level = level;
-    	gravity = 1;
-    	bodies = new Array();
-    	connectors = new Array();
+        this.level = level;
+        gravity = 1;
+        bodies = new Array();
+        connectors = new Array();
     }
 
     public function addBody(body : Body) : Void {

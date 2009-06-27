@@ -14,44 +14,44 @@ level = new Level(1, _root, movieWidth, movieHeight);
 
 // Input handlers
 keyListener.onKeyDown = function() {
-	switch (Key.getCode()) {
-		case leftKey:
-			moveLeft = true;
+    switch (Key.getCode()) {
+        case leftKey:
+            moveLeft = true;
             level.jeep.bodyBody.applyForce(new Vector(-10, 0));
-			break;
-		case upKey:
-			moveUp = true;
+            break;
+        case upKey:
+            moveUp = true;
             level.jeep.bodyBody.applyForce(new Vector(0, -10));
-			break;
-		case rightKey:
-			moveRight = true;
+            break;
+        case rightKey:
+            moveRight = true;
             level.jeep.bodyBody.applyForce(new Vector(10, 0));
-			break;
-		case downKey:
-			moveDown = true;
+            break;
+        case downKey:
+            moveDown = true;
             level.jeep.bodyBody.applyForce(new Vector(0, 10));
-			break;
+            break;
         case Key.SPACE:
             if( _root.transmission_mc )
                 level.acceptTransmission();
             break;
-	}
+    }
 }
 keyListener.onKeyUp = function() {
-	switch (Key.getCode()) {
-		case leftKey :
-			moveLeft = false;
-			break;
-		case upKey :
-			moveUp = false;
-			break;
-		case rightKey :
-			moveRight = false;
-			break;
-		case downKey :
-			moveDown = false;
-			break;
-	}
+    switch (Key.getCode()) {
+        case leftKey :
+            moveLeft = false;
+            break;
+        case upKey :
+            moveUp = false;
+            break;
+        case rightKey :
+            moveRight = false;
+            break;
+        case downKey :
+            moveDown = false;
+            break;
+    }
 }
 
 mouseListener.onMouseMove = function() {
@@ -59,8 +59,8 @@ mouseListener.onMouseMove = function() {
 
 // accept transmission callback
 function acceptTransmission():Void {
-	// forward to level object
-	level.acceptTransmission();
+    // forward to level object
+    level.acceptTransmission();
 }
 
 

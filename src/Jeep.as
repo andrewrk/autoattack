@@ -1,8 +1,8 @@
 // Jeep - contains the jeep body and wheels
 class Jeep {
-	private var jeepWidth : Number = 137;
+    private var jeepWidth : Number = 137;
     private var jeepHeight : Number = 61;
-	private var wheelWidth : Number = 25;
+    private var wheelWidth : Number = 25;
     private var wheelHeight : Number = 25;
     private var defWheelDist : Number = 79;
 
@@ -28,11 +28,11 @@ class Jeep {
         // create the frame and the wheels
         // attach movie clips
         var mc : MovieClip = level.getMovieClip();
-		mc.obj_mc.attachMovie("wheel", "wheelBack_mc", 
+        mc.obj_mc.attachMovie("wheel", "wheelBack_mc", 
             mc.obj_mc.getNextHighestDepth());
-		mc.obj_mc.attachMovie("wheel", "wheelFront_mc", 
+        mc.obj_mc.attachMovie("wheel", "wheelFront_mc", 
             mc.obj_mc.getNextHighestDepth());
-		mc.obj_mc.attachMovie("jeep", "jeep_mc", 
+        mc.obj_mc.attachMovie("jeep", "jeep_mc", 
             mc.obj_mc.getNextHighestDepth());
 
         // store references
@@ -41,12 +41,12 @@ class Jeep {
         backWheel_mc = mc.obj_mc.wheelBack_mc;
 
         // adjust width/height
-		mc.obj_mc.jeep_mc._width = jeepWidth;
-		mc.obj_mc.jeep_mc._height = jeepHeight;
-		mc.obj_mc.wheelFront_mc._width = wheelWidth;
-		mc.obj_mc.wheelFront_mc._height = wheelHeight;
-		mc.obj_mc.wheelBack_mc._width = wheelWidth;
-		mc.obj_mc.wheelBack_mc._height = wheelHeight;
+        mc.obj_mc.jeep_mc._width = jeepWidth;
+        mc.obj_mc.jeep_mc._height = jeepHeight;
+        mc.obj_mc.wheelFront_mc._width = wheelWidth;
+        mc.obj_mc.wheelFront_mc._height = wheelHeight;
+        mc.obj_mc.wheelBack_mc._width = wheelWidth;
+        mc.obj_mc.wheelBack_mc._height = wheelHeight;
 
         // add to physics engine
         bodyBody = new Body(pos, posAng);
