@@ -10,9 +10,9 @@ class Vector {
         this.y = y;
     }
 
-    public function translate(dx : Number, dy : Number) : Void {
-        x += dx;
-        y += dy;
+    public function translate(delta : Vector) : Void {
+        x += delta.x;
+        y += delta.y;
     }
 
     public function plus(vector : Vector) : Vector {
@@ -48,5 +48,9 @@ class Vector {
     
     public function toString() {
         return "v(" + x + "," + y + ")";
+    }
+
+    public static function round(v : Vector) {
+        return new Vector( Math.round(v.x), Math.round(v.y) );
     }
 }

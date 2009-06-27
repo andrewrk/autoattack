@@ -31,6 +31,7 @@ class Level {
 	private var squHeight;
 	private var defSquWidth = 550;
 	private var defSquHeight = 400;
+    private var fps = 30;
 
 	// for scrolling through sectors
 	private var curSquX;
@@ -72,6 +73,8 @@ class Level {
     private var inactiveObjects : Array;
     private var obstacles : Array;
     private var entities : Array;
+
+    private var mainInterval; // what the hell is the data type?
 
 	function Level (number : Number, 
 					root_mc : MovieClip, 
@@ -322,31 +325,22 @@ class Level {
 		curSquY = startSquY;
 		//GO!
 		
+        // initialize
 		scroll();
 		paint();
-		root_mc.onEnterFrame = function() {
-			level.engine.stepFrame();
-            level.scroll();
-            level.computeObjects();
-			level.paint();
-
-            /*// test getSurfaceNormal
-            var edge : Vector = level.getContactPoint(
-                new Vector(level.absX(_root.dc1_mc._x), level.absY(_root.dc1_mc._y)), 
-                new Vector(level.absX(_root.dc2_mc._x), level.absY(_root.dc2_mc._y)));
-            var vec : Vector = level.getSurfaceNormal(edge);
-            
-            //_root.dx_mc._x = level.relX(edge.x);
-            //_root.dx_mc._y = level.relY(edge.y);
-
-            _root.darrow_mc._rotation = Math.atan2(vec.y, vec.x) / Math.PI * 180;
-            */
-            
-
-		}
+        
+        // set up main loop
+        mainInterval = setInterval(this, "main", 1000 / fps);
+        
 		startStreamingSong();
 	}
 	
+    private function main() : Void {
+        engine.stepFrame();
+        scroll();
+        computeObjects();
+        paint();
+    }
 
 	function startStreamingSong() : Void {
 		//stream bg music
@@ -383,7 +377,7 @@ class Level {
                     // check if we picked up the powerup
                     if( jeep.hitMC(activeObjects[i].mc) ){
                         // TODO: do something with this powerup
-                        trace("got a powerup: " + activeObjects[i].idNum);
+                        //trace("got a powerup: " + activeObjects[i].idNum);
 
                         // remove from objects
                         activeObjects[i].mc.removeMovieClip();
@@ -396,7 +390,7 @@ class Level {
                     // check if we hit the trigger
                     if( jeep.hitMC(activeObjects[i].mc) ){
                         // TODO: do something with this trigger
-                        trace("hit a trigger: " + activeObjects[i].idNum);
+                        //trace("hit a trigger: " + activeObjects[i].idNum);
 
                         // remove from objects
                         activeObjects[i].mc.removeMovieClip();
@@ -644,12 +638,12 @@ class Level {
 	function scroll() : Void {
 		// determine what sector we're in
         var jeepPos : Vector = jeep.getPos();
-		curSquX = int(jeepPos.x / squWidth);
-		curSquY = int(jeepPos.y / squHeight);
+		curSquX = Math.floor(jeepPos.x / squWidth);
+		curSquY = Math.floor(jeepPos.y / squHeight);
 
 		//scroll window
-		scrollX = jeepPos.x - movieWidth / 2;
-		scrollY = jeepPos.y - movieHeight / 2;
+		scrollX = Math.round(jeepPos.x - movieWidth / 2);
+		scrollY = Math.round(jeepPos.y - movieHeight / 2);
 
         // move masks into place
 		for (var y = curSquY - 1; y <= curSquY + 1; y++) {
@@ -688,9 +682,14 @@ class Level {
     function getContactPoint(oldLoc : Vector, newLoc : Vector) : Vector {
         // given an old position of something and a new position of something,
         // figure out where the object entered the level mask
-        var accuracy : Number = 2; //pixels
+        var accuracy : Number = 0.5; //pixels
 
         // check if newLoc is hitting
+        if( hit(oldLoc) ){
+            trace("warning: called getContactPoint with an oldLoc in the wall. unstable results.");
+            return null;
+        }
+
         if( hit(newLoc) ){
             // create a direction vector towards the old location
             var dir : Vector = oldLoc.minus(newLoc);
@@ -703,7 +702,7 @@ class Level {
                 dist = (upper + lower) / 2;
                 dir.scale(dist);
 
-                if( hit(newLoc.plus(dir)) ){
+                if( hit(Vector.round(newLoc.plus(dir))) ){
                     lower = dist;
                 } else {
                     upper = dist;
@@ -712,9 +711,10 @@ class Level {
 
             // normalize dir and multiply it by dist
             dir.normalize();
-            dir.scale(dist);
+            // use upper because it's crucial that we return an unhit pixel
+            dir.scale(upper); 
             
-            return newLoc.plus(dir);
+            return Vector.round(newLoc.plus(dir));
 
         } else {
             return null;
@@ -827,6 +827,9 @@ class Level {
 		// remove movie clips from screen and data from memory
         for(var i : Number; i < layers.length; i++)
            root_mc[layers[i]].removeMovieClip();
+
+        // stop main loop
+        clearInterval(mainInterval);
 	}
 
     function getPlayerPos() : Vector {
