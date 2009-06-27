@@ -17,7 +17,6 @@ class PhysicsEngine {
     public function addBody(body : Body) : Void {
         bodies.push(body);  
     }
-
     public function removeBody(body : Body) : Void {
         for( var i : Number = 0; i < bodies.length; i++ ){
             if( bodies[i] == body ){ // I think this checks the reference hash
@@ -28,11 +27,18 @@ class PhysicsEngine {
         trace("Unstable condition: engine.removeBody() failed!");
     }
 
+    /**
+     * Main loop call for the physics engine.
+     */
     public function stepFrame() : Void {
+        // this order allows influence from outside this call to affect the 
+        // netForce on objects (such as debug arrow keys)
         move();
         for (var i : Number = 0; i < bodies.length; i++) {
             bodies[i].resetNetForce();
         }
+
+        // now we calculate the position for next frame.
         applyGravity();
         calculateForces();
     }

@@ -30,7 +30,7 @@ class Body {
         var velocity : Vector = nextPos.minus(pos);
         var newVelocity : Vector = null;
         if (lastContactNormal != null) {
-            // component perpendicular to surface away from surface. 
+            // component perpendicular to surface pointing away from surface. 
             var normalSpeed : Number = velocity.dotProduct(lastContactNormal);
             if (normalSpeed < 0) {
                 // holding against a surface, not bouncing
