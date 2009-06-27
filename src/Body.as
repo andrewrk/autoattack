@@ -5,19 +5,17 @@ class Body {
 
     private var pos : Vector; // px
     private var angle : Number; // rad
-    private var nextPos : Vector; // px
+    private var prevPos : Vector; // px
     private var nextAngle : Number; // rad
-    private var netForce : Vector; // TODO units
-    
+
     private var lastContactNormal : Vector; // normal vector from surface hit 1 fram ago. null if no hit last frame.
     public function Body(pos : Vector, angle : Number)
     {
         mass = 1;
         this.pos = pos;
         this.angle = angle;
-        nextPos = pos.plus(new Vector(0, 1)); // TODO parameterize
+        prevPos = pos.minus(new Vector(0, 1)); // TODO parameterize velocity
         nextAngle = angle;
-        netForce = new Vector(0, 0);
         // TODO depends on shape of object. the following is a square
         hitCheckPoints = [new Vector(0,0)];//[new Vector(-1, -1), new Vector(1, -1), new Vector(1, 1), new Vector(-1, 1)];
 
@@ -26,8 +24,8 @@ class Body {
 
     public function hitTest(level : Level) {
         // TODO angles
-        
-        var velocity : Vector = nextPos.minus(pos);
+
+        var velocity : Vector = pos.minus(prevPos);
         var newVelocity : Vector = null;
         if (lastContactNormal != null) {
             // component perpendicular to surface pointing away from surface. 
@@ -42,24 +40,26 @@ class Body {
             }
         }
 
-        var contactPoint : Vector = level.getContactPoint(pos, nextPos);
+        var contactPoint : Vector = level.getContactPoint(prevPos, pos);
         if (contactPoint == null) {
             lastContactNormal = null;
         } else {
             // we has kontakt
     
             // get out of the wall
-            var deltaPos : Vector = contactPoint.minus(nextPos);
-            nextPos.translate(deltaPos.x, deltaPos.y);
+            var deltaPos : Vector = contactPoint.minus(pos);
+            prevPos.translate(deltaPos.x, deltaPos.y);
             pos.translate(deltaPos.x, deltaPos.y);
     
             
             var surfaceNormal : Vector = level.getSurfaceNormal(contactPoint);
             lastContactNormal = surfaceNormal;
             if (newVelocity == null) {
-                newVelocity = velocity.minus(surfaceNormal.times(2 * velocity.dotProduct(surfaceNormal)));
+                // bounce
+                newVelocity = velocity.minus(surfaceNormal.times((1 + 0.2) * velocity.dotProduct(surfaceNormal)));
+                //newVelocity.scale(0.2); // TODO variablize bounce dampening
             }
-            newVelocity.scale(0.2); // TODO bounce dampening here
+            // TODO be more direct
             var deltaVelocity : Vector = newVelocity.minus(velocity);
             var requiredForce : Vector = deltaVelocity.times(mass);
             applyForce(requiredForce);
@@ -97,24 +97,18 @@ class Body {
 */
     }
 
-    public function resetNetForce() : Void {
-        netForce.x = 0;
-        netForce.y = 0;
-    }
-
     public function applyForce(force : Vector) : Void {
-        netForce.translate(force.x, force.y);
+        prevPos.translate( -force.x / mass, -force.y / mass );
     }
 
     public function move() : Void {
         // TODO angles
-        var velocity = nextPos.minus(pos);
-        velocity.translate(netForce.x / mass, netForce.y / mass);
-        pos = nextPos;
-        nextPos = nextPos.plus(velocity);
-
+        var velocity = pos.minus(prevPos);
+        prevPos = pos;
+        pos = pos.plus(velocity);
     }
     
+    // TODO betting naming
     public function getPos() : Vector {
 		return pos;
     }
