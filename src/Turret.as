@@ -14,7 +14,7 @@ class Turret extends Enemy {
     private var angleMin : Number; // minimum angle
     private var angleMax : Number; // maximum angle
     private var angleVel : Number;
-    private var maxAngleVel : Number = 0.2
+    private var maxAngleVel : Number = 0.4;
     private var acceleration : Number = 0.03;
 
     private var rate : Number; // frames in between shots
@@ -52,10 +52,20 @@ class Turret extends Enemy {
         
         var diff : Number = Util.angleDifference(desiredAngle, posAngle);
         
-        if( diff == 0 )
+        if( Math.abs(diff) < acceleration )
             actionAccelAngle = 0;
         else
             actionAccelAngle = diff / Math.abs(diff);
+
+        // calculate time to decelerate to zero
+        var t : Number = Math.abs(angleVel) / acceleration;
+        // calculate distance required to stop
+        var dist: Number = -0.5 * acceleration * t * t + Math.abs(angleVel) * t;
+        // if our actual distance is less than that, decelerate
+        if( Math.abs(diff) <= dist ) {
+            // decelerate
+            actionAccelAngle = -angleVel / Math.abs(angleVel);
+        }
 
         // if we have a decent shot, fire
         if( Math.abs(diff) < angleShoot ){
