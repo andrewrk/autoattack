@@ -21,7 +21,7 @@ keyListener.onKeyDown = function() {
 			break;
 		case upKey:
 			moveUp = true;
-            level.jeep.bodyBody.applyForce(new Vector(0, -10));
+            //level.jeep.bodyBody.applyForce(new Vector(0, -10));
 			break;
 		case rightKey:
 			moveRight = true;
@@ -29,7 +29,7 @@ keyListener.onKeyDown = function() {
 			break;
 		case downKey:
 			moveDown = true;
-            level.jeep.bodyBody.applyForce(new Vector(0, 10));
+            //level.jeep.bodyBody.applyForce(new Vector(0, 10));
 			break;
         case Key.SPACE:
             if( _root.transmission_mc )
