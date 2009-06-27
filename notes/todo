@@ -21,4 +21,8 @@ Andy:
 
 Josh:
 * make jeep physics work
+    - normal force
+    - multiple points of contact (non particle)
+    - rigid rotation
 * add wheels to jeep
+    - composite objects / connectors
