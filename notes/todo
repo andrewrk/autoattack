@@ -1,14 +1,22 @@
 Andy:
-* start implementing the different class types
+* create a framework for the enemy class type
+    - add movie clips for the bad guys
+    - add behavior for the bad guys
 * change inactive LevelObject array to indexed by square x,y
-* make it so if you hit the spike, it goes away, into the ground, and then
-  after some specified time it pops back up
 * I foresee a bug: in body.move, it calls level.expireBody which calls engine.removeBody which deletes the item from the array, then it goes to the next index, skipping a body in the physics update
+* I foresee a bug: stuff references jeep, thinking it is the player, when really they should reference level.getPlayerPos() because the dude can get out of the jeep.
 * create a level editor
 * fix up level1
     - move booster thing down and to the right a little
-* add movie clips for the bad guys
-* start adding code to make level objects work
+* start implementing individual IDs
+    - give the jeep health and gas and a hud display
+    - implement weaponry
+    - add explosions
+    - implement death which restarts the level
+    - make it so if you hit the spike, it goes away, into the ground, and then
+      after some specified time it pops back up
+* if the jeep blows up, the soldier gets out and you control him
+* make turrets not overshoot their angle when rotating
 
 Josh:
 * make jeep physics work

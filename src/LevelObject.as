@@ -13,6 +13,12 @@ class LevelObject {
     public static var CLASS_ENEMY : Number = 5;
     public static var CLASS_TRIGGER : Number = 4;
 
+    public static var ID_SOLDIER : Number = 0;
+    public static var ID_HELICOPTER : Number = 1;
+    public static var ID_TURRET : Number = 2;
+    public static var ID_CANNON : Number = 3;
+    public static var ID_BOMB_THROWER : Number = 4;
+
     private static var mcMap : Object = {
         class7id1 : "baseCampEntranceFG",
         class7id0 : "fence",

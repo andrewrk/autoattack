@@ -2,7 +2,23 @@
 
 <!-- debug objects -->
 
+<!-- unnecessary mines
 <obj cls="9" id="1" x="300" y="0" sx="0" sy="0" />
+<obj cls="9" id="1" x="290" y="0" sx="0" sy="0" />
+<obj cls="9" id="1" x="280" y="0" sx="0" sy="0" />
+<obj cls="9" id="1" x="270" y="0" sx="0" sy="0" />
+<obj cls="9" id="1" x="260" y="0" sx="0" sy="0" />
+<obj cls="9" id="1" x="250" y="0" sx="0" sy="0" />
+<obj cls="9" id="1" x="240" y="0" sx="0" sy="0" />
+<obj cls="9" id="1" x="310" y="0" sx="0" sy="0" />
+<obj cls="9" id="1" x="320" y="0" sx="0" sy="0" />
+<obj cls="9" id="1" x="330" y="0" sx="0" sy="0" />
+<obj cls="9" id="1" x="340" y="0" sx="0" sy="0" />
+
+-->
+
+
+<obj cls="5" id="2" x="175" y="34" srange="0" erange="360" sx="0" sy="0" rate="24" />
 
 <!-- end debug objects -->
 
@@ -65,7 +81,7 @@
 <obj cls="2" id="1" x="281" y="252" w="36" h="44" sx="6" sy="1" />
 <obj cls="8" id="0" x="105" y="151" w="60" h="31" sx="6" sy="1" code="0" />
 <obj cls="3" id="1" x="255" y="151" sx="6" sy="2" />
-<obj cls="5" id="2" x="75" y="334" w="52" h="60" srange="280" erange="170" sx="7" sy="-1" />
+<obj cls="5" id="2" x="75" y="334" srange="170" erange="280" sx="7" sy="-1" rate="24" />
 <obj cls="3" id="0" x="106" y="60" sx="7" sy="0" />
 <obj cls="3" id="1" x="188" y="55" sx="7" sy="0" />
 <obj cls="3" id="1" x="333" y="159" sx="7" sy="1" />
@@ -92,14 +108,14 @@
 <obj cls="2" id="10" x="154" y="261" w="158" h="253" sx="16" sy="-1" />
 <obj cls="9" id="1" x="391" y="311" sx="7" sy="1" />
 <obj cls="3" id="0" x="8" y="51" sx="17" sy="0" />
-<obj cls="5" id="2" x="446" y="340" w="52" h="60" srange="190" erange="350" sx="18" sy="-1" />
+<obj cls="5" id="2" x="446" y="340" srange="190" erange="350" sx="18" sy="-1" rate="24" />
 <obj cls="3" id="1" x="317" y="30" sx="18" sy="0" />
 <obj cls="2" id="0" x="131" y="36" w="61" h="55" sx="18" sy="0" />
-<obj cls="5" id="2" x="53" y="74" w="52" h="60" srange="10" erange="170" sx="19" sy="0" />
+<obj cls="5" id="2" x="53" y="74" srange="10" erange="170" sx="19" sy="0" rate="24" />
 <obj cls="9" id="0" x="480" y="43" w="33" h="43" sx="19" sy="0" />
 <obj cls="2" id="2" x="137" y="367" w="13" h="119" sx="20" sy="-1" />
-<obj cls="5" id="2" x="531" y="343" w="52" h="60" srange="190" erange="350" sx="20" sy="-1" />
-<obj cls="5" id="2" x="548" y="72" w="52" h="60" srange="10" erange="350" sx="20" sy="0" />
+<obj cls="5" id="2" x="531" y="343" srange="190" erange="350" sx="20" sy="-1" rate="24" />
+<obj cls="5" id="2" x="548" y="72" srange="10" erange="350" sx="20" sy="0" rate="24" />
 <obj cls="2" id="3" x="105" y="328" w="172" h="162" sx="21" sy="-1" />
 <obj cls="9" id="0" x="91" y="37" w="31" h="40" sx="21" sy="0" />
 <obj cls="9" id="0" x="90" y="399" w="31" h="40" sx="21" sy="-1" />
@@ -109,7 +125,7 @@
 <obj cls="9" id="0" x="117" y="363" w="31" h="40" sx="21" sy="-1" />
 <obj cls="3" id="0" x="495" y="25" sx="21" sy="0" />
 <obj cls="4" id="1" x="75" y="278" w="275" h="214" sx="22" sy="-1" />
-<obj cls="5" id="2" x="459" y="75" w="52" h="60" srange="190" erange="350" sx="22" sy="0" />
+<obj cls="5" id="2" x="459" y="75" srange="190" erange="350" sx="22" sy="0" rate="24" />
 <obj cls="3" id="0" x="319" y="39" sx="23" sy="0" />
 <obj cls="8" id="1" x="182" y="283" w="84" h="8" sx="24" sy="-1" weapon="4" rate="30" />
 <obj cls="9" id="1" x="344" y="133" sx="24" sy="0" />
@@ -126,7 +142,7 @@
 <obj cls="5" id="0" x="245" y="-44" sx="1" sy="0" arrival="0" weapon="0" />
 <obj cls="5" id="0" x="175" y="177" sx="4" sy="0" arrival="0" weapon="0" />
 <obj cls="5" id="0" x="274" y="211" sx="4" sy="0" arrival="0" weapon="0" />
-<obj cls="5" id="2" x="323" y="217" sx="4" sy="1" arrival="0" weapon="2" />
+<obj cls="5" id="0" x="323" y="217" sx="4" sy="1" arrival="0" weapon="2" />
 <obj cls="5" id="0" x="40" y="54" sx="4" sy="1" arrival="1" weapon="0" />
 <obj cls="5" id="0" x="295" y="54" sx="3" sy="1" arrival="1" weapon="0" />
 <obj cls="5" id="0" x="277" y="205" sx="6" sy="1" arrival="0" weapon="0" />

@@ -394,7 +394,8 @@ class Level {
                 case LevelObject.CLASS_POWERUP:
                     // check if we picked up the powerup
                     if( jeep.graphics_mc.hitTest(activeObjects[i].mc) ){
-                        trace("got a powerup: " + activeObjects[i].idNum);
+                        // TODO: do something with this powerup
+                        //trace("got a powerup: " + activeObjects[i].idNum);
 
                         // remove from objects
                         activeObjects[i].mc.removeMovieClip();
@@ -406,7 +407,8 @@ class Level {
                 case LevelObject.CLASS_TRIGGER:
                     // check if we hit the trigger
                     if( jeep.graphics_mc.hitTest(activeObjects[i].mc) ){
-                        trace("hit a trigger: " + activeObjects[i].idNum);
+                        // TODO: do something with this trigger
+                        //trace("hit a trigger: " + activeObjects[i].idNum);
 
                         // remove from objects
                         activeObjects[i].mc.removeMovieClip();
@@ -415,6 +417,10 @@ class Level {
                         continue;
                     }
                     
+                    break;
+                case LevelObject.CLASS_ENEMY:
+                    // process bad guy ai
+                    activeObjects[i].doAI();
                     break;
             }
         }
@@ -613,11 +619,35 @@ class Level {
             scrollFactor = new Vector(0.5, 0.5);
         else
             scrollFactor = new Vector(1, 1);
-           
         
-        return new LevelObject(cls, id, 
-            new Vector(sx*squWidth+x, sy*squHeight+y), 
-            layer, scrollFactor, node.attributes, objId);
+        var pos : Vector = new Vector(sx*squWidth+x, sy*squHeight+y); 
+        if( cls == LevelObject.CLASS_ENEMY ){
+            // return an enemy object
+            switch( id ){
+                case LevelObject.ID_SOLDIER:
+                    // TODO: switch with real enemy object
+                    return new LevelObject(cls, id, pos, layer, scrollFactor, 
+                        node.attributes, objId);
+                case LevelObject.ID_HELICOPTER:
+                    // TODO: switch with real enemy object
+                    return new LevelObject(cls, id, pos, layer, scrollFactor, 
+                        node.attributes, objId);
+                case LevelObject.ID_TURRET:
+                    return new Turret(pos, node.attributes, objId, this);
+                case LevelObject.ID_CANNON:
+                    // TODO: switch with real enemy object
+                    return new LevelObject(cls, id, pos, layer, scrollFactor, 
+                        node.attributes, objId);
+                case LevelObject.ID_BOMB_THROWER:
+                    // TODO: switch with real enemy object
+                    return new LevelObject(cls, id, pos, layer, scrollFactor, 
+                        node.attributes, objId);
+            }
+        } else {
+            // generic LevelObject
+            return new LevelObject(cls, id, pos, layer, scrollFactor, 
+                node.attributes, objId);
+        }
     }
 	
 	function errorLoadingLevel() : Void {
@@ -816,6 +846,10 @@ class Level {
 	public function relY(absY : Number) : Number {
 		return absY - scrollY;
 	}
+
+    public function getRelPos(absPos : Vector) : Vector {
+        return absPos.minus(new Vector(scrollX, scrollY));
+    }
 	
 	public function absX(relX : Number) : Number {
 		return relX + scrollX;
@@ -825,11 +859,20 @@ class Level {
 		return relY + scrollY;
 	}
 	
+    public function getAbsPos(relPos : Vector) : Vector {
+        return relPos.plus(new Vector(scrollX, scrollY));
+    }
+	
 	function dispose() : Void {
 		// remove movie clips from screen and data from memory
         for(var i : Number; i < layers.length; i++)
            root_mc[layers[i]].removeMovieClip();
 	}
+
+    function getPlayerPos() : Vector {
+        // TODO: return something else when the dude is out of the jeep.
+        return jeep.getPos();
+    }
 }
 
 

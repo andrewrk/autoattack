@@ -139,14 +139,9 @@ class Body {
     public function paint(level : Level) : Void {
         graphics_mc._x = level.relX(pos.x);
         graphics_mc._y = level.relY(pos.y);
-        graphics_mc._rotation = radToDeg(angle);
+        graphics_mc._rotation = Util.radToDeg(angle);
 //        _root.dx_mc._x = graphics_mc._x;
 //        _root.dx_mc._y = graphics_mc._y;
-    }
-
-    // TODO: where does this function belong?
-    private function radToDeg(radians : Number) : Number {
-        return radians * 180 / Math.PI;
     }
 
     public function needsGravity() : Boolean {

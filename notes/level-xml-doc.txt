@@ -120,6 +120,7 @@ Classification
         ID 2 = Auto-turret
             srange = starting angle (degrees) at which the object can point
             erange = ending angle (degrees) at which the object can point
+            rate = how many frames to wait in between firing
         ID 3 = Cannon
         ID 4 = Bad guy chucking bombs at the player
             
