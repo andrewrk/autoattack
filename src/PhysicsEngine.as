@@ -31,12 +31,7 @@ class PhysicsEngine {
      * Main loop call for the physics engine.
      */
     public function stepFrame() : Void {
-        // this order allows influence from outside this call to affect the 
-        // netForce on objects (such as debug arrow keys)
         move();
-        for (var i : Number = 0; i < bodies.length; i++) {
-            bodies[i].resetNetForce();
-        }
 
         // now we calculate the position for next frame.
         applyGravity();
