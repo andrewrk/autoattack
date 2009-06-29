@@ -26,7 +26,7 @@ class Body {
 
     public function hitTest(level : Level) : Void {
         // TODO angles
-        var maxLoop : Number = 5;
+        var maxLoop : Number = 4;
         
         for(var i : Number = 0; i < maxLoop; i++){
             var contactPoint : Vector = level.getContactPoint(prevPos, pos);
@@ -51,8 +51,10 @@ class Body {
             }
         }
 
-        if( level.hit(pos ) )
-            trace("error: we failed to get out of the wall in body.hitTest");
+        if( level.hit(pos) )
+            pos = prevPos;
+
+        prevPos = pos;
     }
 
     public function applyForce(force : Vector) : Void {
