@@ -9,7 +9,7 @@ class Level {
     public static var LAYER_FOREOBJ : Number = 4;
     public static var LAYER_FORE : Number = 5;
 
-    private var layers : Array = [
+    public static var layers : Array = [
         "bg_mc",
         "bgobj_mc",
         "level_mc",
@@ -19,29 +19,25 @@ class Level {
     ];
     
     // variables loaded from level XML file
-    private var bg_sound;
-    private var bgMusicURL;
-    private var startSquX, startSquY;
-    private var startX, startY;
-    private var lvlSquLeft, lvlSquRight, lvlSquTop, lvlSquBottom;
-    private var lvlScale;
+    private var bg_sound : Sound;
+    private var bgMusicURL : String;
+    private var startSector : Vector;
+    private var startPos : Vector;
+    private var lvlSquLeft : Number, lvlSquRight : Number;
+    private var lvlSquTop : Number, lvlSquBottom : Number;
+    private var lvlScale : Number;
     
     //game constants
-    private var squWidth;
-    private var squHeight;
-    private var defSquWidth = 550;
-    private var defSquHeight = 400;
-    private var fps = 30;
+    private var sectorSize : Vector;
+    private var defSectorSize : Vector;
+    private var fps : Number = 30;
 
     // TODO: this doesn't seem to belong here
     private var bulletSpeed : Number = 30;
 
     // for scrolling through sectors
-    private var curSquX;
-    private var curSquY;
-    private var scrollX;
-    private var scrollY;
-    
+    private var curSector : Vector;
+    private var scrollOffset : Vector;
     
     private var number : Number;
     private var root_mc : MovieClip;
@@ -49,8 +45,7 @@ class Level {
     // for loading xml files
     private var my_xml : XML;
     
-    private var movieWidth : Number;
-    private var movieHeight : Number;
+    private var movieSize : Vector;
     
     
     // when we load the level, these vars hold
@@ -85,10 +80,12 @@ class Level {
                     movieWidth : Number, 
                     movieHeight : Number)
     {
+        // constants
+        defSectorSize = new Vector(550, 400);
+
         this.number = number;
         this.root_mc = root_mc;
-        this.movieWidth = movieWidth;
-        this.movieHeight = movieHeight;
+        this.movieSize = new Vector(movieWidth, movieHeight);
         
         this.loadedSWF = false;
         this.loadedXML = false;
@@ -131,8 +128,10 @@ class Level {
         
         // set up receiver
         root_mc.attachMovie ("receiver", "transmission_mc", root_mc.getNextHighestDepth ());
-        root_mc.transmission_mc._x = movieWidth / 2 - root_mc.transmission_mc._width / 2;
-        root_mc.transmission_mc._y = movieHeight / 2 - root_mc.transmission_mc._height / 2;
+        root_mc.transmission_mc._x = movieSize.x / 2 
+            - root_mc.transmission_mc._width / 2;
+        root_mc.transmission_mc._y = movieSize.y / 2 
+            - root_mc.transmission_mc._height / 2;
 
         
         // load intro cinematic
@@ -239,7 +238,7 @@ class Level {
                 
                 this.level.root_mc.bg_mc.createEmptyMovieClip("bgright_mc",
                     this.level.root_mc.bg_mc.getNextHighestDepth());
-                this.level.root_mc.bg_mc.bgright_mc._x = defSquWidth;
+                this.level.root_mc.bg_mc.bgright_mc._x = defSectorSize.x;
                 this.level.root_mc.bg_mc.bgright_mc._y = 0;
                 this.level.root_mc.bg_mc.bgright_mc._visible = true;
                 // load already cached swf
@@ -287,15 +286,16 @@ class Level {
         if ( ! (loadedXML && loadedBG && loadedSWF))
         {
             root_mc.attachMovie ("missionLoader", "loader_mc", root_mc.getNextHighestDepth ());
-            root_mc.loader_mc._x = movieWidth / 2 - root_mc.loader_mc._width / 2;
-            root_mc.loader_mc._y = movieHeight / 2 - root_mc.loader_mc._height / 2;
+            root_mc.loader_mc._x = movieSize.x / 2 
+                - root_mc.loader_mc._width / 2;
+            root_mc.loader_mc._y = movieSize.y / 2 
+                - root_mc.loader_mc._height / 2;
             progressVisible = true;
         }
     }
     
     function startGamePlay() : Void    {
         var level = this;
-        
         //xml has already been parsed
         //initialize level
         //turn on background
@@ -306,30 +306,32 @@ class Level {
         root_mc.level_mc._visible = true;
         var x;
         var y;
-        for (y = lvlSquTop; y <= lvlSquBottom; y ++)
-        {
-            for (x = lvlSquLeft; x <= lvlSquRight; x ++)
-            {
-                if (root_mc.level_mc ["mx" + x + "y" + y]._visible == undefined)
-                {
-                    root_mc.level_mc.createEmptyMovieClip ("mx" + x + "y" + y, root_mc.level_mc.getNextHighestDepth ());
-                    root_mc.level_mc.createEmptyMovieClip ("sx" + x + "y" + y, root_mc.level_mc.getNextHighestDepth ());
+        for (y = lvlSquTop; y <= lvlSquBottom; y++) {
+            for (x = lvlSquLeft; x <= lvlSquRight; x++) {
+                var mmc : MovieClip = root_mc.level_mc["mx" + x + "y" + y];
+                var smc : MovieClip = root_mc.level_mc["sx" + x + "y" + y];
+                if (mmc._visible == undefined) {
+                    root_mc.level_mc.createEmptyMovieClip("mx" + x + "y" + y, 
+                        root_mc.level_mc.getNextHighestDepth());
+                    root_mc.level_mc.createEmptyMovieClip("sx" + x + "y" + y, 
+                        root_mc.level_mc.getNextHighestDepth());
                 }
-                root_mc.level_mc ["sx" + x + "y" + y]._visible = false;
-                root_mc.level_mc ["mx" + x + "y" + y]._visible = false;
-                root_mc.level_mc ["sx" + x + "y" + y]._xscale = lvlScale * 100;
-                root_mc.level_mc ["sx" + x + "y" + y]._yscale = lvlScale * 100;
-                root_mc.level_mc ["mx" + x + "y" + y]._xscale = lvlScale * 100;
-                root_mc.level_mc ["mx" + x + "y" + y]._yscale = lvlScale * 100;
+                smc._visible = false;
+                smc._xscale = lvlScale * 100;
+                smc._yscale = lvlScale * 100;
+
+                mmc._visible = false;
+                mmc._xscale = lvlScale * 100;
+                mmc._yscale = lvlScale * 100;
             }
         }
         
         // add jeep to physics engine
-        jeep = new Jeep(new Vector(startX, startY), 0, this);
+        jeep = new Jeep(startPos.clone(), 0, this);
         
-        curSquX = startSquX;
-        curSquY = startSquY;
+        curSector = startSector;
         //GO!
+
         
         // initialize
         scroll();
@@ -427,8 +429,7 @@ class Level {
             // if it should be on screen, add it to active objects
             // and create a movie clip
             if( inScreenRangeF(inactiveObjects[i].pos, 
-                Math.max(inactiveObjects[i].scrollFactor.x, 
-                    inactiveObjects[i].scrollFactor.y) ) )
+                inactiveObjects[i].scrollFactor) )
             {
 
                 var layer_mc : MovieClip = 
@@ -440,8 +441,7 @@ class Level {
 
                 inactiveObjects[i].mc = layer_mc[str];
 
-                inactiveObjects[i].mc._x = relX(inactiveObjects[i].pos.x);
-                inactiveObjects[i].mc._y = relY(inactiveObjects[i].pos.y);
+                moveMC(inactiveObjects[i].mc, inactiveObjects[i].pos, 0);
 
                 // optional attributes
                 if( inactiveObjects[i].attrs.w ){
@@ -492,9 +492,7 @@ class Level {
 
     function removeDistantObjects(objects : Array) : Void {
         for( var i : Number = 0; i < objects.length; i++ ){
-            if( ! inScreenRangeF(objects[i].pos, 
-                Math.max(objects[i].scrollFactor.x, 
-                    objects[i].scrollFactor.y)) ){
+            if( ! inScreenRangeF(objects[i].pos, objects[i].scrollFactor) ) {
                 objects[i].mc.removeMovieClip();       
                 if( objects[i].body )
                     engine.removeBody(objects[i].body);
@@ -510,39 +508,39 @@ class Level {
 
     function moveIntoPlace(objects : Array) : Void {
         for( var i : Number = 0; i < objects.length; i++ ){
-            if( objects[i].body )
+            var angle : Number = 0;
+            if( objects[i].body ) {
                 objects[i].pos = objects[i].body.pos;
+                angle = objects[i].body.angle;
+            }
 
             // move the object into place
-            objects[i].mc._x = relX(
-                objects[i].pos.x + 
-                (objects[i].pos.x - getPlayerPos().x) * 
-                (objects[i].scrollFactor.x - 1)
+            var pos : Vector = objects[i].pos.plus(
+                objects[i].pos.minus(getPlayerPos()).componentMult(
+                    objects[i].scrollFactor.plusScalar(-1)
+                )
             );
-            objects[i].mc._y = relY(
-                objects[i].pos.y +
-                (objects[i].pos.y - getPlayerPos().y) * 
-                (objects[i].scrollFactor.y - 1)
-            );
+            moveMC(objects[i].mc, pos, angle);
         }
     }
 
-    function inScreenRangeF(pos : Vector, scrollFactor : Number ) : Boolean {
+    function inScreenRangeF(pos : Vector, scrollFactor : Vector ) : Boolean {
         // return true if the position is considered close 
         // enough to need to be rendered on screen
-        return pos.minus(getPlayerPos()).getMagnitude() 
-            < squWidth * (1 / scrollFactor);
+        var pp : Vector = getPlayerPos();
+        return (Math.abs(pos.x - pp.x) < sectorSize.x * (1 / scrollFactor.x)) 
+            && (Math.abs(pos.y - pp.y) < sectorSize.y * (1 / scrollFactor.y));
     }
 
     function inScreenRange(pos : Vector) : Boolean {
-        return inScreenRangeF(pos, 1);
+        return inScreenRangeF(pos, new Vector(1,1));
     }
     
     function loadLevelFromXML() : Void {
         //parse the xml file and get ready
         //look for "jclevel" tag
         var foundLevelTag : Boolean = false;
-        for (var i : Number = 0; i < my_xml.childNodes.length; i ++)
+        for (var i : Number = 0; i < my_xml.childNodes.length; i++)
         {
             if (my_xml.childNodes[i].nodeName == "jclevel")
             {
@@ -557,16 +555,20 @@ class Level {
                 //level propertes
                 bgMusicURL = my_xml.childNodes[i].attributes.bgmusic;
                 lvlScale = parseFloat (my_xml.childNodes[i].attributes.scale);
-                squWidth = defSquWidth * lvlScale;
-                squHeight = defSquHeight * lvlScale;
-                startSquX = parseInt (my_xml.childNodes[i].attributes.sx);
-                startSquY = parseInt (my_xml.childNodes[i].attributes.sy);
-                startX = lvlScale * parseInt (my_xml.childNodes[i].attributes.spx);
-                startY = lvlScale * parseInt (my_xml.childNodes[i].attributes.spy);
-                lvlSquLeft = parseInt (my_xml.childNodes[i].attributes.sl);
-                lvlSquRight = parseInt (my_xml.childNodes[i].attributes.sr);
-                lvlSquTop = parseInt (my_xml.childNodes[i].attributes.st);
-                lvlSquBottom = parseInt (my_xml.childNodes[i].attributes.sb);
+                sectorSize = defSectorSize.times(lvlScale);
+                startSector = new Vector(
+                    parseInt(my_xml.childNodes[i].attributes.sx),
+                    parseInt(my_xml.childNodes[i].attributes.sy) );
+                
+                startPos = (new Vector(
+                    parseInt(my_xml.childNodes[i].attributes.spx),
+                    parseInt (my_xml.childNodes[i].attributes.spy))
+                ).times(lvlScale);
+
+                lvlSquLeft = parseInt(my_xml.childNodes[i].attributes.sl);
+                lvlSquRight = parseInt(my_xml.childNodes[i].attributes.sr);
+                lvlSquTop = parseInt(my_xml.childNodes[i].attributes.st);
+                lvlSquBottom = parseInt(my_xml.childNodes[i].attributes.sb);
                 foundLevelTag = true;
                 break;
             }
@@ -598,9 +600,7 @@ class Level {
         var str : String = "obj" + obj.objId;
         layer_mc.attachMovie("bullet", str, layer_mc.getNextHighestDepth());
         obj.mc = layer_mc[str];
-        obj.mc._x = relX(obj.pos.x);
-        obj.mc._y = relY(obj.pos.y);
-        obj.mc._rotation = Util.radToDeg(Math.atan2(dir.y, dir.x));
+        moveMC(obj.mc, obj.pos, dir.getAngle());
 
         projectiles.push(obj);
     }
@@ -609,11 +609,11 @@ class Level {
         var cls : Number = parseInt(node.attributes.cls);
         var id : Number = parseInt(node.attributes.id);
        
-        var x : Number = parseFloat(node.attributes.x);
-        var y : Number = parseFloat(node.attributes.y);
+        var offset : Vector = new Vector(parseFloat(node.attributes.x),
+            parseFloat(node.attributes.y));
 
-        var sx : Number = parseInt(node.attributes.sx);
-        var sy : Number = parseInt(node.attributes.sy);
+        var sector : Vector = new Vector(parseInt(node.attributes.sx),
+            parseInt(node.attributes.sy));
         
         var layer : Number;
         
@@ -635,7 +635,7 @@ class Level {
         else
             scrollFactor = new Vector(1, 1);
         
-        var pos : Vector = new Vector(sx*squWidth+x, sy*squHeight+y); 
+        var pos : Vector = sector.componentMult(sectorSize).plus(offset);
         if( cls == LevelObject.CLASS_ENEMY ){
             // return an enemy object
             switch( id ){
@@ -669,8 +669,8 @@ class Level {
         bg_sound.stop ();
         bg_sound = new Sound ();
         root_mc.attachMovie("loadLevelError", "error_mc", root_mc.getNextHighestDepth());
-        root_mc.error_mc._x = movieWidth / 2 - root_mc.error_mc._width / 2;
-        root_mc.error_mc._y = movieHeight / 2 - root_mc.error_mc._height / 2;
+        root_mc.error_mc._x = movieSize.x / 2 - root_mc.error_mc._width / 2;
+        root_mc.error_mc._y = movieSize.y / 2 - root_mc.error_mc._height / 2;
         root_mc.onEnterFrame = null;
         root_mc.loader_mc.removeMovieClip ();
         root_mc.level_mc.removeMovieClip ();
@@ -681,40 +681,42 @@ class Level {
     function scroll() : Void {
         // determine what sector we're in
         var playerPos : Vector = getPlayerPos();
-        curSquX = Math.floor(playerPos.x / squWidth);
-        curSquY = Math.floor(playerPos.y / squHeight);
-
+        curSector = playerPos.componentDivide(sectorSize).applyMath(Math.floor);
+        
         //scroll window
-        scrollX = Math.round(playerPos.x - movieWidth / 2);
-        scrollY = Math.round(playerPos.y - movieHeight / 2);
+        scrollOffset =
+            playerPos.minus(movieSize.divide(2)).applyMath(Math.round);
 
         // move masks into place
-        for (var y = curSquY - 1; y <= curSquY + 1; y++) {
-            for (var x = curSquX - 1; x <= curSquX + 1; x++){
+        for (var y : Number = curSector.y - 1; y <= curSector.y + 1; y++) {
+            for (var x : Number = curSector.x - 1; x <= curSector.x + 1; x++){
                 // move masks into place
-                root_mc.level_mc["mx" + x + "y" + y]._x = 
-                    relX(x * squWidth);
-                root_mc.level_mc["mx" + x + "y" + y]._y = 
-                    relY(y * squHeight);
+                moveMC( root_mc.level_mc["mx" + x + "y" + y], 
+                    new Vector(x * sectorSize.x, y * sectorSize.y), 0);
             }
         }
     }
     
     function paint() : Void {    
         //background
-        root_mc.bg_mc.bgcenter_mc._x = - (scrollX % (defSquWidth * 4)) / 4 ;
-        root_mc.bg_mc.bgright_mc._x = root_mc.bg_mc.bgcenter_mc._x + defSquWidth;
+        root_mc.bg_mc.bgcenter_mc._x = 
+            - (scrollOffset.x % (defSectorSize.x * 4)) / 4 ;
+        root_mc.bg_mc.bgright_mc._x = 
+            root_mc.bg_mc.bgcenter_mc._x + defSectorSize.x;
+
         //move sectors into place
-        for (var y = curSquY - 2; y <= curSquY + 2; y++) {
-            for (var x = curSquX - 2; x <= curSquX + 2; x++){
-                if (x == curSquX - 2 || x == curSquX + 2 || 
-                    y == curSquY - 2 || y == curSquY + 2)
+        var vbegin : Vector = curSector.minus(new Vector(2,2));
+        var vend : Vector = curSector.plus(new Vector(2,2));
+        for (var y = vbegin.y; y <= vend.y; y++) {
+            for (var x = vbegin.x; x <= vend.x; x++){
+                var mc : MovieClip = root_mc.level_mc["sx" + x + "y" + y];
+                if (x == vbegin.x || x == vend.x || 
+                    y == vbegin.y || y == vend.y)
                 {
-                    root_mc.level_mc["sx" + x + "y" + y]._visible = false;
+                    mc._visible = false;
                 } else {
-                    root_mc.level_mc["sx" + x + "y" + y]._visible = true;
-                    root_mc.level_mc["sx" + x + "y" + y]._x = relX(x * squWidth);
-                    root_mc.level_mc["sx" + x + "y" + y]._y = relY(y * squHeight);
+                    mc._visible = true;
+                    moveMC(mc, sectorSize.componentMult(new Vector(x, y)), 0);
                 }
             }
         }
@@ -729,7 +731,7 @@ class Level {
 
         // check if newLoc is hitting
         if( hit(oldLoc) ){
-            trace("warning: called getContactPoint with an oldLoc in the wall. unstable results.");
+            trace("ERROR: getContactPoint called with an oldLoc in the wall. PhysicsEngine is now unstable.");
             return null;
         }
 
@@ -745,7 +747,7 @@ class Level {
                 dist = (upper + lower) / 2;
                 dir.scale(dist);
 
-                if( hit(Vector.round(newLoc.plus(dir))) ){
+                if( hit(newLoc.plus(dir).applyMath(Math.round)) ){
                     lower = dist;
                 } else {
                     upper = dist;
@@ -757,7 +759,7 @@ class Level {
             // use upper because it's crucial that we return an unhit pixel
             dir.scale(upper); 
             
-            return Vector.round(newLoc.plus(dir));
+            return newLoc.plus(dir).applyMath(Math.round);
 
         } else {
             return null;
@@ -786,9 +788,6 @@ class Level {
             }
         } while(Math.abs(upper - lower) > accuracy); 
         
-        _root.dc3_mc._x = relX(f1vec.x);
-        _root.dc3_mc._y = relY(f1vec.y);
-        
         // we have one surface, now set the upper and lower just around
         // it to find the other side
         var f2ang : Number;
@@ -806,9 +805,6 @@ class Level {
             }
         } while(Math.abs(upper - lower) > accuracy); 
 
-        _root.dc4_mc._x = relX(f2vec.x);
-        _root.dc4_mc._y = relY(f2vec.y);
-
         // both feelers found surfaces, now find slope between points
         var slope : Vector = f2vec.minus(f1vec);
 
@@ -820,43 +816,33 @@ class Level {
     }
     
     function hit (pos : Vector) : Boolean {
-        var rx : Number = relX(pos.x);
-        var ry : Number = relY(pos.y);
-        for (var sy : Number = curSquY - 1; sy <= curSquY + 1; sy++) {
-            for (var sx : Number = curSquX - 1; sx <= curSquX + 1; sx++) {
-                if (root_mc.level_mc["mx" + sx + "y" + sy].hitTest(rx, ry, 1))
+        var rel : Vector = getRelPos(pos);
+        for (var sy : Number = curSector.y-1; sy <= curSector.y+1; sy++) {
+            for (var sx : Number = curSector.x-1; sx <= curSector.x+1; sx++) {
+                if (root_mc.level_mc["mx" + sx + "y" + sy].hitTest(rel.x, rel.y, 1))
                     return true;
             }
         }
         for( var i : Number = 0; i < obstacles.length; i++ ){
-            if( obstacles[i].mc.hitTest(rx, ry, 1) )
+            if( obstacles[i].mc.hitTest(rel.x, rel.y, 1) )
                 return true;
         }
         return false;
     }
-    
-    public function relX(absX : Number) : Number {
-        return absX - scrollX;
-    }
-    
-    public function relY(absY : Number) : Number {
-        return absY - scrollY;
-    }
 
+    public function moveMC(mc : MovieClip, pos : Vector, angle : Number) {
+        var rel : Vector = getRelPos(pos);
+        mc._x = rel.x;
+        mc._y = rel.y;
+        mc._rotation = Util.radToDeg(angle);
+    }
+    
     public function getRelPos(absPos : Vector) : Vector {
-        return absPos.minus(new Vector(scrollX, scrollY));
-    }
-    
-    public function absX(relX : Number) : Number {
-        return relX + scrollX;
-    }
-    
-    public function absY(relY : Number) : Number {
-        return relY + scrollY;
+        return absPos.minus(scrollOffset);
     }
     
     public function getAbsPos(relPos : Vector) : Vector {
-        return relPos.plus(new Vector(scrollX, scrollY));
+        return relPos.plus(scrollOffset);
     }
     
     function dispose() : Void {

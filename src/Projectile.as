@@ -3,8 +3,8 @@ class Projectile extends Body {
        
     private var dead : Boolean;
     
-    function Projectile(pos : Vector, vel : Vector, hitCallback : Function) {
-        super(pos, 0, vel, 0);
+    function Projectile(pos : Vector, vel : Vector) {
+        super(pos, vel.getAngle(), vel, 0);
         this.dead = false;
     }
 

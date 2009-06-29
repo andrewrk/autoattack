@@ -23,8 +23,16 @@ class Vector {
         return new Vector(x - vector.x, y - vector.y);
     }
 
+    public function plusScalar(scalar : Number) : Vector {
+        return new Vector(x + scalar, y + scalar);
+    }
+
     public function getMagnitude() : Number {
         return Math.sqrt(x*x + y*y);
+    }
+
+    public function getAngle() : Number {
+        return Math.atan2(y,x);
     }
 
     public function normalize() : Void {
@@ -35,6 +43,18 @@ class Vector {
 
     public function times(factor : Number) : Vector {
         return new Vector (x * factor, y * factor);
+    }
+
+    public function componentMult(v : Vector) : Vector {
+        return new Vector(x * v.x, y * v.y);
+    }
+
+    public function componentDivide(v : Vector) : Vector {
+        return new Vector(x / v.x, y / v.y);
+    }
+
+    public function divide(scalar : Number) : Vector {
+        return new Vector(x / scalar, y / scalar);
     }
 
     public function scale(factor : Number) : Void {
@@ -50,8 +70,8 @@ class Vector {
         return "v(" + x + "," + y + ")";
     }
 
-    public static function round(v : Vector) : Vector {
-        return new Vector( Math.round(v.x), Math.round(v.y) );
+    public function applyMath(func : Function) : Vector {
+        return new Vector( func(x), func(y) );
     }
 
     public function equals( v : Vector) : Boolean {

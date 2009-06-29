@@ -73,7 +73,7 @@ class Body {
     public function move() : Void {
         // TODO angles
         prevPos = pos;
-        pos = Vector.round(pos.plus(vel)); // calling plus to get a new vector on purpose
+        pos = pos.plus(vel); // calling plus to get a new vector on purpose
     }
     
     // TODO betting naming
