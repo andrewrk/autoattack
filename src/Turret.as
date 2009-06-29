@@ -7,7 +7,7 @@ class Turret extends Enemy {
     private var actionFire : Boolean;
 
     // if it's within this angle delta, shoot
-    private var angleShoot : Number = Math.PI / 3;
+    private var angleShoot : Number = Math.PI / 5;
     
     // physics
     private var posAngle : Number; // actual angle we are pointing at
@@ -15,7 +15,7 @@ class Turret extends Enemy {
     private var angleMax : Number; // maximum angle
     private var angleVel : Number;
     private var maxAngleVel : Number = 0.4;
-    private var acceleration : Number = 0.03;
+    private var acceleration : Number = 0.003;
 
     private var rate : Number; // frames in between shots
     private var fireDelay : Number; // # frames left till can fire

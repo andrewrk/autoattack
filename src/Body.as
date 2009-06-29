@@ -9,7 +9,6 @@ class Body {
     private var vel : Vector; // px/frame
     private var angleVel : Number; // radians/frame
 
-    private var lastContactNormal : Vector; // normal vector from surface hit 1 fram ago. null if no hit last frame.
     public function Body(pos : Vector, angle : Number, vel : Vector, 
         angleVel : Number)
     {
@@ -23,7 +22,6 @@ class Body {
         // TODO depends on shape of object. the following is a square
         hitCheckPoints = [new Vector(0,0)];//[new Vector(-1, -1), new Vector(1, -1), new Vector(1, 1), new Vector(-1, 1)];
 
-        lastContactNormal = null;        
     }
 
     public function hitTest(level : Level) : Void {
@@ -31,23 +29,8 @@ class Body {
         var maxLoop : Number = 5;
         
         for(var i : Number = 0; i < maxLoop; i++){
-            var newVelocity : Vector = null;
-            if (lastContactNormal != null) {
-                // component perpendicular to surface pointing away from surface. 
-                var normalSpeed : Number = vel.dotProduct(lastContactNormal);
-                if (normalSpeed < 0) {
-                    // holding against a surface, not bouncing
-                    var tangentVelocity : Vector = vel.minus(lastContactNormal.times(normalSpeed));
-                    newVelocity = tangentVelocity;
-                    
-                } else {
-                    // moving away from the surface
-                }
-            }
-
             var contactPoint : Vector = level.getContactPoint(prevPos, pos);
             if (contactPoint == null) {
-                lastContactNormal = null;
                 break;
             } else {
                 // we has kontakt
@@ -58,13 +41,8 @@ class Body {
                 var t : Number = dist.getMagnitude() / vel.getMagnitude();
         
                 var surfaceNormal : Vector = level.getSurfaceNormal(contactPoint);
-                lastContactNormal = surfaceNormal;
-                if (newVelocity == null) {
-                    // bounce
-                    newVelocity = vel.minus(surfaceNormal.times((1 + 0.2) * vel.dotProduct(surfaceNormal)));
-                    //newVelocity.scale(0.2); // TODO variablize bounce dampening
-                }
-                vel = newVelocity; // this direct enough for you?
+                // bounce
+                vel = vel.minus(surfaceNormal.times((1 + 0.2) * vel.dotProduct(surfaceNormal)));
                 pos = contactPoint.plus(vel.times(t));
                 prevPos = contactPoint;
                 
@@ -72,6 +50,9 @@ class Body {
                     break;
             }
         }
+
+        if( level.hit(pos ) )
+            trace("error: we failed to get out of the wall in body.hitTest");
     }
 
     public function applyForce(force : Vector) : Void {
