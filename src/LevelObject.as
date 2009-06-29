@@ -90,6 +90,8 @@ class LevelObject {
     public var mc : MovieClip; // the movie clip (if any) used to paint this
     public var body : Body; // the physics body (if any) used for physics
 
+    public var node : XML; // for level editing
+
     // does this object expire when it goes off screen?
     public var expires : Boolean;
 

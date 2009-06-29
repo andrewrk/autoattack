@@ -252,7 +252,6 @@ class Level {
                 root_mc.bg_mc.bgcenter_mc);
 
             
-            
             root_mc.onEnterFrame = function ()
             {
                 if (level.loadedXML && level.loadedBG && level.loadedSWF ) {
@@ -293,21 +292,16 @@ class Level {
             progressVisible = true;
         }
     }
-    
-    function startGamePlay() : Void    {
-        var level = this;
-        //xml has already been parsed
-        //initialize level
+
+    function initializeLevel() : Void {
         //turn on background
         root_mc.bg_mc._visible = true;
         root_mc.bg_mc.bgcenter_mc._visible = true;
         root_mc.bg_mc.bgright_mc._visible = true;
         //set up squares and mask
         root_mc.level_mc._visible = true;
-        var x;
-        var y;
-        for (y = lvlSquTop; y <= lvlSquBottom; y++) {
-            for (x = lvlSquLeft; x <= lvlSquRight; x++) {
+        for (var y : Number = lvlSquTop; y <= lvlSquBottom; y++) {
+            for (var x : Number = lvlSquLeft; x <= lvlSquRight; x++) {
                 var mmc : MovieClip = root_mc.level_mc["mx" + x + "y" + y];
                 var smc : MovieClip = root_mc.level_mc["sx" + x + "y" + y];
                 if (mmc._visible == undefined) {
@@ -325,21 +319,26 @@ class Level {
                 mmc._yscale = lvlScale * 100;
             }
         }
+
+        curSector = startSector;
+    }
+    
+    function startGamePlay() : Void    {
+        //xml has already been parsed
+        //initialize level
+        initializeLevel();
         
         // add jeep to physics engine
-        jeep = new Jeep(startPos.clone(), 0, this);
+        jeep = new Jeep(startPos, 0, this);
         
-        curSector = startSector;
-        //GO!
-
-        
-        // initialize
+        // initialize display
         scroll();
         paint();
         
         // set up main loop
         mainInterval = setInterval(this, "main", 1000 / fps);
         
+        // begin listening to music
         startStreamingSong();
     }
     
@@ -581,7 +580,10 @@ class Level {
         var obj_xmlnode : XML = my_xml.childNodes[i];
         for (var i : Number = 0; i < obj_xmlnode.childNodes.length; i++) {
             // get level object and push it into array
-            inactiveObjects.push(createLevelObject(obj_xmlnode.childNodes[i]));
+            var obj : LevelObject = 
+                createLevelObject(obj_xmlnode.childNodes[i]);
+            obj.node = obj_xmlnode.childNodes[i];
+            inactiveObjects.push(obj);
         }
     }
 
@@ -696,14 +698,16 @@ class Level {
             }
         }
     }
-    
-    function paint() : Void {    
+
+    function paintBackground() : Void {
         //background
         root_mc.bg_mc.bgcenter_mc._x = 
             - (scrollOffset.x % (defSectorSize.x * 4)) / 4 ;
         root_mc.bg_mc.bgright_mc._x = 
             root_mc.bg_mc.bgcenter_mc._x + defSectorSize.x;
+    }
 
+    function paintSectors() : Void {
         //move sectors into place
         var vbegin : Vector = curSector.minus(new Vector(2,2));
         var vend : Vector = curSector.plus(new Vector(2,2));
@@ -721,6 +725,11 @@ class Level {
             }
         }
 
+    }
+    
+    function paint() : Void {    
+        paintBackground();
+        paintSectors();
         jeep.paint();
     }
 

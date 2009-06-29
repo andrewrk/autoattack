@@ -14,7 +14,7 @@ class Body {
         angleVel : Number)
     {
         mass = 1;
-        this.pos = pos;
+        this.pos = pos.clone();
         this.angle = angle;
         this.vel = new Vector(0, 0);
         prevPos = pos;

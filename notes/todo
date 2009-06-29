@@ -11,6 +11,8 @@ Andy:
     - make it so if you hit the spike, it goes away, into the ground, and then
       after some specified time it pops back up
 * if the jeep blows up, the soldier gets out and you control him
+* fix background music and provide an option to toggle sound and music, and
+  remember the option with cookies
 * Optimize:
     - change inactive LevelObject array to indexed by square x,y
 
