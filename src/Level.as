@@ -516,12 +516,12 @@ class Level {
             // move the object into place
             objects[i].mc._x = relX(
                 objects[i].pos.x + 
-                (objects[i].pos.x - jeep.getPos().x) * 
+                (objects[i].pos.x - getPlayerPos().x) * 
                 (objects[i].scrollFactor.x - 1)
             );
             objects[i].mc._y = relY(
                 objects[i].pos.y +
-                (objects[i].pos.y - jeep.getPos().y) * 
+                (objects[i].pos.y - getPlayerPos().y) * 
                 (objects[i].scrollFactor.y - 1)
             );
         }
@@ -530,7 +530,7 @@ class Level {
     function inScreenRangeF(pos : Vector, scrollFactor : Number ) : Boolean {
         // return true if the position is considered close 
         // enough to need to be rendered on screen
-        return pos.minus(jeep.getPos()).getMagnitude() 
+        return pos.minus(getPlayerPos()).getMagnitude() 
             < squWidth * (1 / scrollFactor);
     }
 
@@ -680,13 +680,13 @@ class Level {
     
     function scroll() : Void {
         // determine what sector we're in
-        var jeepPos : Vector = jeep.getPos();
-        curSquX = Math.floor(jeepPos.x / squWidth);
-        curSquY = Math.floor(jeepPos.y / squHeight);
+        var playerPos : Vector = getPlayerPos();
+        curSquX = Math.floor(playerPos.x / squWidth);
+        curSquY = Math.floor(playerPos.y / squHeight);
 
         //scroll window
-        scrollX = Math.round(jeepPos.x - movieWidth / 2);
-        scrollY = Math.round(jeepPos.y - movieHeight / 2);
+        scrollX = Math.round(playerPos.x - movieWidth / 2);
+        scrollY = Math.round(playerPos.y - movieHeight / 2);
 
         // move masks into place
         for (var y = curSquY - 1; y <= curSquY + 1; y++) {
