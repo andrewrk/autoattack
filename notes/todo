@@ -1,10 +1,6 @@
 Andy:
-* create a framework for the enemy class type
-    - add movie clips for the bad guys
-    - add behavior for the bad guys
 * change inactive LevelObject array to indexed by square x,y
 * index bodies in the physics engine by ids so that we don't have a O(n) algorithm to look them up
-* move body.paint to level
 * create a level editor
 * fix up level1
     - move booster thing down and to the right a little
@@ -16,8 +12,6 @@ Andy:
     - make it so if you hit the spike, it goes away, into the ground, and then
       after some specified time it pops back up
 * if the jeep blows up, the soldier gets out and you control him
-* make turrets not overshoot their angle when rotating
-* entities are still on the screen when masks aren't. this is a problem.
 
 Josh:
 * make jeep physics work
