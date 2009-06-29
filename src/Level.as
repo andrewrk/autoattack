@@ -317,6 +317,9 @@ class Level {
                 mmc._visible = false;
                 mmc._xscale = lvlScale * 100;
                 mmc._yscale = lvlScale * 100;
+
+                mmc._x = 0;
+                mmc._y = 0;
             }
         }
 
@@ -688,15 +691,6 @@ class Level {
         //scroll window
         scrollOffset =
             playerPos.minus(movieSize.divide(2)).applyMath(Math.round);
-
-        // move masks into place
-        for (var y : Number = curSector.y - 1; y <= curSector.y + 1; y++) {
-            for (var x : Number = curSector.x - 1; x <= curSector.x + 1; x++){
-                // move masks into place
-                moveMC( root_mc.level_mc["mx" + x + "y" + y], 
-                    new Vector(x * sectorSize.x, y * sectorSize.y), 0);
-            }
-        }
     }
 
     function paintBackground() : Void {
@@ -825,13 +819,15 @@ class Level {
     }
     
     function hit (pos : Vector) : Boolean {
-        var rel : Vector = getRelPos(pos);
         for (var sy : Number = curSector.y-1; sy <= curSector.y+1; sy++) {
             for (var sx : Number = curSector.x-1; sx <= curSector.x+1; sx++) {
-                if (root_mc.level_mc["mx" + sx + "y" + sy].hitTest(rel.x, rel.y, 1))
+                var checkX : Number = pos.x - sx * sectorSize.x;
+                var checkY : Number = pos.y - sy * sectorSize.y;
+                if (root_mc.level_mc["mx" + sx + "y" + sy].hitTest(checkX, checkY, 1))
                     return true;
             }
         }
+        var rel : Vector = getRelPos(pos);
         for( var i : Number = 0; i < obstacles.length; i++ ){
             if( obstacles[i].mc.hitTest(rel.x, rel.y, 1) )
                 return true;
