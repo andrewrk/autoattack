@@ -27,4 +27,11 @@ class Util {
         else
             return offset;
     }
+
+    public static function extendRadius(
+        pos : Vector, angle : Number, radius : Number) : Vector
+    {
+        return pos.plus(
+            new Vector(radius * Math.cos(angle), radius * Math.sin(angle)));
+    }
 }

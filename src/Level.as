@@ -76,6 +76,7 @@ class Level {
     private var inactiveObjects : Array;
     private var obstacles : Array;
     private var entities : Array;
+    private var projectiles : Array;
 
     private var mainInterval; // what the hell is the data type?
 
@@ -106,6 +107,7 @@ class Level {
         this.activeObjects = new Array();
         this.obstacles = new Array();
         this.entities = new Array();
+        this.projectiles = new Array();
         
         // create the movie clip containers in root_mc
         for( var i : Number = 0; i < layers.length; i++ ){
@@ -361,15 +363,27 @@ class Level {
     }
 
     function computeObjects() : Void {
+        for( var i : Number = 0; i < projectiles.length; i++){
+            if( projectiles[i].body.dead ){
+                // explode
+                engine.removeBody(projectiles[i].body);
+                projectiles[i].mc.removeMovieClip();
+                projectiles.splice(i, 1);
+                i--;
+                continue;
+            }
+        }
         // if it's no longer relevant, remove the movie clip
         // and move the element to inactive objects
         removeDistantObjects(activeObjects);
         removeDistantObjects(obstacles);
         removeDistantObjects(entities);
+        removeDistantObjects(projectiles);
 
         moveIntoPlace(activeObjects);
         moveIntoPlace(obstacles);
         moveIntoPlace(entities);
+        moveIntoPlace(projectiles);
 
         // perform actions on objects
         for( var i : Number = 0; i < activeObjects.length; i++){
@@ -588,7 +602,7 @@ class Level {
         obj.mc._y = relY(obj.pos.y);
         obj.mc._rotation = Util.radToDeg(Math.atan2(dir.y, dir.x));
 
-        entities.push(obj);
+        projectiles.push(obj);
     }
 
     private function createLevelObject(node : XML) {
@@ -764,7 +778,7 @@ class Level {
         do {
             f1ang = (upper + lower) / 2;
 
-            f1vec = extendRadius(pos, f1ang, feelerRadius);
+            f1vec = Util.extendRadius(pos, f1ang, feelerRadius);
             if( hit(f1vec) ){
                 lower = f1ang;
             } else {
@@ -784,7 +798,7 @@ class Level {
         do {
             f2ang = (upper + lower) / 2;
 
-            f2vec = extendRadius(pos, f2ang, feelerRadius);
+            f2vec = Util.extendRadius(pos, f2ang, feelerRadius);
             if( ! hit(f2vec) ){
                 lower = f2ang;
             } else {
@@ -803,13 +817,6 @@ class Level {
         slope = new Vector(slope.y, -slope.x);
         
         return slope;
-    }
-
-    function extendRadius(
-        pos : Vector, angle : Number, radius : Number) : Vector
-    {
-        return pos.plus(
-            new Vector(radius * Math.cos(angle), radius * Math.sin(angle)));
     }
     
     function hit (pos : Vector) : Boolean {

@@ -26,7 +26,7 @@ class Body {
         lastContactNormal = null;        
     }
 
-    public function hitTest(level : Level) {
+    public function hitTest(level : Level) : Void {
         // TODO angles
 
         var newVelocity : Vector = null;
