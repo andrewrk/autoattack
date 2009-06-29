@@ -28,41 +28,49 @@ class Body {
 
     public function hitTest(level : Level) : Void {
         // TODO angles
+        var maxLoop : Number = 5;
+        
+        for(var i : Number = 0; i < maxLoop; i++){
+            var newVelocity : Vector = null;
+            if (lastContactNormal != null) {
+                // component perpendicular to surface pointing away from surface. 
+                var normalSpeed : Number = vel.dotProduct(lastContactNormal);
+                if (normalSpeed < 0) {
+                    // holding against a surface, not bouncing
+                    var tangentVelocity : Vector = vel.minus(lastContactNormal.times(normalSpeed));
+                    newVelocity = tangentVelocity;
+                    
+                } else {
+                    // moving away from the surface
+                }
+            }
 
-        var newVelocity : Vector = null;
-        if (lastContactNormal != null) {
-            // component perpendicular to surface pointing away from surface. 
-            var normalSpeed : Number = vel.dotProduct(lastContactNormal);
-            if (normalSpeed < 0) {
-                // holding against a surface, not bouncing
-                var tangentVelocity : Vector = vel.minus(lastContactNormal.times(normalSpeed));
-                newVelocity = tangentVelocity;
-                
+            var contactPoint : Vector = level.getContactPoint(prevPos, pos);
+            if (contactPoint == null) {
+                lastContactNormal = null;
+                break;
             } else {
-                // moving away from the surface
+                // we has kontakt
+        
+                // distance to contact point
+                var dist : Vector = pos.minus(contactPoint);
+                // time spent in the wall
+                var t : Number = dist.getMagnitude() / vel.getMagnitude();
+        
+                var surfaceNormal : Vector = level.getSurfaceNormal(contactPoint);
+                lastContactNormal = surfaceNormal;
+                if (newVelocity == null) {
+                    // bounce
+                    newVelocity = vel.minus(surfaceNormal.times((1 + 0.2) * vel.dotProduct(surfaceNormal)));
+                    //newVelocity.scale(0.2); // TODO variablize bounce dampening
+                }
+                vel = newVelocity; // this direct enough for you?
+                pos = contactPoint.plus(vel.times(t));
+                prevPos = contactPoint;
+                
+                if( ! level.hit(pos) )
+                    break;
             }
-        }
-
-        var contactPoint : Vector = level.getContactPoint(prevPos, pos);
-        if (contactPoint == null) {
-            lastContactNormal = null;
-        } else {
-            // we has kontakt
-    
-            // get out of the wall
-            pos = contactPoint;
-    
-            var surfaceNormal : Vector = level.getSurfaceNormal(contactPoint);
-            lastContactNormal = surfaceNormal;
-            if (newVelocity == null) {
-                // bounce
-                newVelocity = vel.minus(surfaceNormal.times((1 + 0.2) * vel.dotProduct(surfaceNormal)));
-                //newVelocity.scale(0.2); // TODO variablize bounce dampening
-            }
-            // TODO be more direct
-            var deltaVelocity : Vector = newVelocity.minus(vel);
-            var requiredForce : Vector = deltaVelocity.times(mass);
-            applyForce(requiredForce);
         }
     }
 

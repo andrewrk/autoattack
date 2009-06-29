@@ -2,7 +2,6 @@
 
 <!-- debug objects -->
 
-<!-- unnecessary mines
 <obj cls="9" id="1" x="300" y="0" sx="0" sy="0" />
 <obj cls="9" id="1" x="290" y="0" sx="0" sy="0" />
 <obj cls="9" id="1" x="280" y="0" sx="0" sy="0" />
@@ -15,7 +14,6 @@
 <obj cls="9" id="1" x="330" y="0" sx="0" sy="0" />
 <obj cls="9" id="1" x="340" y="0" sx="0" sy="0" />
 
--->
 
 
 <obj cls="5" id="2" x="175" y="34" srange="0" erange="360" sx="0" sy="0" rate="5" />
