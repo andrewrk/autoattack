@@ -50,7 +50,11 @@ class Vector {
         return "v(" + x + "," + y + ")";
     }
 
-    public static function round(v : Vector) {
+    public static function round(v : Vector) : Vector {
         return new Vector( Math.round(v.x), Math.round(v.y) );
+    }
+
+    public function equals( v : Vector) : Boolean {
+        return v.x == x && v.y == y;
     }
 }

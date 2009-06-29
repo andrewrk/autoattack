@@ -682,7 +682,7 @@ class Level {
     function getContactPoint(oldLoc : Vector, newLoc : Vector) : Vector {
         // given an old position of something and a new position of something,
         // figure out where the object entered the level mask
-        var accuracy : Number = 0.5; //pixels
+        var accuracy : Number = 1; //pixels
 
         // check if newLoc is hitting
         if( hit(oldLoc) ){
@@ -725,7 +725,7 @@ class Level {
         // return a normal vector perpendicular to the surface at pos
         
         // stick out a feeler and find one of the edges
-        var feelerRadius : Number = 8;
+        var feelerRadius : Number = 6;
         var accuracy : Number = 0.03; // radians
         var f1ang : Number;
         var f1vec : Vector;
