@@ -20,9 +20,7 @@ class Turret extends Enemy {
     private var rate : Number; // frames in between shots
     private var fireDelay : Number; // # frames left till can fire
 
-    function Turret(pos : Vector, attrs : Object, objId : Number,
-        level : Level)
-    {
+    function Turret(pos : Vector, attrs : Object, level : Level) {
         super(LevelObject.ID_TURRET, pos, attrs, objId, level, 1);
         this.angleMin = Util.normalizeAngle(
             Util.degToRad(parseFloat(attrs.srange)));
@@ -94,7 +92,8 @@ class Turret extends Enemy {
             if( actionFire ) {
                 fireDelay = rate;
                 // create a bullet and put it into action
-                // TODO: ^^
+                level.shootBullet(pos, new Vector(Math.cos(posAngle), 
+                    Math.sin(posAngle)));
             }
         } else {
             fireDelay--;

@@ -19,6 +19,8 @@ class LevelObject {
     public static var ID_CANNON : Number = 3;
     public static var ID_BOMB_THROWER : Number = 4;
 
+    private static var objectCount : Number = 0;
+
     private static var mcMap : Object = {
         class7id1 : "baseCampEntranceFG",
         class7id0 : "fence",
@@ -75,22 +77,25 @@ class LevelObject {
 
     private var classNum : Number;
     private var idNum : Number;
-    private var pos : Vector; // where is it
-    private var layer : Number; // which layer to display on 
+    public var pos : Vector; // where is it
+    public var layer : Number; // which layer to display on 
     private var scrollFactor : Vector; // scroll faster or slower than normal
 
     private var attrs : Object;
 
     private var mcString : String;
 
-    private var objId : Number; // unique number used to reference movie clips
+    public var objId : Number; // unique number used to reference movie clips
 
-    private var mc : MovieClip; // the movie clip (if any) used to paint this
-    private var body : Body; // the physics body (if any) used for physics
+    public var mc : MovieClip; // the movie clip (if any) used to paint this
+    public var body : Body; // the physics body (if any) used for physics
+
+    // does this object expire when it goes off screen?
+    public var expires : Boolean;
 
     function LevelObject(
         classNum : Number, idNum : Number, pos : Vector, layer : Number,
-        scrollFactor : Vector, attrs : Object, objId : Number )
+        scrollFactor : Vector, attrs : Object, expires : Boolean )
     {
         this.classNum = classNum;
         this.idNum = idNum;
@@ -99,9 +104,10 @@ class LevelObject {
         this.scrollFactor = scrollFactor;
         this.attrs = attrs;
         this.mcString = mcName(classNum, idNum);
-        this.objId = objId;
+        this.objId = objectCount++;
         this.mc = null;
         this.body = null;
+        this.expires = expires;
     }
 
 }

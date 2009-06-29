@@ -49,9 +49,9 @@ class Jeep {
         mc.obj_mc.wheelBack_mc._height = wheelHeight;
 
         // add to physics engine
-        bodyBody = new Body(pos, posAng);
-        frontWheelBody = new Body(pos.plus(fwOffset), 0);
-        backWheelBody = new Body(pos.plus(bwOffset), 0);
+        bodyBody = new Body(pos, posAng, new Vector(0,0), 0);
+        frontWheelBody = new Body(pos.plus(fwOffset), 0, new Vector(0,0), 0);
+        backWheelBody = new Body(pos.plus(bwOffset), 0, new Vector(0,0), 0);
 
         var engine : PhysicsEngine = level.getEngine();
         engine.addBody(bodyBody);

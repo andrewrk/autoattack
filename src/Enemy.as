@@ -10,7 +10,7 @@ class Enemy extends LevelObject {
         objId : Number, level : Level, hp : Number )
     {
         super(LevelObject.CLASS_ENEMY, idNum, pos, Level.LAYER_OBJ, 
-            new Vector(1, 1), attrs, objId)
+            new Vector(1, 1), attrs, false)
         this.level = level;
         this.hp = hp;
     }

@@ -18,7 +18,7 @@
 -->
 
 
-<obj cls="5" id="2" x="175" y="34" srange="0" erange="360" sx="0" sy="0" rate="24" />
+<obj cls="5" id="2" x="175" y="34" srange="0" erange="360" sx="0" sy="0" rate="5" />
 
 <!-- end debug objects -->
 

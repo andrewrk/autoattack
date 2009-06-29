@@ -57,4 +57,8 @@ class Vector {
     public function equals( v : Vector) : Boolean {
         return v.x == x && v.y == y;
     }
+
+    public function clone() : Vector {
+        return new Vector(x,y);
+    }
 }

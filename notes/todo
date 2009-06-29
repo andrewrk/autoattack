@@ -1,4 +1,5 @@
 Andy:
+* fix engine.removeBody
 * create a framework for the enemy class type
     - add movie clips for the bad guys
     - add behavior for the bad guys

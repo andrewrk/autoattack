@@ -6,18 +6,20 @@ class Body {
     private var pos : Vector; // px
     private var angle : Number; // rad
     private var prevPos : Vector; // px
-    private var vel : Vector; // px
-    private var nextAngle : Number; // rad
+    private var vel : Vector; // px/frame
+    private var angleVel : Number; // radians/frame
 
     private var lastContactNormal : Vector; // normal vector from surface hit 1 fram ago. null if no hit last frame.
-    public function Body(pos : Vector, angle : Number)
+    public function Body(pos : Vector, angle : Number, vel : Vector, 
+        angleVel : Number)
     {
         mass = 1;
         this.pos = pos;
         this.angle = angle;
         this.vel = new Vector(0, 0);
         prevPos = pos;
-        nextAngle = angle;
+        this.vel = vel;
+        this.angleVel = angleVel;
         // TODO depends on shape of object. the following is a square
         hitCheckPoints = [new Vector(0,0)];//[new Vector(-1, -1), new Vector(1, -1), new Vector(1, 1), new Vector(-1, 1)];
 

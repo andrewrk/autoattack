@@ -33,6 +33,9 @@ class Level {
     private var defSquHeight = 400;
     private var fps = 30;
 
+    // TODO: this doesn't seem to belong here
+    private var bulletSpeed : Number = 30;
+
     // for scrolling through sectors
     private var curSquX;
     private var curSquY;
@@ -102,6 +105,7 @@ class Level {
         this.inactiveObjects = new Array();
         this.activeObjects = new Array();
         this.obstacles = new Array();
+        this.entities = new Array();
         
         // create the movie clip containers in root_mc
         for( var i : Number = 0; i < layers.length; i++ ){
@@ -357,10 +361,6 @@ class Level {
     }
 
     function computeObjects() : Void {
-        // sync physics engine objects with entities
-        for(var i : Number = 0; i < entities.length; i++)
-            entities[i].pos = entities[i].body.getPos();
-
         // if it's no longer relevant, remove the movie clip
         // and move the element to inactive objects
         removeDistantObjects(activeObjects);
@@ -369,6 +369,7 @@ class Level {
 
         moveIntoPlace(activeObjects);
         moveIntoPlace(obstacles);
+        moveIntoPlace(entities);
 
         // perform actions on objects
         for( var i : Number = 0; i < activeObjects.length; i++){
@@ -445,7 +446,7 @@ class Level {
                 // some classes get added to physics engine
                 if( inactiveObjects[i].classNum == LevelObject.CLASS_ENTITY ){
                     inactiveObjects[i].body = new Body(
-                        inactiveObjects[i].pos, 0, inactiveObjects[i].mc);
+                        inactiveObjects[i].pos, 0, new Vector(0,0), 0);
                     engine.addBody(inactiveObjects[i].body);
                 }
 
@@ -483,7 +484,10 @@ class Level {
                 objects[i].mc.removeMovieClip();       
                 if( objects[i].body )
                     engine.removeBody(objects[i].body);
-                inactiveObjects.push(objects.splice(i, 1)[0]);
+
+                var obj : LevelObject = objects.splice(i, 1)[0];
+                if( ! obj.expires )
+                    inactiveObjects.push(obj);
                 i--;
                 continue;
             }
@@ -492,6 +496,9 @@ class Level {
 
     function moveIntoPlace(objects : Array) : Void {
         for( var i : Number = 0; i < objects.length; i++ ){
+            if( objects[i].body )
+                objects[i].pos = objects[i].body.pos;
+
             // move the object into place
             objects[i].mc._x = relX(
                 objects[i].pos.x + 
@@ -558,11 +565,33 @@ class Level {
         var obj_xmlnode : XML = my_xml.childNodes[i];
         for (var i : Number = 0; i < obj_xmlnode.childNodes.length; i++) {
             // get level object and push it into array
-            inactiveObjects.push(createLevelObject(obj_xmlnode.childNodes[i], i));
+            inactiveObjects.push(createLevelObject(obj_xmlnode.childNodes[i]));
         }
     }
 
-    private function createLevelObject(node : XML, objId : Number) {
+    public function shootBullet(pos : Vector, dir : Vector) {
+        var vel : Vector = dir.clone();
+        vel.normalize();
+        vel.scale(bulletSpeed);
+
+        var obj : LevelObject = 
+            new LevelObject(0, 0, pos, LAYER_OBJ, new Vector(1,1), null, true);
+        var bod : Body = new Projectile(pos, vel);
+        obj.body = bod;
+        engine.addBody(obj.body);
+        
+        var layer_mc : MovieClip = root_mc[layers[obj.layer]];
+        var str : String = "obj" + obj.objId;
+        layer_mc.attachMovie("bullet", str, layer_mc.getNextHighestDepth());
+        obj.mc = layer_mc[str];
+        obj.mc._x = relX(obj.pos.x);
+        obj.mc._y = relY(obj.pos.y);
+        obj.mc._rotation = Util.radToDeg(Math.atan2(dir.y, dir.x));
+
+        entities.push(obj);
+    }
+
+    private function createLevelObject(node : XML) {
         var cls : Number = parseInt(node.attributes.cls);
         var id : Number = parseInt(node.attributes.id);
        
@@ -599,26 +628,26 @@ class Level {
                 case LevelObject.ID_SOLDIER:
                     // TODO: switch with real enemy object
                     return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                        node.attributes, objId);
+                        node.attributes, false);
                 case LevelObject.ID_HELICOPTER:
                     // TODO: switch with real enemy object
                     return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                        node.attributes, objId);
+                        node.attributes, false);
                 case LevelObject.ID_TURRET:
-                    return new Turret(pos, node.attributes, objId, this);
+                    return new Turret(pos, node.attributes, this);
                 case LevelObject.ID_CANNON:
                     // TODO: switch with real enemy object
                     return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                        node.attributes, objId);
+                        node.attributes, false);
                 case LevelObject.ID_BOMB_THROWER:
                     // TODO: switch with real enemy object
                     return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                        node.attributes, objId);
+                        node.attributes, false);
             }
         } else {
             // generic LevelObject
             return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                node.attributes, objId);
+                node.attributes, false);
         }
     }
     
