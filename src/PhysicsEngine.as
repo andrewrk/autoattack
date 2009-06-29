@@ -21,7 +21,7 @@ class PhysicsEngine {
         for( var i : Number = 0; i < bodies.length; i++ ){
             if( bodies[i] == body ){ // I think this checks the reference hash
                 bodies.splice(i, 1);
-                break;
+                return;
             }
         }
         trace("Unstable condition: engine.removeBody() failed!");
