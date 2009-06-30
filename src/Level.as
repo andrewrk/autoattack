@@ -2,6 +2,7 @@
 
 import org.cove.flade.DynamicsEngine;
 import org.cove.flade.util.Vector;
+import org.cove.flade.primitives.*;
 
 class Level {
     // static constants
@@ -334,16 +335,17 @@ class Level {
         initializeLevel();
         
         // set up physics engine
-        engine.setDamping(1.0);
-        engine.setGravity(0.0, 0.5);
-        engine.setSurfaceBounce(0.1);
-        engine.setSurfaceFriction(0.1);
+        engine.setDamping(0.99);
+        engine.setGravity(0.0, 1.0);
+        engine.setSurfaceBounce(0.5);
+        engine.setSurfaceFriction(0.01);
 
         var sw : Number = sectorWidth * (lvlSquRight - lvlSquLeft);
         var sh : Number = sectorHeight * (lvlSquBottom - lvlSquTop);
         var sx : Number = sectorWidth * lvlSquLeft;
         var sy : Number = sectorHeight * lvlSquTop;
         engine.addSurface(new LevelSurface(this));
+        engine.level = this;
 
         // add jeep to physics engine
         jeep = new Jeep(startPos, 0, this);
@@ -368,8 +370,8 @@ class Level {
         computeObjects();
         paint();
 
-        engine.paintPrimitives();
-        engine.paintConstraints();
+        //engine.paintPrimitives();
+        //engine.paintConstraints();
     }
 
     function startStreamingSong() : Void {
@@ -388,10 +390,9 @@ class Level {
 
     function computeObjects() : Void {
         for( var i : Number = 0; i < projectiles.length; i++){
-            if( projectiles[i].body.dead ){
+            if( projectiles[i].primitive.dead ){
                 // explode
-                /* TODO: Convert to flade
-                engine.removeBody(projectiles[i].body); */
+                engine.removePrimitive(projectiles[i].primitive);
                 projectiles[i].mc.removeMovieClip();
                 projectiles.splice(i, 1);
                 i--;
@@ -480,14 +481,12 @@ class Level {
                         parseFloat(inactiveObjects[i].attrs.dir);
                 }
 
-                /* TODO: convert to flade
                 // some classes get added to physics engine
                 if( inactiveObjects[i].classNum == LevelObject.CLASS_ENTITY ){
-                    inactiveObjects[i].body = new Body(
-                        inactiveObjects[i].pos, 0, new Vector(0,0), 0);
-                    engine.addBody(inactiveObjects[i].body);
+                    inactiveObjects[i].primitive = new Particle(
+                        inactiveObjects[i].pos.x, inactiveObjects[i].pos.y);
+                    engine.addPrimitive(inactiveObjects[i].primitive);
                 }
-                */
 
                 // triggers are invisible
                 if( inactiveObjects[i].classNum == LevelObject.CLASS_TRIGGER ){
@@ -519,10 +518,8 @@ class Level {
         for( var i : Number = 0; i < objects.length; i++ ){
             if( ! inScreenRangeF(objects[i].pos, objects[i].scrollFactor) ) {
                 objects[i].mc.removeMovieClip();       
-                /* TODO: convert to flade
-                if( objects[i].body )
-                    engine.removeBody(objects[i].body);
-                    */
+                if( objects[i].primitive )
+                    engine.removePrimitive(objects[i].primitive);
 
                 var obj : LevelObject = objects.splice(i, 1)[0];
                 if( ! obj.expires )
@@ -535,11 +532,8 @@ class Level {
 
     function moveIntoPlace(objects : Array) : Void {
         for( var i : Number = 0; i < objects.length; i++ ){
-            var angle : Number = 0;
-            if( objects[i].body ) {
-                objects[i].pos = objects[i].body.pos;
-                angle = objects[i].body.angle;
-            }
+            if( objects[i].primitive )
+                objects[i].pos = objects[i].primitive.getPos();
 
             // move the object into place
             var offset : Vector = objects[i].pos.minusNew(getPlayerPos());
@@ -548,7 +542,7 @@ class Level {
                 objects[i].pos.y + offset.y * (objects[i].scrollFactor.y - 1)
             );
 
-            moveMC(objects[i].mc, pos, angle);
+            moveMC_noa(objects[i].mc, pos);
         }
     }
 
@@ -618,24 +612,20 @@ class Level {
     }
 
     public function shootBullet(pos : Vector, dir : Vector) {
-        // TODO: convert this to flade
-        /*var vel : Vector = dir.clone();
-        vel.normalize();
-        vel.scale(bulletSpeed);
+        var vel : Vector = dir.clone().normalize().mult(bulletSpeed);
 
         var obj : LevelObject = 
             new LevelObject(0, 0, pos, LAYER_OBJ, new Vector(1,1), null, true);
-        var bod : Body = new Projectile(pos, vel);
-        obj.body = bod;
-        engine.addBody(obj.body);
+        obj.primitive = new Projectile(pos, vel);
+        engine.addPrimitive(obj.primitive);
         
         var layer_mc : MovieClip = root_mc[layers[obj.layer]];
         var str : String = "obj" + obj.objId;
         layer_mc.attachMovie("bullet", str, layer_mc.getNextHighestDepth());
         obj.mc = layer_mc[str];
-        moveMC(obj.mc, obj.pos, dir.getAngle());
+        moveMC(obj.mc, obj.pos, dir.angle());
 
-        projectiles.push(obj);*/
+        projectiles.push(obj);
     }
 
     private function createLevelObject(node : XML) {
@@ -864,6 +854,12 @@ class Level {
         return false;
     }
 
+    public function moveMC_noa(mc : MovieClip, pos : Vector) {
+        var rel : Vector = getRelPos(pos);
+        mc._x = rel.x;
+        mc._y = rel.y;
+    }
+    
     public function moveMC(mc : MovieClip, pos : Vector, angle : Number) {
         var rel : Vector = getRelPos(pos);
         mc._x = rel.x;

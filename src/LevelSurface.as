@@ -38,25 +38,38 @@ class LevelSurface extends AbstractTile implements Surface {
     }
 
     private function isCircleColliding(p : CircleParticle) : Boolean {
-        if( level.hit(p.prev) ){
-            trace("resorting to flat");
-            normal.setTo(0, -1);
-            p.mtd.setTo(0, -50);
-            return level.hit(p.curr);
-        } else {
-            var contactPoint : Vector = level.getContactPoint(p.prev, p.curr);
-            if( contactPoint == null ) {
-                return false;
-            } else {
-                p.mtd = contactPoint.minusNew(p.curr);
+        var angCheck : Number = 0.1 * Math.PI;
+
+        for(var rad : Number = 0; rad < Math.PI * 2; rad+=angCheck) {
+            var prevCheck : Vector = Util.extendRadius(p.prev, rad, p.radius);
+            var currCheck : Vector = Util.extendRadius(p.curr, rad, p.radius);
+            var contactPoint : Vector = level.getContactPoint(prevCheck, currCheck);
+            if( contactPoint != null ) {
                 normal = level.getSurfaceNormal(contactPoint);
+                p.mtd = contactPoint.plusNew(normal.multNew(p.radius)).minus(p.curr);
                 return true;
             }
         }
+
+        return false;
     }
 
     private function isRectangleColliding(p : RectangleParticle) : Boolean {
-        return false;
+        // TODO: this only works for 1 pixel width and height rectangles now
+        if( level.hit(p.prev) ){
+            trace("rectanglecollision failed to resolve");
+            return true;
+        } else {
+            var contactPoint : Vector = level.getContactPoint(p.prev,p.curr);
+            if( contactPoint == null ){
+                return false;
+            } else {
+                normal = level.getSurfaceNormal(contactPoint);
+                p.mtd = contactPoint.minusNew(p.curr);
+
+                return true;
+            }
+        }
     }
 
 }

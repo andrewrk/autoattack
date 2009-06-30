@@ -17,9 +17,7 @@ Andy:
     - change inactive LevelObject array to indexed by square x,y
 
 Josh:
-* make jeep physics work
-    - normal force
-    - multiple points of contact (non particle)
-    - rigid rotation
-* add wheels to jeep
-    - composite objects / connectors
+* fix up physics
+    - make it smooth
+    - maybe make it something other than a rod connecting the wheels
+    - make it less springy

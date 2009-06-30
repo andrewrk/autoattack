@@ -129,5 +129,18 @@ class org.cove.flade.util.Vector {
     public function angle() : Number {
         return Math.atan2(y,x);
     }
+
+    public function rotate(angleOffset : Number) : Vector {
+        var newAng : Number = angle() + angleOffset;
+        var mag : Number = magnitude();
+        x = mag * Math.cos(newAng);
+        y = mag * Math.sin(newAng);
+
+        return this;
+    }
+
+    public function clone() : Vector {
+        return new Vector(x,y);
+    }
 }
 

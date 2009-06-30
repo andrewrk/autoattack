@@ -86,8 +86,12 @@ class org.cove.flade.primitives.Particle {
 		temp.x = curr.x;
 		temp.y = curr.y;
 		
-		curr.x += sysObj.coeffDamp * (curr.x - prev.x) + sysObj.gravity.x;
-		curr.y += sysObj.coeffDamp * (curr.y - prev.y) + sysObj.gravity.y;
+        var grav : Vector = sysObj.gravity;
+        if( ! needsGravity() )
+            grav = new Vector(0, 0);
+
+		curr.x += sysObj.coeffDamp * (curr.x - prev.x) + grav.x;
+		curr.y += sysObj.coeffDamp * (curr.y - prev.y) + grav.y;
 
 		prev.x = temp.x;
 		prev.y = temp.y;
@@ -222,6 +226,10 @@ class org.cove.flade.primitives.Particle {
 	public function checkCollision(surface:Surface, sysObj:DynamicsEngine):Void {
 	}
 
+    // some subclasses can skip gravity
+    public function needsGravity() : Boolean {
+        return true;
+    }
 
 }
 

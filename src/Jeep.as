@@ -10,10 +10,11 @@ import org.cove.flade.composites.*;
 class Jeep {
     private var jeepWidth : Number = 137;
     private var jeepHeight : Number = 61;
+    private var jeepBodyHeight : Number = 20;
     private var wheelWidth : Number = 25;
     private var wheelHeight : Number = 25;
     private var defWheelDist : Number = 79;
-    private var wheelRadius : Number = 13;
+    private var wheelRadius : Number = 10;
 
     // vector from center of mass to wheel
     private var bwOffset : Vector;
@@ -61,18 +62,13 @@ class Jeep {
         var fwPos : Vector = pos.plusNew(fwOffset);
         var bwPos : Vector = pos.plusNew(bwOffset);
 
-		var leftX:Number = bwPos.x;
-		var rightX:Number = fwPos.x;
-		var widthX:Number = rightX - leftX;
-		var midX:Number = leftX + (widthX / 2);
-		var topY:Number = bwPos.y;
-
-        frontWheelBody = new Wheel(leftX, topY, wheelRadius);
-        backWheelBody = new Wheel(rightX, topY, wheelRadius);
+        frontWheelBody = new Wheel(fwPos.x, fwPos.y, wheelRadius);
+        backWheelBody = new Wheel(bwPos.x, bwPos.y, wheelRadius);
 
         engine.addPrimitive(frontWheelBody);
         engine.addPrimitive(backWheelBody);
 
+        /*
         // body
         var rectA : SpringBox = new SpringBox(midX, topY, widthX, 
             15, engine);
@@ -90,29 +86,49 @@ class Jeep {
         var conn2a:SpringConstraint = new SpringConstraint(backWheelBody,
             rectA.p1);
         engine.addConstraint(conn2a);
+        */
 
-		// triangle top of car
-		var p1:CircleParticle = new CircleParticle(midX, topY - 25, 2, 2);
-		engine.addPrimitive(p1);
-		
-		var conn3:SpringConstraint = new SpringConstraint(frontWheelBody, p1);
-		engine.addConstraint(conn3);
-		
-		var conn4:SpringConstraint = new SpringConstraint(backWheelBody, p1);
-		engine.addConstraint(conn4);
-		
-		
-		// angular constraint for triangle top
-		var ang : AngularConstraint = new AngularConstraint(frontWheelBody, p1, backWheelBody);
-		engine.addConstraint(ang);
+        //var boxTopLeft : RectangleParticle = new RectangleParticle(bwPos.x,
+        //    pos.y - jeepBodyHeight, 1, 1);
+        //var boxTopRight : RectangleParticle = new RectangleParticle(fwPos.x,
+        //    pos.y - jeepBodyHeight, 1, 1);
 
+        //engine.addPrimitive(boxTopLeft);
+        //engine.addPrimitive(boxTopRight);
+
+        //var conn1 : SpringConstraint = new SpringConstraint(frontWheelBody,
+        //    backWheelBody);
+        //conn1.setStiffness(0.6);
+        //engine.addConstraint(conn1);
+
+        var conn4 : SpringConstraint = new SpringConstraint(frontWheelBody, 
+            backWheelBody);
+        conn4.setStiffness(0.5);
+        engine.addConstraint(conn4);
+
+        //var conn2 : SpringConstraint = new SpringConstraint(boxTopLeft, 
+        //    boxTopRight);
+        //var conn3 : SpringConstraint = new SpringConstraint(boxTopRight, 
+        //    frontWheelBody);
+        //var conn5 : SpringConstraint = new SpringConstraint(backWheelBody, 
+        //    boxTopLeft);
+        //var conn6 : SpringConstraint = new SpringConstraint(boxTopLeft, 
+        //    frontWheelBody);
+        //var conn7 : SpringConstraint = new SpringConstraint(boxTopRight, 
+        //    backWheelBody);
+
+        //engine.addConstraint(conn2);
+        //engine.addConstraint(conn3);
+        //engine.addConstraint(conn5);
+        //engine.addConstraint(conn6);
+        //engine.addConstraint(conn7);
 
         this.level = level;
 
     }
 
     public function doInput() : Void {
-        var keySpeed : Number = 2.0;
+        var keySpeed : Number = 4.0;
         if( Key.isDown(Key.LEFT) ){
             frontWheelBody.rp.vs = -keySpeed;
             backWheelBody.rp.vs = -keySpeed;
@@ -130,11 +146,25 @@ class Jeep {
         paintWheel(frontWheel_mc, frontWheelBody);
         paintWheel(backWheel_mc, backWheelBody);
 
-        
-        // TODO: paint the body
-        //paintBody(jeepBody_mc, bodyBody);
-        
+        paintBody();
         paintGunner();
+    }
+
+    private function paintBody() : Void {
+        var fw : Vector = frontWheelBody.getPos();
+        var bw : Vector = backWheelBody.getPos();
+        var pos : Vector = getPos();
+
+        var angle : Number = Math.atan2(fw.y-bw.y,fw.x-bw.x);
+        
+        pos.plus(fw.minusNew(bw).rotate(Math.PI / 2).normalize().mult(-20));
+
+        var relLoc : Vector = level.getRelPos(pos);
+
+        jeepBody_mc._x = relLoc.x;
+        jeepBody_mc._y = relLoc.y;
+
+        jeepBody_mc._rotation = Util.radToDeg(angle);
     }
 
     private function paintGunner() : Void {
@@ -164,7 +194,8 @@ class Jeep {
     }
 
     public function getPos() : Vector {
-        // TODO: switch to jeep body
-        return frontWheelBody.getPos();
+        var fw : Vector = frontWheelBody.getPos();
+        var bw : Vector = backWheelBody.getPos();
+        return new Vector((fw.x+bw.x)/2, (fw.y+bw.y)/2);
     }
 }

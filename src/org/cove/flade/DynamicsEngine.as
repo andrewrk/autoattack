@@ -38,8 +38,10 @@ class org.cove.flade.DynamicsEngine {
 	public var primitives:Array;
 	public var surfaces:Array;
 	public var constraints:Array;
+
+    public var level : Level;
 	
-	public function DynamicsEngine() {
+	public function DynamicsEngine(level : Level) {
 			
 		primitives = new Array();
 		surfaces = new Array();
@@ -50,6 +52,8 @@ class org.cove.flade.DynamicsEngine {
 		coeffRest = 1 + 0.5;
 		coeffFric = 0.01;	// surface friction
 		coeffDamp = 0.99; 	// global damping
+
+        this.level = level;
 	}
 	
 	
@@ -57,16 +61,47 @@ class org.cove.flade.DynamicsEngine {
 		primitives.push(p);
 	}
 
+    public function removePrimitive(p:Particle):Void {
+        for(var i : Number; i < primitives.length; i++ ){
+            if( primitives[i] == p ){
+                primitives.splice(i,1);
+                return;
+            }
+        }
+
+        trace("ERROR: removePrimitive failed");
+    }
+
 
 	public function addSurface(s:Surface):Void {
 		surfaces.push(s);
 	}
 
+    public function removeSurface(s:Surface):Void {
+        for(var i : Number; i < surfaces.length; i++ ){
+            if( surfaces[i] == s ){
+                surfaces.splice(i,1);
+                return;
+            }
+        }
+
+        trace("ERROR: removeSurface failed");
+    }
 	
 	public function addConstraint(c:Constraint):Void {
 		constraints.push(c);
 	}
 	
+    public function removeConstraint(c:Constraint):Void {
+        for(var i : Number; i < constraints.length; i++ ){
+            if( constraints[i] == c ){
+                constraints.splice(i,1);
+                return;
+            }
+        }
+
+        trace("ERROR: removeConstraint failed");
+    }
 	
 	public function paintSurfaces():Void {
 		for (var j:Number = 0; j < surfaces.length; j++) {

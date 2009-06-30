@@ -91,7 +91,7 @@ class LevelObject {
     public var objId : Number; // unique number used to reference movie clips
 
     public var mc : MovieClip; // the movie clip (if any) used to paint this
-    public var body : Particle; // the physics body (if any) used for physics
+    public var primitive : Particle; // the physics body (if any) used for physics
 
     public var node : XML; // for level editing
 
@@ -111,7 +111,7 @@ class LevelObject {
         this.mcString = mcName(classNum, idNum);
         this.objId = objectCount++;
         this.mc = null;
-        this.body = null;
+        this.primitive = null;
         this.expires = expires;
     }
 
