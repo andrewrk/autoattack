@@ -1,5 +1,7 @@
 // LevelEditor class - edit levels
 
+import org.cove.flade.util.Vector;
+
 class LevelEditor extends Level {
     
     // level editor variables
@@ -32,7 +34,8 @@ class LevelEditor extends Level {
     }
 
     function getPlayerPos() : Vector {
-        return scrollOffset.plus(sectorSize.divide(2));
+        return (new Vector(sectorWidth / 2, sectorHeight / 2)).plus(
+            scrollOffset);
     }
 
     function paint() {
@@ -88,7 +91,7 @@ class LevelEditor extends Level {
     }
 
     function pan(amount : Vector) {
-        scrollOffset.translate(amount);
+        scrollOffset.plus(amount);
         paint();
     }
 

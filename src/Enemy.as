@@ -1,5 +1,7 @@
 // Enemy class - extends LevelObject and provides an AI 
 
+import org.cove.flade.util.Vector;
+
 class Enemy extends LevelObject {
 
     private var level : Level;

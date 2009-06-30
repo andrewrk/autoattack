@@ -1,6 +1,9 @@
 // LevelObject class - an object in a level like a bad guy, a decoration, 
 // or something you can interact with
 
+import org.cove.flade.util.Vector;
+import org.cove.flade.primitives.Particle;
+
 class LevelObject {
     public static var CLASS_BG_DYN : Number = 0;
     public static var CLASS_BG_ST : Number = 6;
@@ -88,7 +91,7 @@ class LevelObject {
     public var objId : Number; // unique number used to reference movie clips
 
     public var mc : MovieClip; // the movie clip (if any) used to paint this
-    public var body : Body; // the physics body (if any) used for physics
+    public var body : Particle; // the physics body (if any) used for physics
 
     public var node : XML; // for level editing
 

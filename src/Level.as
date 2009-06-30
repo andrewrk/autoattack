@@ -1,5 +1,8 @@
 // Level object - game code for a level
 
+import org.cove.flade.DynamicsEngine;
+import org.cove.flade.util.Vector;
+
 class Level {
     // static constants
     public static var LAYER_BG : Number = 0;
@@ -28,8 +31,8 @@ class Level {
     private var lvlScale : Number;
     
     //game constants
-    private var sectorSize : Vector;
-    private var defSectorSize : Vector;
+    private var sectorWidth : Number, sectorHeight : Number;
+    private var defSectorWidth : Number = 550, defSectorHeight : Number = 400;
     private var fps : Number = 30;
 
     // TODO: this doesn't seem to belong here
@@ -61,7 +64,7 @@ class Level {
     private var startedLoad : Boolean;
     private var progressVisible : Boolean;
     
-    private var engine : PhysicsEngine;
+    private var engine : DynamicsEngine;
     
     // jeep handle
     private var jeep : Jeep;
@@ -81,7 +84,6 @@ class Level {
                     movieHeight : Number)
     {
         // constants
-        defSectorSize = new Vector(550, 400);
 
         this.number = number;
         this.root_mc = root_mc;
@@ -97,7 +99,7 @@ class Level {
         this.startedLoad = false;
         this.progressVisible = false;
         
-        this.engine = new PhysicsEngine(this);
+        this.engine = new DynamicsEngine(this);
         
         this.jeep = null; // we initialize the jeep after the level is loaded
         this.inactiveObjects = new Array();
@@ -238,7 +240,7 @@ class Level {
                 
                 this.level.root_mc.bg_mc.createEmptyMovieClip("bgright_mc",
                     this.level.root_mc.bg_mc.getNextHighestDepth());
-                this.level.root_mc.bg_mc.bgright_mc._x = defSectorSize.x;
+                this.level.root_mc.bg_mc.bgright_mc._x = defSectorWidth;
                 this.level.root_mc.bg_mc.bgright_mc._y = 0;
                 this.level.root_mc.bg_mc.bgright_mc._visible = true;
                 // load already cached swf
@@ -331,6 +333,18 @@ class Level {
         //initialize level
         initializeLevel();
         
+        // set up physics engine
+        engine.setDamping(1.0);
+        engine.setGravity(0.0, 0.5);
+        engine.setSurfaceBounce(0.1);
+        engine.setSurfaceFriction(0.1);
+
+        var sw : Number = sectorWidth * (lvlSquRight - lvlSquLeft);
+        var sh : Number = sectorHeight * (lvlSquBottom - lvlSquTop);
+        var sx : Number = sectorWidth * lvlSquLeft;
+        var sy : Number = sectorHeight * lvlSquTop;
+        engine.addSurface(new LevelSurface(this));
+
         // add jeep to physics engine
         jeep = new Jeep(startPos, 0, this);
         
@@ -346,10 +360,16 @@ class Level {
     }
     
     private function main() : Void {
-        engine.stepFrame();
+        // keyboard input
+        jeep.doInput();
+
+        engine.timeStep();
         scroll();
         computeObjects();
         paint();
+
+        engine.paintPrimitives();
+        engine.paintConstraints();
     }
 
     function startStreamingSong() : Void {
@@ -370,7 +390,8 @@ class Level {
         for( var i : Number = 0; i < projectiles.length; i++){
             if( projectiles[i].body.dead ){
                 // explode
-                engine.removeBody(projectiles[i].body);
+                /* TODO: Convert to flade
+                engine.removeBody(projectiles[i].body); */
                 projectiles[i].mc.removeMovieClip();
                 projectiles.splice(i, 1);
                 i--;
@@ -459,12 +480,14 @@ class Level {
                         parseFloat(inactiveObjects[i].attrs.dir);
                 }
 
+                /* TODO: convert to flade
                 // some classes get added to physics engine
                 if( inactiveObjects[i].classNum == LevelObject.CLASS_ENTITY ){
                     inactiveObjects[i].body = new Body(
                         inactiveObjects[i].pos, 0, new Vector(0,0), 0);
                     engine.addBody(inactiveObjects[i].body);
                 }
+                */
 
                 // triggers are invisible
                 if( inactiveObjects[i].classNum == LevelObject.CLASS_TRIGGER ){
@@ -496,8 +519,10 @@ class Level {
         for( var i : Number = 0; i < objects.length; i++ ){
             if( ! inScreenRangeF(objects[i].pos, objects[i].scrollFactor) ) {
                 objects[i].mc.removeMovieClip();       
+                /* TODO: convert to flade
                 if( objects[i].body )
                     engine.removeBody(objects[i].body);
+                    */
 
                 var obj : LevelObject = objects.splice(i, 1)[0];
                 if( ! obj.expires )
@@ -517,11 +542,12 @@ class Level {
             }
 
             // move the object into place
-            var pos : Vector = objects[i].pos.plus(
-                objects[i].pos.minus(getPlayerPos()).componentMult(
-                    objects[i].scrollFactor.plusScalar(-1)
-                )
+            var offset : Vector = objects[i].pos.minusNew(getPlayerPos());
+            var pos : Vector = new Vector(
+                objects[i].pos.x + offset.x * (objects[i].scrollFactor.x - 1),
+                objects[i].pos.y + offset.y * (objects[i].scrollFactor.y - 1)
             );
+
             moveMC(objects[i].mc, pos, angle);
         }
     }
@@ -530,8 +556,8 @@ class Level {
         // return true if the position is considered close 
         // enough to need to be rendered on screen
         var pp : Vector = getPlayerPos();
-        return (Math.abs(pos.x - pp.x) < sectorSize.x * (1 / scrollFactor.x)) 
-            && (Math.abs(pos.y - pp.y) < sectorSize.y * (1 / scrollFactor.y));
+        return (Math.abs(pos.x - pp.x) < sectorWidth * (1 / scrollFactor.x)) 
+            && (Math.abs(pos.y - pp.y) < sectorHeight * (1 / scrollFactor.y));
     }
 
     function inScreenRange(pos : Vector) : Boolean {
@@ -557,7 +583,8 @@ class Level {
                 //level propertes
                 bgMusicURL = my_xml.childNodes[i].attributes.bgmusic;
                 lvlScale = parseFloat (my_xml.childNodes[i].attributes.scale);
-                sectorSize = defSectorSize.times(lvlScale);
+                sectorWidth = lvlScale * defSectorWidth;
+                sectorHeight = lvlScale * defSectorHeight;
                 startSector = new Vector(
                     parseInt(my_xml.childNodes[i].attributes.sx),
                     parseInt(my_xml.childNodes[i].attributes.sy) );
@@ -565,7 +592,7 @@ class Level {
                 startPos = (new Vector(
                     parseInt(my_xml.childNodes[i].attributes.spx),
                     parseInt (my_xml.childNodes[i].attributes.spy))
-                ).times(lvlScale);
+                ).multNew(lvlScale);
 
                 lvlSquLeft = parseInt(my_xml.childNodes[i].attributes.sl);
                 lvlSquRight = parseInt(my_xml.childNodes[i].attributes.sr);
@@ -591,7 +618,8 @@ class Level {
     }
 
     public function shootBullet(pos : Vector, dir : Vector) {
-        var vel : Vector = dir.clone();
+        // TODO: convert this to flade
+        /*var vel : Vector = dir.clone();
         vel.normalize();
         vel.scale(bulletSpeed);
 
@@ -607,7 +635,7 @@ class Level {
         obj.mc = layer_mc[str];
         moveMC(obj.mc, obj.pos, dir.getAngle());
 
-        projectiles.push(obj);
+        projectiles.push(obj);*/
     }
 
     private function createLevelObject(node : XML) {
@@ -640,7 +668,8 @@ class Level {
         else
             scrollFactor = new Vector(1, 1);
         
-        var pos : Vector = sector.componentMult(sectorSize).plus(offset);
+        var pos : Vector = new Vector(sectorWidth * sector.x + offset.x,
+            sectorHeight * sector.y + offset.y);
         if( cls == LevelObject.CLASS_ENEMY ){
             // return an enemy object
             switch( id ){
@@ -686,25 +715,25 @@ class Level {
     function scroll() : Void {
         // determine what sector we're in
         var playerPos : Vector = getPlayerPos();
-        curSector = playerPos.componentDivide(sectorSize).applyMath(Math.floor);
+        curSector = new Vector(Math.floor(playerPos.x / sectorWidth),
+            Math.floor(playerPos.y / sectorHeight));
         
         //scroll window
-        scrollOffset =
-            playerPos.minus(movieSize.divide(2)).applyMath(Math.round);
+        scrollOffset = playerPos.minusNew(movieSize.multNew(0.5));
     }
 
     function paintBackground() : Void {
         //background
         root_mc.bg_mc.bgcenter_mc._x = 
-            - (scrollOffset.x % (defSectorSize.x * 4)) / 4 ;
+            - (scrollOffset.x % (movieSize.x * 4)) / 4 ;
         root_mc.bg_mc.bgright_mc._x = 
-            root_mc.bg_mc.bgcenter_mc._x + defSectorSize.x;
+            root_mc.bg_mc.bgcenter_mc._x + movieSize.x;
     }
 
     function paintSectors() : Void {
         //move sectors into place
-        var vbegin : Vector = curSector.minus(new Vector(2,2));
-        var vend : Vector = curSector.plus(new Vector(2,2));
+        var vbegin : Vector = curSector.minusNew(new Vector(2,2));
+        var vend : Vector = curSector.plusNew(new Vector(2,2));
         for (var y = vbegin.y; y <= vend.y; y++) {
             for (var x = vbegin.x; x <= vend.x; x++){
                 var mc : MovieClip = root_mc.level_mc["sx" + x + "y" + y];
@@ -714,7 +743,7 @@ class Level {
                     mc._visible = false;
                 } else {
                     mc._visible = true;
-                    moveMC(mc, sectorSize.componentMult(new Vector(x, y)), 0);
+                    moveMC(mc, new Vector(x * sectorWidth, y * sectorHeight),0);
                 }
             }
         }
@@ -740,17 +769,17 @@ class Level {
 
         if( hit(newLoc) ){
             // create a direction vector towards the old location
-            var dir : Vector = oldLoc.minus(newLoc);
+            var dir : Vector = oldLoc.minusNew(newLoc);
             var dist : Number;
-            var upper : Number = dir.getMagnitude();
+            var upper : Number = dir.magnitude();
             var lower : Number = 1;
 
             do {
                 dir.normalize();
                 dist = (upper + lower) / 2;
-                dir.scale(dist);
+                dir.mult(dist);
 
-                if( hit(newLoc.plus(dir).applyMath(Math.round)) ){
+                if( hit(newLoc.plusNew(dir)) ){
                     lower = dist;
                 } else {
                     upper = dist;
@@ -760,9 +789,9 @@ class Level {
             // normalize dir and multiply it by dist
             dir.normalize();
             // use upper because it's crucial that we return an unhit pixel
-            dir.scale(upper); 
+            dir.mult(upper); 
             
-            return newLoc.plus(dir).applyMath(Math.round);
+            return dir.plus(newLoc);
 
         } else {
             return null;
@@ -809,7 +838,7 @@ class Level {
         } while(Math.abs(upper - lower) > accuracy); 
 
         // both feelers found surfaces, now find slope between points
-        var slope : Vector = f2vec.minus(f1vec);
+        var slope : Vector = f2vec.minusNew(f1vec);
 
         // normalize and make it perpindicular
         slope.normalize();
@@ -843,11 +872,11 @@ class Level {
     }
     
     public function getRelPos(absPos : Vector) : Vector {
-        return absPos.minus(scrollOffset);
+        return absPos.minusNew(scrollOffset);
     }
     
     public function getAbsPos(relPos : Vector) : Vector {
-        return relPos.plus(scrollOffset);
+        return relPos.plusNew(scrollOffset);
     }
     
     function dispose() : Void {
@@ -868,7 +897,7 @@ class Level {
         return root_mc;
     }
 
-    public function getEngine() : PhysicsEngine {
+    public function getEngine() : DynamicsEngine {
         return engine;
     }
 

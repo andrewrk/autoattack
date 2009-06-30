@@ -1,4 +1,7 @@
 // static utility functions
+
+import org.cove.flade.util.*;
+
 class Util {
     public static function radToDeg(radians : Number) : Number {
         return radians * 180 / Math.PI;
@@ -31,7 +34,7 @@ class Util {
     public static function extendRadius(
         pos : Vector, angle : Number, radius : Number) : Vector
     {
-        return pos.plus(
+        return pos.plusNew(
             new Vector(radius * Math.cos(angle), radius * Math.sin(angle)));
     }
 }

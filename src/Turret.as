@@ -1,5 +1,7 @@
 // Those spinning turrets that shoot stuff at the player
 
+import org.cove.flade.util.Vector;
+
 class Turret extends Enemy {
 
     // actions

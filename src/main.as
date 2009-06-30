@@ -34,6 +34,8 @@ keyListener.onKeyDown = function() {
         case Key.SPACE:
             if( _root.transmission_mc )
                 level.acceptTransmission();
+            else
+                level.main();
             break;
     }
 }
