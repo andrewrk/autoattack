@@ -370,8 +370,8 @@ class Level {
         computeObjects();
         paint();
 
-        //engine.paintPrimitives();
-        //engine.paintConstraints();
+        engine.paintPrimitives();
+        engine.paintConstraints();
     }
 
     function startStreamingSong() : Void {

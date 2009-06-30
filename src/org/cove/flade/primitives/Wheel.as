@@ -130,7 +130,7 @@ class org.cove.flade.primitives.Wheel extends CircleParticle {
 	}	
 
     public function getAngle() : Number {
-        return rp.curr.minusNew(curr).angle();
+        return rp.curr.angle();
     }
 }
 

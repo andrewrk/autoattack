@@ -142,5 +142,9 @@ class org.cove.flade.util.Vector {
     public function clone() : Vector {
         return new Vector(x,y);
     }
+
+    public function toString() : String {
+        return "v(" + x + ", " + y + ")";
+    }
 }
 
