@@ -68,6 +68,11 @@ class org.cove.flade.surfaces.RectangleTile extends AbstractTile implements Surf
 		}
 	}
 
+
+    public function resolveParticleCollision(p:Particle, sysObj:DynamicsEngine):Void {
+        // TODO: 
+    }
+	
 	
 	private function isCircleColliding(p:CircleParticle):Boolean {
 	

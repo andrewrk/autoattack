@@ -62,7 +62,7 @@ class org.cove.flade.DynamicsEngine {
 	}
 
     public function removePrimitive(p:Particle):Void {
-        for(var i : Number; i < primitives.length; i++ ){
+        for(var i : Number = 0; i < primitives.length; i++ ){
             if( primitives[i] == p ){
                 primitives.splice(i,1);
                 return;
@@ -78,7 +78,7 @@ class org.cove.flade.DynamicsEngine {
 	}
 
     public function removeSurface(s:Surface):Void {
-        for(var i : Number; i < surfaces.length; i++ ){
+        for(var i : Number = 0; i < surfaces.length; i++ ){
             if( surfaces[i] == s ){
                 surfaces.splice(i,1);
                 return;
@@ -93,7 +93,7 @@ class org.cove.flade.DynamicsEngine {
 	}
 	
     public function removeConstraint(c:Constraint):Void {
-        for(var i : Number; i < constraints.length; i++ ){
+        for(var i : Number = 0; i < constraints.length; i++ ){
             if( constraints[i] == c ){
                 constraints.splice(i,1);
                 return;

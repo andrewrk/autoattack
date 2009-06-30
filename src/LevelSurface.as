@@ -37,11 +37,22 @@ class LevelSurface extends AbstractTile implements Surface {
         }
     }
 
+
+    public function resolveParticleCollision(p:Particle, 
+        engine:DynamicsEngine):Void
+    {
+        if( isParticleColliding(p) ){
+            onContact();
+            p.resolveCollision(normal, engine);
+        }
+    }
+	
     private function isCircleColliding(p : CircleParticle) : Boolean {
         var angCheck : Number = 0.1 * Math.PI;
 
         for(var rad : Number = 0; rad < Math.PI * 2; rad+=angCheck) {
             var prevCheck : Vector = Util.extendRadius(p.prev, rad, p.radius);
+            if( level.hit(prevCheck) ) continue;
             var currCheck : Vector = Util.extendRadius(p.curr, rad, p.radius);
             var contactPoint : Vector = level.getContactPoint(prevCheck, currCheck);
             if( contactPoint != null ) {
@@ -54,10 +65,9 @@ class LevelSurface extends AbstractTile implements Surface {
         return false;
     }
 
-    private function isRectangleColliding(p : RectangleParticle) : Boolean {
-        // TODO: this only works for 1 pixel width and height rectangles now
+    private function isParticleColliding(p : Particle) : Boolean {
         if( level.hit(p.prev) ){
-            trace("rectanglecollision failed to resolve");
+            trace("particlecollision failed to resolve");
             return true;
         } else {
             var contactPoint : Vector = level.getContactPoint(p.prev,p.curr);
@@ -70,6 +80,11 @@ class LevelSurface extends AbstractTile implements Surface {
                 return true;
             }
         }
+    }
+
+    private function isRectangleColliding(p : RectangleParticle) : Boolean {
+        // TODO: this only works for 1 pixel width and height rectangles now
+        return isParticleColliding(p);
     }
 
 }

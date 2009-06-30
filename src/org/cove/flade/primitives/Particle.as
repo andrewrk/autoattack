@@ -223,7 +223,9 @@ class org.cove.flade.primitives.Particle {
 	}
 
 
-	public function checkCollision(surface:Surface, sysObj:DynamicsEngine):Void {
+	public function checkCollision(surface:Surface, sysObj:DynamicsEngine):Void
+    {
+        surface.resolveParticleCollision(this, sysObj);
 	}
 
     // some subclasses can skip gravity

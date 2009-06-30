@@ -91,6 +91,11 @@ class org.cove.flade.surfaces.LineSurface extends AbstractTile implements Surfac
 	}
 
 
+    public function resolveParticleCollision(p:Particle, sysObj:DynamicsEngine):Void {
+        // TODO: 
+    }
+	
+
 	public function setCollisionDepth(d:Number) {
 		collisionDepth = d;
 		precalculate();

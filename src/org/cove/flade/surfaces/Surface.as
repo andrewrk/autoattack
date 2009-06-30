@@ -35,4 +35,5 @@ interface org.cove.flade.surfaces.Surface {
 	
 	public function resolveCircleCollision(p:CircleParticle, sysObj:DynamicsEngine):Void
 	public function resolveRectangleCollision(p:RectangleParticle, sysObj:DynamicsEngine):Void
+	public function resolveParticleCollision(p:Particle, sysObj:DynamicsEngine):Void
 }

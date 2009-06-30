@@ -62,6 +62,10 @@ class org.cove.flade.surfaces.CircleTile extends AbstractTile implements Surface
 			p.resolveCollision(normal, sysObj);		
 		}
 	}
+
+    public function resolveParticleCollision(p:Particle, sysObj:DynamicsEngine):Void {
+        // TODO: 
+    }
 	
 	
 	private function isCircleColliding(p:CircleParticle):Boolean {
