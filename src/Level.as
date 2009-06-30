@@ -840,8 +840,8 @@ class Level {
     function hit (pos : Vector) : Boolean {
         for (var sy : Number = curSector.y-1; sy <= curSector.y+1; sy++) {
             for (var sx : Number = curSector.x-1; sx <= curSector.x+1; sx++) {
-                var checkX : Number = pos.x - sx * sectorSize.x;
-                var checkY : Number = pos.y - sy * sectorSize.y;
+                var checkX : Number = pos.x - sx * sectorWidth;
+                var checkY : Number = pos.y - sy * sectorHeight;
                 if (root_mc.level_mc["mx" + sx + "y" + sy].hitTest(checkX, checkY, 1))
                     return true;
             }
