@@ -101,9 +101,8 @@ class Jeep {
         //conn1.setStiffness(0.6);
         //engine.addConstraint(conn1);
 
-        var conn4 : SpringConstraint = new SpringConstraint(frontWheelBody, 
+        var conn4 : RodConstraint = new RodConstraint(frontWheelBody, 
             backWheelBody);
-        conn4.setStiffness(0.5);
         engine.addConstraint(conn4);
 
         //var conn2 : SpringConstraint = new SpringConstraint(boxTopLeft, 
@@ -128,7 +127,7 @@ class Jeep {
     }
 
     public function doInput() : Void {
-        var keySpeed : Number = 4.0;
+        var keySpeed : Number = 6.0;
         if( Key.isDown(Key.LEFT) ){
             frontWheelBody.rp.vs = -keySpeed;
             backWheelBody.rp.vs = -keySpeed;

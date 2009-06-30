@@ -336,7 +336,7 @@ class Level {
         
         // set up physics engine
         engine.setDamping(0.99);
-        engine.setGravity(0.0, 1.0);
+        engine.setGravity(0.0, 1.2);
         engine.setSurfaceBounce(0.5);
         engine.setSurfaceFriction(0.01);
 

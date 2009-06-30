@@ -1,5 +1,5 @@
 Andy:
-* separate Level, Transmission, and LevelLoader
+* separate Level, Transmission, and GamePlay. Move user input to GamePlay
 * create a level editor
 * fix up level1
     - move booster thing down and to the right a little

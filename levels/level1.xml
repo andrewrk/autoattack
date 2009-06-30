@@ -1,25 +1,4 @@
 <jclevel gameover="0" sx="0" sy="0" sl="0" st="-1" sr="31" sb="2" spx="160" spy="102" bgmusic="" scale="1">
-
-<!-- debug objects -->
-
-<obj cls="9" id="1" x="300" y="0" sx="0" sy="0" />
-<obj cls="9" id="1" x="290" y="0" sx="0" sy="0" />
-<obj cls="9" id="1" x="280" y="0" sx="0" sy="0" />
-<obj cls="9" id="1" x="270" y="0" sx="0" sy="0" />
-<obj cls="9" id="1" x="260" y="0" sx="0" sy="0" />
-<obj cls="9" id="1" x="250" y="0" sx="0" sy="0" />
-<obj cls="9" id="1" x="240" y="0" sx="0" sy="0" />
-<obj cls="9" id="1" x="310" y="0" sx="0" sy="0" />
-<obj cls="9" id="1" x="320" y="0" sx="0" sy="0" />
-<obj cls="9" id="1" x="330" y="0" sx="0" sy="0" />
-<obj cls="9" id="1" x="340" y="0" sx="0" sy="0" />
-
-
-
-<obj cls="5" id="2" x="175" y="34" srange="0" erange="360" sx="0" sy="0" rate="5" />
-
-<!-- end debug objects -->
-
 <obj cls="0" id="0" x="82" y="-22" w="87" h="44" sx="0" sy="0" />
 <obj cls="0" id="0" x="364" y="43" w="87" h="44" sx="0" sy="0" />
 <obj cls="0" id="0" x="89" y="-19" w="87" h="44" sx="1" sy="0" />
