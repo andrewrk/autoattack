@@ -46,10 +46,11 @@ class org.cove.flade.primitives.CircleParticle extends Particle {
 	}
 	
 	
-	public function paint():Void {
+	public function paint(level : Level):Void {
 		dmc.clear();
 		dmc.lineStyle(0, 0x666666, 100);
-		Graphics.paintCircle(dmc, curr.x, curr.y, radius);
+        var rel : Vector = level.getRelPos(curr);
+		Graphics.paintCircle(dmc, rel.x, rel.y, radius);
 	}
 
 

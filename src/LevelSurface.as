@@ -15,7 +15,7 @@ class LevelSurface extends AbstractTile implements Surface {
         this.level = level;
     }
 
-    public function paint() : Void {
+    public function paint(level : Level) : Void {
         // don't paint
     }
 

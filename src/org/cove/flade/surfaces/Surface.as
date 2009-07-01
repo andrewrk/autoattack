@@ -28,7 +28,7 @@ import org.cove.flade.DynamicsEngine;
 
 interface org.cove.flade.surfaces.Surface {
 	
-	public function paint():Void
+	public function paint(level : Level):Void
 
 	public function getActiveState():Boolean
 	public function setActiveState(s:Boolean):Void

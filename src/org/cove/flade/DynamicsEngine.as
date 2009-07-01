@@ -105,21 +105,21 @@ class org.cove.flade.DynamicsEngine {
 	
 	public function paintSurfaces():Void {
 		for (var j:Number = 0; j < surfaces.length; j++) {
-			surfaces[j].paint();
+			surfaces[j].paint(level);
 		}
 	}
 
 
 	public function paintPrimitives():Void {
 		for (var j:Number = 0; j < primitives.length; j++) {
-			primitives[j].paint();
+			primitives[j].paint(level);
 		}
 	}
 
 
 	public function paintConstraints():Void {
 		for (var j:Number = 0; j < constraints.length; j++) {
-			constraints[j].paint();
+			constraints[j].paint(level);
 		}
 	}
 

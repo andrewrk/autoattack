@@ -24,6 +24,6 @@
  */
 
 interface org.cove.flade.constraints.Constraint {
-	public function paint():Void;
+	public function paint(level : Level):Void;
 	public function resolve():Void;
 }

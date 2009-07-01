@@ -219,7 +219,7 @@ class org.cove.flade.primitives.Particle {
 	}
 	
 
-	public function paint():Void {
+	public function paint(level : Level):Void {
 	}
 
 

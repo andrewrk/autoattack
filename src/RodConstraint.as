@@ -10,15 +10,26 @@ class RodConstraint implements Constraint {
     private var p2 : Particle;
     private var restLength : Number;
 
+	private var color:Number;
+	private var dmc:MovieClip;
+	private var isVisible:Boolean;
+
     public function RodConstraint(p1 : Particle, p2 : Particle) {
         this.p1 = p1;
         this.p2 = p2;
+
         restLength = p1.curr.distance(p2.curr);
+		color = 0x996633;
+
+		initializeContainer();
+        isVisible = true;
     }
 
-	public function paint():Void {
-        // don't paint
-    }
+	public function initializeContainer():Void {
+		var depth:Number = _root.getNextHighestDepth();
+		var drawClipName:String = "_" + depth;
+		dmc = _root.createEmptyMovieClip (drawClipName, depth);
+	}
 
 	public function resolve():Void {
         // bring p1 and p2 together evenly
@@ -30,4 +41,22 @@ class RodConstraint implements Constraint {
         p2.curr = midPoint.plusNew(delta);
                
     }
+
+	public function paint(level : Level):Void {
+		
+		if (isVisible) {
+			dmc.clear();
+			dmc.lineStyle(0, color, 100);
+            
+            var p1rel : Vector = level.getRelPos(p1.curr);
+            var p2rel : Vector = level.getRelPos(p2.curr);
+
+			Graphics.paintLine(
+					dmc, 
+					p1rel.x, 
+					p1rel.y, 
+					p2rel.x, 
+					p2rel.y);
+		}
+	}
 }

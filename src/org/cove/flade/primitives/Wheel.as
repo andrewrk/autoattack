@@ -62,13 +62,15 @@ class org.cove.flade.primitives.Wheel extends CircleParticle {
 	}
 
 
-	public function paint():Void {
+	public function paint(level : Level):Void {
 		if (isVisible) {
+            var relP : Vector = level.getRelPos(curr);
 			// draw wheel circle
-			var px:Number = curr.x;
-			var py:Number = curr.y;
+			var px:Number = relP.x;
+			var py:Number = relP.y;
 			var rx:Number = rp.curr.x;
 			var ry:Number = rp.curr.y;
+
 
 			dmc.clear();
 			dmc.lineStyle(0, 0x222288, 100);

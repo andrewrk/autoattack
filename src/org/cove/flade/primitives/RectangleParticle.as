@@ -46,11 +46,12 @@ class org.cove.flade.primitives.RectangleParticle extends Particle {
 	}
 	
 	
-	public function paint():Void {
+	public function paint(level : Level):Void {
 		if (isVisible) {
 			dmc.clear();
 			dmc.lineStyle(0, 0x666666, 100);
-			Graphics.paintRectangle(dmc, curr.x, curr.y, width, height);
+            var rel : Vector = level.getRelPos(curr);
+			Graphics.paintRectangle(dmc, rel.x, rel.y, width, height);
 		}
 	}
 

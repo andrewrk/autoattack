@@ -39,11 +39,12 @@ class org.cove.flade.surfaces.CircleTile extends AbstractTile implements Surface
 	}
 	
 
-	public function paint():Void {
+	public function paint(level : Level):Void {
 		if (isVisible) {
 			dmc.clear();
 			dmc.lineStyle(0, 0x222288, 100);
-			Graphics.paintCircle(dmc, center.x, center.y, radius);
+            var rel : Vector = level.getRelPos(center);
+			Graphics.paintCircle(dmc, rel.x, rel.y, radius);
 		}
 	}
 

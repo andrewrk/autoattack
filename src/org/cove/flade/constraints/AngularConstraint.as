@@ -101,7 +101,7 @@ class org.cove.flade.constraints.AngularConstraint implements Constraint {
 	}
 
 
-	public function paint():Void {	
+	public function paint(level : Level):Void {	
 		// maintain the constraint interface. angular constraints are
 		// painted by their two component SpringConstraints.
 	}

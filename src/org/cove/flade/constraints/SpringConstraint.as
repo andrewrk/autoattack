@@ -91,18 +91,21 @@ class org.cove.flade.constraints.SpringConstraint implements Constraint{
 	}
 
 
-	public function paint():Void {
+	public function paint(level : Level):Void {
 		
 		if (isVisible) {
 			dmc.clear();
 			dmc.lineStyle(0, color, 100);
+            
+            var p1rel : Vector = level.getRelPos(p1.curr);
+            var p2rel : Vector = level.getRelPos(p2.curr);
 
 			Graphics.paintLine(
 					dmc, 
-					p1.curr.x, 
-					p1.curr.y, 
-					p2.curr.x, 
-					p2.curr.y);
+					p1rel.x, 
+					p1rel.y, 
+					p2rel.x, 
+					p2rel.y);
 		}
 	}
 }

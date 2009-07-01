@@ -70,7 +70,10 @@ class org.cove.flade.surfaces.LineSurface extends AbstractTile implements Surfac
 		if (isVisible) {
 			dmc.clear();
 			dmc.lineStyle(0, 0x222288, 100);
-			Graphics.paintLine(dmc, p1.x, p1.y, p2.x, p2.y);
+
+            var p1rel : Vector = level.getRelPos(p1);
+            var p2rel : Vector = level.getRelPos(p2);
+			Graphics.paintLine(dmc, p1rel.x, p1rel.y, p2rel.x, p2rel.y);
 		}
 	}
 	

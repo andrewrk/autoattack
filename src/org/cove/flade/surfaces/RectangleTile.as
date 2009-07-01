@@ -44,11 +44,12 @@ class org.cove.flade.surfaces.RectangleTile extends AbstractTile implements Surf
 	}
 
 
-	public function paint():Void {
+	public function paint(level : Level):Void {
 		if(isVisible) {
 			dmc.clear();
 			dmc.lineStyle(0, 0x222288, 100);
-			Graphics.paintRectangle(dmc, center.x, center.y, rectWidth, rectHeight);
+            var rel : Vector = level.getRelPos(center);
+			Graphics.paintRectangle(dmc, rel.x, rel.y, rectWidth, rectHeight);
 		}
 	}
 
