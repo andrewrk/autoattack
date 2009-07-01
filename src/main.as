@@ -66,30 +66,29 @@ function acceptTransmission():Void {
 }
 
 
-/*
+
 // debugging stuff
-_root.attachMovie("debugcircle", "dc1_mc", _root.getNextHighestDepth());
-_root.attachMovie("debugcircle", "dc2_mc", _root.getNextHighestDepth());
-_root.attachMovie("debugx", "dx_mc", _root.getNextHighestDepth());
-_root.attachMovie("debugarrow", "darrow_mc", _root.getNextHighestDepth());
+//_root.attachMovie("debugcircle", "dc1_mc", _root.getNextHighestDepth());
+//_root.attachMovie("debugcircle", "dc2_mc", _root.getNextHighestDepth());
+//_root.attachMovie("debugx", "dx_mc", _root.getNextHighestDepth());
+//_root.attachMovie("debugarrow", "darrow_mc", _root.getNextHighestDepth());
+//
+//_root.attachMovie("debugcircle", "dc3_mc", _root.getNextHighestDepth());
+//_root.attachMovie("debugcircle", "dc4_mc", _root.getNextHighestDepth());
+//
+//_root.dc1_mc.onPress = function(){
+//    this.startDrag();
+//}
+//
+//_root.dc1_mc.onRelease = function(){
+//    this.stopDrag();
+//}
+//
+//_root.dc2_mc.onPress = function(){
+//    this.startDrag();
+//}
+//
+//_root.dc2_mc.onRelease = function(){
+//    this.stopDrag();
+//}
 
-_root.attachMovie("debugcircle", "dc3_mc", _root.getNextHighestDepth());
-_root.attachMovie("debugcircle", "dc4_mc", _root.getNextHighestDepth());
-
-_root.dc1_mc.onPress = function(){
-    this.startDrag();
-}
-
-_root.dc1_mc.onRelease = function(){
-    this.stopDrag();
-}
-
-_root.dc2_mc.onPress = function(){
-    this.startDrag();
-}
-
-_root.dc2_mc.onRelease = function(){
-    this.stopDrag();
-}
-
-*/

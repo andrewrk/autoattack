@@ -186,17 +186,22 @@ class Jeep {
             frontWheelBody.getPos().minusNew(backWheelBody.getPos()).angle())
     }
 
+    private function getGunRelPos() : Vector {
+        var gunoff : Vector = (new Vector(jeepBody_mc.gun_mc._x, 
+            jeepBody_mc.gun_mc._y)).rotate(getAngle());
+        return (new Vector(jeepBody_mc._x, jeepBody_mc._y)).plus(gunoff);
+    }
+
+    private function getGunAngle() : Number {
+        var mloc : Vector = new Vector(_root._xmouse, _root._ymouse);
+
+        return mloc.minusNew(getGunRelPos()).angle();
+    }
+
     private function paintGunner() : Void {
         // point the gunner at the mouse cursor 
-        var x2 : Number = _root._xmouse;
-        var y2 : Number = _root._ymouse;
-        var x1 : Number = jeepBody_mc.gun_mc._x + jeepBody_mc._x;
-        var y1 : Number = jeepBody_mc.gun_mc._y + jeepBody_mc._y;
-
-        var theta : Number = Math.atan2(y2-y1,x2-x1);
-        var angle : Number = (180*theta) / Math.PI;
-        angle += 180 - jeepBody_mc._rotation
-        jeepBody_mc.gun_mc.gotoAndStop(Math.round(angle));
+        jeepBody_mc.gun_mc.gotoAndStop(Math.round(Util.radToDeg(
+            Util.normalizeAngle(Math.PI - getAngle() + getGunAngle()))));
     }
 
     private function paintWheel(mc : MovieClip, w : Wheel) : Void {
