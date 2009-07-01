@@ -1,15 +1,20 @@
 Andy:
-* create a level editor
-* fix up level1
-    - move booster thing down and to the right a little
+* implement weaponry
+* add explosions
 * start implementing individual IDs
     - give the jeep health and gas and a hud display
-    - implement weaponry
-    - add explosions
-    - implement death which restarts the level
     - make it so if you hit the spike, it goes away, into the ground, and then
       after some specified time it pops back up
+* level editor:
+    - ability to adjust sectors
+    - ability to change classes and ids
+    - ability to adjust width, height, and dir
+* level1.xml
+    - some decorations are floating
+    - some things need to be resized
+    - some sectors need to be adjusted
 * if the jeep blows up, the soldier gets out and you control him
+* implement death which restarts the level
 * fix background music and provide an option to toggle sound and music, and
   remember the option with cookies
 * Optimize/refactor:

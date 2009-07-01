@@ -28,11 +28,15 @@ class Jeep {
     private var backWheelBody : Wheel;
 
     private var level : Level;
+
+    private var shootRate : Number = 10; // frames to skip in between shots
+    private var fireDelay : Number;
+    private var keySpeed : Number = 6.0; // how fast the wheels accelerate
     
     public function Jeep(pos : Vector, posAng : Number, level : Level) {
         // constants 
-        bwOffset = new Vector(-25, 21);
-        fwOffset = new Vector(55, 17);
+        bwOffset = new Vector(-38, 20);
+        fwOffset = new Vector(40, 18);
 
         // create the frame and the wheels
         // attach movie clips
@@ -124,10 +128,11 @@ class Jeep {
 
         this.level = level;
 
+        fireDelay = 0;
+
     }
 
     public function doInput() : Void {
-        var keySpeed : Number = 6.0;
         if( Key.isDown(Key.LEFT) ){
             frontWheelBody.rp.vs = -keySpeed;
             backWheelBody.rp.vs = -keySpeed;
@@ -138,32 +143,47 @@ class Jeep {
             frontWheelBody.rp.vs = 0;
             backWheelBody.rp.vs = 0;
         }
+
+        if( fireDelay == 0 ){
+            if( Key.isDown(Key.SPACE) ){
+                fireDelay = shootRate;
+                // create a bullet and put it into action
+                //level.shootBullet(pos, new Vector(Math.cos(posAngle), 
+                //    Math.sin(posAngle)));
+            }
+        } else {
+            fireDelay--;
+        }
     }
 
     public function paint() : Void {
         // move items into place
-        paintWheel(frontWheel_mc, frontWheelBody);
-        paintWheel(backWheel_mc, backWheelBody);
+        //paintWheel(frontWheel_mc, frontWheelBody);
+        //paintWheel(backWheel_mc, backWheelBody);
+        var pos : Vector = getPos();
+        var ang : Number = getAngle();
+        var bw : Vector = level.getRelPos(bwOffset.clone().rotate(ang).plus(pos));
+        var fw : Vector = level.getRelPos(fwOffset.clone().rotate(ang).plus(pos));
+
+        backWheel_mc._x = bw.x;
+        backWheel_mc._y = bw.y;
+        backWheel_mc._rotation = Util.radToDeg(backWheelBody.getAngle());
+        
+        frontWheel_mc._x = fw.x;
+        frontWheel_mc._y = fw.y;
+        frontWheel_mc._rotation = Util.radToDeg(frontWheelBody.getAngle());
 
         paintBody();
         paintGunner();
     }
 
     private function paintBody() : Void {
-        var fw : Vector = frontWheelBody.getPos();
-        var bw : Vector = backWheelBody.getPos();
-        var pos : Vector = getPos();
+        var rel : Vector = level.getRelPos(getPos());
 
-        var angle : Number = Math.atan2(fw.y-bw.y,fw.x-bw.x);
-        
-        pos.plus(fw.minusNew(bw).rotate(Math.PI / 2).normalize().mult(-20));
-
-        var relLoc : Vector = level.getRelPos(pos);
-
-        jeepBody_mc._x = relLoc.x;
-        jeepBody_mc._y = relLoc.y;
-
-        jeepBody_mc._rotation = Util.radToDeg(angle);
+        jeepBody_mc._x = rel.x;
+        jeepBody_mc._y = rel.y;
+        jeepBody_mc._rotation = Util.radToDeg(
+            frontWheelBody.getPos().minusNew(backWheelBody.getPos()).angle())
     }
 
     private function paintGunner() : Void {
@@ -193,8 +213,10 @@ class Jeep {
     }
 
     public function getPos() : Vector {
-        var fw : Vector = frontWheelBody.getPos();
-        var bw : Vector = backWheelBody.getPos();
-        return new Vector((fw.x+bw.x)/2, (fw.y+bw.y)/2);
+        return backWheelBody.getPos().minusNew(bwOffset.clone().rotate(getAngle()));
+    }
+
+    public function getAngle() : Number {
+        return frontWheelBody.getPos().minusNew(backWheelBody.getPos()).angle();
     }
 }
