@@ -43,7 +43,6 @@ class LevelEditor extends Level {
         scroll();
         paintBackground();
         paintSectors();
-
         computeObjects();
     }
     
@@ -54,32 +53,39 @@ class LevelEditor extends Level {
 
         // inactive
         for( var i : Number = 0; i < inactiveObjects.length; i++) {
-            if( inScreenRangeF(inactiveObjects[i].pos,
-                inactiveObjects[i].scrollFactor))
+            var obj : LevelObject = inactiveObjects[i];
+            if( inScreenRangeF(obj.pos, obj.scrollFactor))
             {
                 var layer_mc : MovieClip = 
-                    root_mc[layers[inactiveObjects[i].layer]];
-                var str : String = "obj" + inactiveObjects[i].objId;
+                    root_mc[layers[obj.layer]];
+                var str : String = "obj" + obj.objId;
 
-                layer_mc.attachMovie(inactiveObjects[i].mcString, 
-                    str, layer_mc.getNextHighestDepth());
+                layer_mc.attachMovie(obj.mcString, str, 
+                    layer_mc.getNextHighestDepth());
 
-                inactiveObjects[i].mc = layer_mc[str];
+                obj.mc = layer_mc[str];
+                obj.mc.obj = obj;
+                obj.mc.lvl = this;
+                
+                obj.mc.onPress = function() {
+                    this.lvl.clipPress(this.obj);
+                }
+                obj.mc.onRelease = function() {
+                    this.lvl.clipRelease(this.obj);
+                }
 
-                moveMC(inactiveObjects[i].mc, inactiveObjects[i].pos, 0);
+
+                moveMC(obj.mc, obj.pos, 0);
 
                 // optional attributes
-                if( inactiveObjects[i].attrs.w ){
-                    inactiveObjects[i].mc._width = 
-                        parseFloat(inactiveObjects[i].attrs.w);
+                if( obj.attrs.w ){
+                    obj.mc._width = parseFloat(obj.attrs.w);
                 }
-                if( inactiveObjects[i].attrs.h ){
-                    inactiveObjects[i].mc._height = 
-                        parseFloat(inactiveObjects[i].attrs.h);
+                if( obj.attrs.h ){
+                    obj.mc._height = parseFloat(obj.attrs.h);
                 }
-                if( inactiveObjects[i].attrs.dir ) {
-                    inactiveObjects[i].mc._xscale = 100 *
-                        parseFloat(inactiveObjects[i].attrs.dir);
+                if( obj.attrs.dir ) {
+                    obj.mc._xscale = 100 * parseFloat(obj.attrs.dir);
                 }
 
                 activeObjects.push(inactiveObjects.splice(i, 1)[0]);
@@ -88,6 +94,31 @@ class LevelEditor extends Level {
 
             }
         }
+    }
+
+    function clipPress(obj : LevelObject) : Void {
+        obj.mc.startDrag();
+    }
+
+    function clipRelease(obj : LevelObject) : Void {
+        obj.mc.stopDrag();
+
+        obj.pos = getAbsPos(new Vector(obj.mc._x, obj.mc._y));
+        var offset : Vector = obj.pos.minusNew(getPlayerPos());
+        obj.pos.minus(new Vector(
+            offset.x * (obj.scrollFactor.x - 1),
+            offset.y * (obj.scrollFactor.y - 1)));
+
+        var sx : Number = Math.floor(obj.pos.x/sectorWidth);
+        var sy : Number = Math.floor(obj.pos.y/sectorHeight);
+        obj.node.attributes.sx = sx;
+        obj.node.attributes.sy = sy;
+        obj.node.attributes.x = obj.pos.x - sx * sectorWidth;
+        obj.node.attributes.y = obj.pos.y - sy * sectorHeight;
+
+        trace(obj.node);
+
+        paint();
     }
 
     function pan(amount : Vector) {

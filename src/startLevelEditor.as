@@ -1,3 +1,5 @@
+import org.cove.flade.util.Vector;
+
 var lvlEdit : LevelEditor = null;
 
 _root.output_mc._visible = false;

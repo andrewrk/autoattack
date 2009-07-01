@@ -370,8 +370,8 @@ class Level {
         computeObjects();
         paint();
 
-        engine.paintPrimitives();
-        engine.paintConstraints();
+        //engine.paintPrimitives();
+        //engine.paintConstraints();
     }
 
     function startStreamingSong() : Void {
@@ -724,8 +724,8 @@ class Level {
         //move sectors into place
         var vbegin : Vector = curSector.minusNew(new Vector(2,2));
         var vend : Vector = curSector.plusNew(new Vector(2,2));
-        for (var y = vbegin.y; y <= vend.y; y++) {
-            for (var x = vbegin.x; x <= vend.x; x++){
+        for (var y : Number = vbegin.y; y <= vend.y; y++) {
+            for (var x : Number = vbegin.x; x <= vend.x; x++){
                 var mc : MovieClip = root_mc.level_mc["sx" + x + "y" + y];
                 if (x == vbegin.x || x == vend.x || 
                     y == vbegin.y || y == vend.y)

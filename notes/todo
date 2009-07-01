@@ -1,5 +1,4 @@
 Andy:
-* separate Level, Transmission, and GamePlay. Move user input to GamePlay
 * create a level editor
 * fix up level1
     - move booster thing down and to the right a little
@@ -13,8 +12,9 @@ Andy:
 * if the jeep blows up, the soldier gets out and you control him
 * fix background music and provide an option to toggle sound and music, and
   remember the option with cookies
-* Optimize:
+* Optimize/refactor:
     - change inactive LevelObject array to indexed by square x,y
+    - separate Level, Transmission, and GamePlay. Move user input to GamePlay
 
 Josh:
 * fix up physics

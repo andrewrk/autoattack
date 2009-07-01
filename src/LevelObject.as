@@ -78,15 +78,15 @@ class LevelObject {
         return mcMap["class" + classNum + "id" + idNum];
     }
 
-    private var classNum : Number;
-    private var idNum : Number;
+    public var classNum : Number;
+    public var idNum : Number;
     public var pos : Vector; // where is it
     public var layer : Number; // which layer to display on 
-    private var scrollFactor : Vector; // scroll faster or slower than normal
+    public var scrollFactor : Vector; // scroll faster or slower than normal
 
-    private var attrs : Object;
+    public var attrs : Object;
 
-    private var mcString : String;
+    public var mcString : String;
 
     public var objId : Number; // unique number used to reference movie clips
 
