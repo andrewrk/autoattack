@@ -59,6 +59,14 @@ keyListener.onKeyUp = function() {
 mouseListener.onMouseMove = function() {
 }
 
+mouseListener.onMouseDown = function() {
+    level.shootDown = true;
+}
+
+mouseListener.onMouseUp = function() {
+    level.shootDown = false;
+}
+
 // accept transmission callback
 function acceptTransmission():Void {
     // forward to level object

@@ -37,7 +37,7 @@ class Level {
     private var fps : Number = 30;
 
     // TODO: this doesn't seem to belong here
-    private var bulletSpeed : Number = 30;
+    private var bulletSpeed : Number = 50;
 
     // for scrolling through sectors
     private var curSector : Vector;
@@ -79,6 +79,9 @@ class Level {
 
     private var mainInterval; // what the hell is the data type?
 
+    
+    public var shootDown : Boolean;
+
     function Level (number : Number, 
                     root_mc : MovieClip, 
                     movieWidth : Number, 
@@ -109,6 +112,8 @@ class Level {
         this.entities = new Array();
         this.projectiles = new Array();
         
+        this.shootDown = false;
+
         // create the movie clip containers in root_mc
         for( var i : Number = 0; i < layers.length; i++ ){
             root_mc.createEmptyMovieClip(layers[i], 
@@ -611,8 +616,9 @@ class Level {
         }
     }
 
-    public function shootBullet(pos : Vector, dir : Vector) {
-        var vel : Vector = dir.clone().normalize().mult(bulletSpeed);
+    public function shootBullet(pos : Vector, dir : Vector, extraVel : Vector) {
+        var vel : Vector = dir.clone().normalize().mult(bulletSpeed).plus(
+            extraVel);
 
         var obj : LevelObject = 
             new LevelObject(0, 0, pos, LAYER_OBJ, new Vector(1,1), null, true);

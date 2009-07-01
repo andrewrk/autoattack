@@ -95,7 +95,7 @@ class Turret extends Enemy {
                 fireDelay = rate;
                 // create a bullet and put it into action
                 level.shootBullet(pos, new Vector(Math.cos(posAngle), 
-                    Math.sin(posAngle)));
+                    Math.sin(posAngle)), new Vector(0,0));
             }
         } else {
             fireDelay--;

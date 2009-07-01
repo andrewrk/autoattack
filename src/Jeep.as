@@ -29,9 +29,11 @@ class Jeep {
 
     private var level : Level;
 
-    private var shootRate : Number = 10; // frames to skip in between shots
+    private var shootRate : Number = 2; // frames to skip in between shots
     private var fireDelay : Number;
     private var keySpeed : Number = 6.0; // how fast the wheels accelerate
+
+    private var prevGunPos : Vector; // so we know our velocity
     
     public function Jeep(pos : Vector, posAng : Number, level : Level) {
         // constants 
@@ -129,6 +131,7 @@ class Jeep {
         this.level = level;
 
         fireDelay = 0;
+        prevGunPos = getGunRelPos();
 
     }
 
@@ -145,15 +148,21 @@ class Jeep {
         }
 
         if( fireDelay == 0 ){
-            if( Key.isDown(Key.SPACE) ){
+            // TODO: user input framework is crappy
+            if( level.shootDown ){
                 fireDelay = shootRate;
                 // create a bullet and put it into action
-                //level.shootBullet(pos, new Vector(Math.cos(posAngle), 
-                //    Math.sin(posAngle)));
+                var ang : Number = getGunAngle();
+                var gp : Vector = getGunRelPos();
+                level.shootBullet(level.getAbsPos(gp), 
+                    new Vector(Math.cos(ang),Math.sin(ang)), 
+                    gp.minusNew(prevGunPos));
             }
         } else {
             fireDelay--;
         }
+
+        prevGunPos = getGunRelPos();
     }
 
     public function paint() : Void {
