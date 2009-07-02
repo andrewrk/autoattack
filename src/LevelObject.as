@@ -107,6 +107,8 @@ class LevelObject {
 
     public var active : Boolean; // for level editing
 
+    public var hp : Number;
+
     function LevelObject(
         classNum : Number, idNum : Number, pos : Vector, layer : Number,
         scrollFactor : Vector, attrs : Object, expires : Boolean )
@@ -122,6 +124,7 @@ class LevelObject {
         this.mc = null;
         this.primitive = null;
         this.expires = expires;
+        this.hp = parseInt(attrs.hp);
     }
 
 }

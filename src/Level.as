@@ -38,6 +38,7 @@ class Level {
 
     // TODO: this doesn't seem to belong here
     private var bulletSpeed : Number = 50;
+    private var bulletDamage : Number = 5;
 
     // for scrolling through sectors
     private var curSector : Vector;
@@ -418,6 +419,11 @@ class Level {
                     // move the object a little in the direction of the bullet
                     // commented out. I don't think it's a good feature
                     //objHit.pos.plus(projectiles[i].primitive.velocity.clone().normalize());
+                    objHit.hp -= bulletDamage;
+                    if( objHit.hp <= 0 ){
+                        // destroy the object
+                        destroyObject(objHit);
+                    }
                 }
 
                 // remove from engine
@@ -557,9 +563,21 @@ class Level {
         }
     }
 
+    function destroyObject(obj : LevelObject){
+        for( var i : Number = 0; i < obstacles.length; i++ ){
+            if( obstacles[i] == obj ){
+                obj.mc.removeMovieClip();
+                obstacles.splice(i, 1);
+                return;
+            }
+        }
+        trace("error destroying object");
+    }
+
     function removeDistantObjects(objects : Array) : Void {
         for( var i : Number = 0; i < objects.length; i++ ){
-            if( ! inScreenRangeF(objects[i].pos, objects[i].scrollFactor) ) {
+            if( ! inScreenRangeF(objects[i].pos, objects[i].scrollFactor) ) 
+            {
                 objects[i].mc.removeMovieClip();       
                 if( objects[i].primitive )
                     engine.removePrimitive(objects[i].primitive);
