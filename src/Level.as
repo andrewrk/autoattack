@@ -76,11 +76,14 @@ class Level {
     private var obstacles : Array;
     private var entities : Array;
     private var projectiles : Array;
+    private var explosions : Array;
 
     private var mainInterval; // what the hell is the data type?
 
     
     public var shootDown : Boolean;
+
+    public var lastHitObject : LevelObject;
 
     function Level (number : Number, 
                     root_mc : MovieClip, 
@@ -111,6 +114,7 @@ class Level {
         this.obstacles = new Array();
         this.entities = new Array();
         this.projectiles = new Array();
+        this.explosions = new Array();
         
         this.shootDown = false;
 
@@ -394,12 +398,45 @@ class Level {
     }
 
     function computeObjects() : Void {
+        // remove old explosions
+        for( var i : Number = 0; i < explosions.length; i++){
+            if( explosions[i].framesLeft <= 0 ){
+                explosions[i].mc.removeMovieClip();
+                explosions.splice(i, 1);
+                i--;
+                continue;
+            } else {
+                explosions[i].framesLeft--;
+            }
+        }
+
         for( var i : Number = 0; i < projectiles.length; i++){
             if( projectiles[i].primitive.dead ){
-                // explode
+                // do actions because of the bullet hitting something
+                var objHit : LevelObject = projectiles[i].primitive.lvlObjHit;
+                if( objHit != null && parseInt(objHit.attrs.destructable)==1 ){
+                    // move the object a little in the direction of the bullet
+                    // commented out. I don't think it's a good feature
+                    //objHit.pos.plus(projectiles[i].primitive.velocity.clone().normalize());
+                }
+
+                // remove from engine
                 engine.removePrimitive(projectiles[i].primitive);
                 projectiles[i].mc.removeMovieClip();
-                projectiles.splice(i, 1);
+                projectiles[i].primitive = null;
+
+                // switch to explosion mc
+                var layer_mc : MovieClip = root_mc[layers[projectiles[i].layer]];
+                var str : String = "exp" + projectiles[i].objId;
+                layer_mc.attachMovie("bulletExplosion", str,
+                    layer_mc.getNextHighestDepth());
+                
+                projectiles[i].mc = layer_mc[str];
+                // TODO: create a weapon data table
+                projectiles[i].framesLeft = 6; 
+
+                // remove from projectiles and add to explosions
+                explosions.push(projectiles.splice(i, 1)[0]);
                 i--;
                 continue;
             }
@@ -415,6 +452,7 @@ class Level {
         moveIntoPlace(obstacles);
         moveIntoPlace(entities);
         moveIntoPlace(projectiles);
+        moveIntoPlace(explosions);
 
         // perform actions on objects
         for( var i : Number = 0; i < activeObjects.length; i++){
@@ -844,6 +882,7 @@ class Level {
     }
     
     function hit (pos : Vector) : Boolean {
+        lastHitObject = null;
         for (var sy : Number = curSector.y-1; sy <= curSector.y+1; sy++) {
             for (var sx : Number = curSector.x-1; sx <= curSector.x+1; sx++) {
                 var checkX : Number = pos.x - sx * sectorWidth;
@@ -854,8 +893,10 @@ class Level {
         }
         var rel : Vector = getRelPos(pos);
         for( var i : Number = 0; i < obstacles.length; i++ ){
-            if( obstacles[i].mc.hitTest(rel.x, rel.y, 1) )
+            if( obstacles[i].mc.hitTest(rel.x, rel.y, 1) ) {
+                lastHitObject = obstacles[i];
                 return true;
+            }
         }
         return false;
     }

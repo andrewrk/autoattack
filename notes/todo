@@ -1,9 +1,11 @@
 Andy:
-* give the bullets little explosion graphics when it hits something
 * start implementing individual IDs
-    - give the jeep health and gas and a hud display
+    - make bullets hurt breakable objects and eventually destroy them.
+        > when a breakable object is destroyed it should shatter into rubble 
     - make it so if you hit the spike, it goes away, into the ground, and then
       after some specified time it pops back up
+    - give the jeep health and gas and a hud display
+        > implement power ups
 * level editor:
     - ability to adjust sectors
     - ability to change classes and ids
@@ -16,9 +18,12 @@ Andy:
 * implement death which restarts the level
 * fix background music and provide an option to toggle sound and music, and
   remember the option with cookies
+* bullets travel really fast - need to check points in between for hits
 * Optimize/refactor:
     - change inactive LevelObject array to indexed by square x,y
     - separate Level, Transmission, and GamePlay. Move user input to GamePlay
+    - split LevelObject into a parent and some subclasses, including 
+      explosions, projectiles, etc
 
 Josh:
 * fix up physics
