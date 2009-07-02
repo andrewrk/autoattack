@@ -29,14 +29,18 @@ class LevelObject {
         class7id0 : "fence",
         class6id0 : "baseCampEntranceBG",
         class1id6 : "bigBlackBar",
+        class7id8 : "bigBlackBar",
         class1id5 : "bigDeadBush",
+        class7id7 : "bigDeadBush",
         class8id1 : "bombDroppingVent",
         class3id1 : "booster",
         class2id0 : "breakableBoulder",
         class2id3 : "breakableMountainExit",
         class1id0 : "cactus",
+        class7id2 : "cactus",
         class5id3 : "cannon",
         class1id3 : "christmasTree",
+        class7id5 : "christmasTree",
         class0id0 : "cloud",
         class2id1 : "defenseShelf",
         class2id5 : "downRamp",
@@ -45,13 +49,16 @@ class LevelObject {
         class2id10 : "gate",
         class2id2 : "glassPane",
         class1id2 : "goodBush",
+        class7id4 : "goodBush",
         class3id2 : "healthPack",
         class9id1 : "mine",
         class2id9 : "oneWaySpike",
         class2id4 : "ramp",
         class2id8 : "ramp2",
         class1id4 : "saguaro",
+        class7id6 : "saguaro",
         class1id1 : "skeletonBush",
+        class7id3 : "skeletonBush",
         class3id3 : "timeBonus",
         class2id6 : "trapDoor",
         class5id2 : "turret",
@@ -97,6 +104,8 @@ class LevelObject {
 
     // does this object expire when it goes off screen?
     public var expires : Boolean;
+
+    public var active : Boolean; // for level editing
 
     function LevelObject(
         classNum : Number, idNum : Number, pos : Vector, layer : Number,

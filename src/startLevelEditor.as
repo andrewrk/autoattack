@@ -58,3 +58,22 @@ _root.filePanel_mc.editProp_btn.onPress = function() {
         return;
     lvlEdit.selectEditProp();
 }
+
+_root.output_mc.done_btn.onPress = function() {
+    if( lvlEdit == null )
+        return;
+    lvlEdit.doneClick();
+}
+
+_root.filePanel_mc.bigger_btn.onPress = function() {
+    if( lvlEdit == null )
+        return;
+    lvlEdit.biggerClick();
+}
+
+_root.filePanel_mc.smaller_btn.onPress = function() {
+    if( lvlEdit == null )
+        return;
+    lvlEdit.smallerClick();
+}
+

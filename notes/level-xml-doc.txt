@@ -45,6 +45,13 @@ Classification
         * objects are stationary and scroll normally, in front of the jeep
         ID 0 = Base camp fence
         ID 1 = Base camp entrance fg
+        ID 2 = Cactus
+        ID 3 = Skeleton Bush
+        ID 4 = Good-looking bush
+        ID 5 = Christmas Tree
+        ID 6 = Big Saguaro Cactus
+        ID 7 = Big Dead Bush
+        ID 8 = Black bar
 
     CLASS 1 - FOREGROUND, DYNAMIC - LevelObject.CLASS_FG_DYN
         * objects are in front of the level and scroll by quickly

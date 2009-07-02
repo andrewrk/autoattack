@@ -1,4 +1,5 @@
 Andy:
+* level editor bug: when you adjust an object's xml, weird things happen to other objects
 * start implementing individual IDs
     - make bullets hurt breakable objects and eventually destroy them.
         > when a breakable object is destroyed it should shatter into rubble 

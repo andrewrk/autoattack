@@ -585,6 +585,7 @@ class Level {
                 objects[i].pos.y + offset.y * (objects[i].scrollFactor.y - 1)
             );
 
+
             moveMC_noa(objects[i].mc, pos);
         }
     }
@@ -675,7 +676,7 @@ class Level {
     private function createLevelObject(node : XML) {
         var cls : Number = parseInt(node.attributes.cls);
         var id : Number = parseInt(node.attributes.id);
-       
+
         var offset : Vector = new Vector(parseFloat(node.attributes.x),
             parseFloat(node.attributes.y));
 
@@ -704,6 +705,7 @@ class Level {
         
         var pos : Vector = new Vector(sectorWidth * sector.x + offset.x,
             sectorHeight * sector.y + offset.y);
+
         if( cls == LevelObject.CLASS_ENEMY ){
             // return an enemy object
             switch( id ){
