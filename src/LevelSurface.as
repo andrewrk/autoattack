@@ -48,7 +48,7 @@ class LevelSurface extends AbstractTile implements Surface {
     }
 	
     private function isCircleColliding(p : CircleParticle) : Boolean {
-        var angCheck : Number = 0.25 * Math.PI;
+        var angCheck : Number = 0.1 * Math.PI;
 
         for(var rad : Number = 0; rad < Math.PI * 2; rad+=angCheck) {
             var prevCheck : Vector = Util.extendRadius(p.prev, rad, p.radius);

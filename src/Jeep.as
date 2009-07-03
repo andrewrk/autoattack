@@ -156,13 +156,13 @@ class Jeep {
                 var gp : Vector = getGunRelPos();
                 level.shootBullet(level.getAbsPos(gp), 
                     new Vector(Math.cos(ang),Math.sin(ang)), 
-                    gp.minusNew(prevGunPos));
+                    level.getAbsPos(gp).minusNew(prevGunPos));
             }
         } else {
             fireDelay--;
         }
 
-        prevGunPos = getGunRelPos();
+        prevGunPos = level.getAbsPos(getGunRelPos());
     }
 
     public function paint() : Void {
