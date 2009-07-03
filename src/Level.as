@@ -385,14 +385,12 @@ class Level {
 
     function startStreamingSong() : Void {
         //stream bg music
-        if (bgMusicURL != "")
-        {
-            bg_sound = new Sound ();
-            bg_sound.loadSound ("levels/" + bgMusicURL, true);
-            bg_sound.setVolume (50);
-            bg_sound.onSoundComplete = function ()
-            {
-                bg_sound.start (0);
+        if (bgMusicURL) {
+            bg_sound = new Sound();
+            bg_sound.loadSound("levels/" + bgMusicURL, true);
+            bg_sound.setVolume(50);
+            bg_sound.onSoundComplete = function () {
+                this.start(0);
             }
         }
     }

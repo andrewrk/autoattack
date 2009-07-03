@@ -6,10 +6,6 @@ Andy:
       after some specified time it pops back up
     - give the jeep health and gas and a hud display
         > implement power ups
-* level editor:
-    - ability to adjust sectors
-* level1.xml
-    - some sectors need to be adjusted
 * if the jeep blows up, the soldier gets out and you control him
 * implement death which restarts the level
 * fix background music and provide an option to toggle sound and music, and
@@ -26,6 +22,10 @@ Andy:
       no longer in the wall
     - use the point that is furthest in the wall
     - create a testing suite to check the resolvecirclecollision fuction
+* level editor:
+    - ability to adjust sectors
+* level1.xml
+    - some sectors need to be adjusted
 
 Josh:
 * fix up physics
