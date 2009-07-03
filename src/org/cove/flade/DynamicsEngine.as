@@ -39,9 +39,7 @@ class org.cove.flade.DynamicsEngine {
 	public var surfaces:Array;
 	public var constraints:Array;
 
-    public var level : Level;
-	
-	public function DynamicsEngine(level : Level) {
+	public function DynamicsEngine() {
 			
 		primitives = new Array();
 		surfaces = new Array();
@@ -52,8 +50,6 @@ class org.cove.flade.DynamicsEngine {
 		coeffRest = 1 + 0.5;
 		coeffFric = 0.01;	// surface friction
 		coeffDamp = 0.99; 	// global damping
-
-        this.level = level;
 	}
 	
 	
@@ -103,21 +99,21 @@ class org.cove.flade.DynamicsEngine {
         trace("ERROR: removeConstraint failed");
     }
 	
-	public function paintSurfaces():Void {
+	public function paintSurfaces(level : Level):Void {
 		for (var j:Number = 0; j < surfaces.length; j++) {
 			surfaces[j].paint(level);
 		}
 	}
 
 
-	public function paintPrimitives():Void {
+	public function paintPrimitives(level : Level):Void {
 		for (var j:Number = 0; j < primitives.length; j++) {
 			primitives[j].paint(level);
 		}
 	}
 
 
-	public function paintConstraints():Void {
+	public function paintConstraints(level : Level):Void {
 		for (var j:Number = 0; j < constraints.length; j++) {
 			constraints[j].paint(level);
 		}

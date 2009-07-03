@@ -138,3 +138,6 @@ Classification
                     a switch rather than a hit area
         ID 2 = Level complete
         ID 3 = jeep explodes and but the driver hops out unharmed
+
+    CLASS 10 - PROJECTILES - LevelObject.CLASS_PROJECTILE
+        ID 0 = Bullet

@@ -20,6 +20,12 @@ Andy:
     - separate Level, Transmission, and GamePlay. Move user input to GamePlay
     - split LevelObject into a parent and some subclasses, including 
       explosions, projectiles, etc
+* ideas to try fixing physics:
+    - just check the points around the wheel to determine if the wheel is 
+      in the wall. then move it back along the line of of movement until it is
+      no longer in the wall
+    - use the point that is furthest in the wall
+    - create a testing suite to check the resolvecirclecollision fuction
 
 Josh:
 * fix up physics

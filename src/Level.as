@@ -107,7 +107,7 @@ class Level {
         this.startedLoad = false;
         this.progressVisible = false;
         
-        this.engine = new DynamicsEngine(this);
+        this.engine = new DynamicsEngine();
         
         this.jeep = null; // we initialize the jeep after the level is loaded
         this.inactiveObjects = new Array();
@@ -355,7 +355,6 @@ class Level {
         var sx : Number = sectorWidth * lvlSquLeft;
         var sy : Number = sectorHeight * lvlSquTop;
         engine.addSurface(new LevelSurface(this));
-        engine.level = this;
 
         // add jeep to physics engine
         jeep = new Jeep(startPos, 0, this);
@@ -380,8 +379,8 @@ class Level {
         computeObjects();
         paint();
 
-        engine.paintPrimitives();
-        engine.paintConstraints();
+        engine.paintPrimitives(this);
+        engine.paintConstraints(this);
     }
 
     function startStreamingSong() : Void {
@@ -411,25 +410,28 @@ class Level {
             }
         }
 
+        // projectiles
         for( var i : Number = 0; i < projectiles.length; i++){
-            if( projectiles[i].primitive.dead ){
+            // move projectiles
+            projectiles[i].pos.plus(projectiles[i].vel);
+
+            if( hit(projectiles[i].pos) ){
+                var objHit : LevelObject = lastHitObject;
+
                 // do actions because of the bullet hitting something
-                var objHit : LevelObject = projectiles[i].primitive.lvlObjHit;
-                if( objHit != null && parseInt(objHit.attrs.destructable)==1 ){
+                if( objHit != null && objHit.attrs.destructable==1 ){
                     // move the object a little in the direction of the bullet
                     // commented out. I don't think it's a good feature
                     //objHit.pos.plus(projectiles[i].primitive.velocity.clone().normalize());
-                    objHit.hp -= bulletDamage;
-                    if( objHit.hp <= 0 ){
+                    objHit.attrs.hp -= bulletDamage;
+                    if( objHit.attrs.hp <= 0 ){
                         // destroy the object
                         destroyObject(objHit);
                     }
                 }
 
-                // remove from engine
-                engine.removePrimitive(projectiles[i].primitive);
+                // remove 
                 projectiles[i].mc.removeMovieClip();
-                projectiles[i].primitive = null;
 
                 // switch to explosion mc
                 var layer_mc : MovieClip = root_mc[layers[projectiles[i].layer]];
@@ -677,10 +679,7 @@ class Level {
         var vel : Vector = dir.clone().normalize().mult(bulletSpeed).plus(
             extraVel);
 
-        var obj : LevelObject = 
-            new LevelObject(0, 0, pos, LAYER_OBJ, new Vector(1,1), null, true);
-        obj.primitive = new Projectile(pos, vel);
-        engine.addPrimitive(obj.primitive);
+        var obj : Projectile = new Projectile(pos, vel);
         
         var layer_mc : MovieClip = root_mc[layers[obj.layer]];
         var str : String = "obj" + obj.objId;
