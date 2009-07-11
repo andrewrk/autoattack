@@ -2,7 +2,7 @@
 
 import org.cove.flade.util.Vector;
 
-class levelObjects.SpecialObject extends LevelObject {
+class objects.SpecialObject extends LevelObject {
 
     public function SpecialObject(pos : Vector, attrs : Object) {
         super(LevelObject.CLASS_SPECIAL, -1, pos, Level.LAYER_OBJ, 

@@ -5,8 +5,8 @@ import org.cove.flade.util.Vector;
 import org.cove.flade.primitives.*;
 import org.cove.flade.surfaces.*;
 
-import levelObjects.*;
-import levelObjects.enemies.*;
+import objects.*;
+import objects.enemies.*;
 
 class Level {
     // static constants

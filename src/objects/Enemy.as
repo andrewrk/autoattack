@@ -2,7 +2,7 @@
 
 import org.cove.flade.util.Vector;
 
-class levelObjects.Enemy extends LevelObject {
+class objects.Enemy extends LevelObject {
 
     private var level : Level;
     private var hp : Number; // health points

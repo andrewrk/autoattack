@@ -2,7 +2,7 @@
 
 import org.cove.flade.util.Vector;
 
-class levelObjects.enemies.Turret extends levelObjects.Enemy {
+class objects.enemies.Turret extends objects.Enemy {
 
     // actions
     private var actionAccelAngle : Number; // 1, 0, or -1

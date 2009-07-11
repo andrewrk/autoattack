@@ -2,7 +2,7 @@
 
 import org.cove.flade.util.Vector;
 
-class levelObjects.Projectile extends LevelObject {
+class objects.Projectile extends LevelObject {
     private var vel : Vector; 
     
     function Projectile(pos : Vector, vel : Vector) {
