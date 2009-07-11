@@ -3,6 +3,10 @@
 import org.cove.flade.DynamicsEngine;
 import org.cove.flade.util.Vector;
 import org.cove.flade.primitives.*;
+import org.cove.flade.surfaces.*;
+
+import levelObjects.*;
+import levelObjects.enemies.*;
 
 class Level {
     // static constants

@@ -58,7 +58,7 @@ Classification
         ID 10 = Base camp entrance bg
 
     CLASS 1 - SPECIAL - LevelObject.CLASS_SPECIAL
-        ID 0 = Mountain Exit
+        ID 0 = Activation Gate
         ID 1 = Platforms Moving Up
             yrange = how far up (pixels) a platform moves before it disappears
             pspace = the space in between moving platforms
@@ -82,7 +82,6 @@ Classification
         ID 8 = Up Ramp #2
         ID 9 = One-way spike
             rate = how many frames to count before popping back up
-        ID 10 = Activation Gate
 
     CLASS 3 - POWER UPS - LevelObject.CLASS_POWERUP
         * collectables that you get once and they disappear
