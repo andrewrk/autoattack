@@ -8,6 +8,10 @@ import org.cove.flade.surfaces.*;
 import objects.*;
 import objects.enemies.*;
 
+import flash.geom.Rectangle;
+
+import objects.special.*;
+
 class Level {
     // static constants
     public static var LAYER_BG : Number = 0;
@@ -79,6 +83,7 @@ class Level {
     private var activeObjects : Array;
     private var inactiveObjects : Array;
     private var obstacles : Array;
+    private var specialObjects : Array;
     private var entities : Array;
     private var projectiles : Array;
     private var explosions : Array;
@@ -117,6 +122,7 @@ class Level {
         this.inactiveObjects = new Array();
         this.activeObjects = new Array();
         this.obstacles = new Array();
+        this.specialObjects = new Array();
         this.entities = new Array();
         this.projectiles = new Array();
         this.explosions = new Array();
@@ -451,6 +457,21 @@ class Level {
                 continue;
             }
         }
+
+        // process special objects
+        for( var i : Number = 0; i < specialObjects.length; i++ ){
+            var obj : SpecialObject = specialObjects[i];
+            obj.update();
+            if( ! obj.onScreen() ){
+                // deactivate
+                obj.deactivate();
+                inactiveObjects.push(obj);
+                specialObjects.splice(i, 1);
+                i--;
+                continue;
+            }
+        }
+
         // if it's no longer relevant, remove the movie clip
         // and move the element to inactive objects
         removeDistantObjects(activeObjects);
@@ -463,6 +484,7 @@ class Level {
         moveIntoPlace(entities);
         moveIntoPlace(projectiles);
         moveIntoPlace(explosions);
+
 
         // perform actions on objects
         for( var i : Number = 0; i < activeObjects.length; i++){
@@ -503,66 +525,72 @@ class Level {
 
         // loop through inactive objects
         for( var i : Number = 0; i < inactiveObjects.length; i++) {
+            var obj : LevelObject = inactiveObjects[i];
+
             // if it should be on screen, add it to active objects
             // and create a movie clip
-            if( inScreenRangeF(inactiveObjects[i].pos, 
-                inactiveObjects[i].scrollFactor) )
-            {
-
-                var layer_mc : MovieClip = 
-                    root_mc[layers[inactiveObjects[i].layer]];
-                var str : String = "obj" + inactiveObjects[i].objId;
-
-                layer_mc.attachMovie(inactiveObjects[i].mcString, 
-                    str, layer_mc.getNextHighestDepth());
-
-                inactiveObjects[i].mc = layer_mc[str];
-
-                moveMC(inactiveObjects[i].mc, inactiveObjects[i].pos, 0);
-
-                // optional attributes
-                if( inactiveObjects[i].attrs.w ){
-                    inactiveObjects[i].mc._width = 
-                        parseFloat(inactiveObjects[i].attrs.w);
+            if( obj.classNum == LevelObject.CLASS_SPECIAL ){
+                if( obj.onScreen() ){
+                    obj.activate();
+                    specialObjects.push(inactiveObjects.splice(i, 1)[0]);
+                    i--;
+                    continue;
                 }
-                if( inactiveObjects[i].attrs.h ){
-                    inactiveObjects[i].mc._height = 
-                        parseFloat(inactiveObjects[i].attrs.h);
-                }
-                if( inactiveObjects[i].attrs.dir ) {
-                    inactiveObjects[i].mc._xscale = 100 *
-                        parseFloat(inactiveObjects[i].attrs.dir);
-                }
+            } else {
+                if( inScreenRangeF(obj.pos, obj.scrollFactor) )
+                {
 
-                // some classes get added to physics engine
-                if( inactiveObjects[i].classNum == LevelObject.CLASS_ENTITY ){
-                    inactiveObjects[i].primitive = new Particle(
-                        inactiveObjects[i].pos.x, inactiveObjects[i].pos.y);
-                    engine.addPrimitive(inactiveObjects[i].primitive);
-                }
+                    var layer_mc : MovieClip = 
+                        root_mc[layers[obj.layer]];
+                    var str : String = "obj" + obj.objId;
 
-                // triggers are invisible
-                if( inactiveObjects[i].classNum == LevelObject.CLASS_TRIGGER ){
-                    inactiveObjects[i].mc._visible = false;
-                }
-                
-                // which array to put active items in 
-                var dest : Array;
-                switch( inactiveObjects[i].classNum ){
-                    case LevelObject.CLASS_OBSTACLE:
-                        dest = obstacles;
-                        break;
-                    case LevelObject.CLASS_ENTITY:
-                        dest = entities;
-                        break;
-                    default:
-                        dest = activeObjects;
-                }
-                
-                dest.push(inactiveObjects.splice(i, 1)[0]);
-                i--;
-                continue;
+                    layer_mc.attachMovie(obj.mcString, 
+                        str, layer_mc.getNextHighestDepth());
 
+                    obj.mc = layer_mc[str];
+
+                    moveMC(obj.mc, obj.pos, 0);
+
+                    // optional attributes
+                    if( obj.attrs.w ){
+                        obj.mc._width = parseFloat(obj.attrs.w);
+                    }
+                    if( obj.attrs.h ){
+                        obj.mc._height = parseFloat(obj.attrs.h);
+                    }
+                    if( obj.attrs.dir ) {
+                        obj.mc._xscale = 100 * parseFloat(obj.attrs.dir);
+                    }
+
+                    // some classes get added to physics engine
+                    if( obj.classNum == LevelObject.CLASS_ENTITY ){
+                        obj.primitive = new Particle(obj.pos.x, obj.pos.y);
+                        engine.addPrimitive(obj.primitive);
+                    }
+
+                    // triggers are invisible
+                    if( obj.classNum == LevelObject.CLASS_TRIGGER ){
+                        obj.mc._visible = false;
+                    }
+                    
+                    // which array to put active items in 
+                    var dest : Array;
+                    switch( obj.classNum ){
+                        case LevelObject.CLASS_OBSTACLE:
+                            dest = obstacles;
+                            break;
+                        case LevelObject.CLASS_ENTITY:
+                            dest = entities;
+                            break;
+                        default:
+                            dest = activeObjects;
+                    }
+                    
+                    dest.push(inactiveObjects.splice(i, 1)[0]);
+                    i--;
+                    continue;
+
+                }
             }
         }
     }
@@ -622,6 +650,12 @@ class Level {
 
     function inScreenRange(pos : Vector) : Boolean {
         return inScreenRangeF(pos, new Vector(1,1));
+    }
+
+    function getScreenRect() : Rectangle {
+        var pp : Vector = getPlayerPos();
+        return new Rectangle(pp.x - sectorWidth / 2, pp.y - sectorHeight / 2,
+            sectorWidth, sectorHeight);
     }
     
     function loadLevelFromXML() : Void {
@@ -721,32 +755,48 @@ class Level {
         var pos : Vector = new Vector(sectorWidth * sector.x + offset.x,
             sectorHeight * sector.y + offset.y);
 
-        if( cls == LevelObject.CLASS_ENEMY ){
-            // return an enemy object
-            switch( id ){
-                case LevelObject.ID_SOLDIER:
-                    // TODO: switch with real enemy object
-                    return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                        node.attributes, false);
-                case LevelObject.ID_HELICOPTER:
-                    // TODO: switch with real enemy object
-                    return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                        node.attributes, false);
-                case LevelObject.ID_TURRET:
-                    return new Turret(pos, node.attributes, this);
-                case LevelObject.ID_CANNON:
-                    // TODO: switch with real enemy object
-                    return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                        node.attributes, false);
-                case LevelObject.ID_BOMB_THROWER:
-                    // TODO: switch with real enemy object
-                    return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                        node.attributes, false);
-            }
-        } else {
-            // generic LevelObject
-            return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                node.attributes, false);
+        // return a level object
+        switch( cls ){
+            case LevelObject.CLASS_ENEMY:
+                switch( id ){
+                    case LevelObject.ID_SOLDIER:
+                        // TODO: switch with real enemy object
+                        return new LevelObject(cls, id, pos, layer, 
+                            scrollFactor, node.attributes, false);
+                    case LevelObject.ID_HELICOPTER:
+                        // TODO: switch with real enemy object
+                        return new LevelObject(cls, id, pos, layer, 
+                            scrollFactor, node.attributes, false);
+                    case LevelObject.ID_TURRET:
+                        return new Turret(pos, node.attributes, this);
+                    case LevelObject.ID_CANNON:
+                        // TODO: switch with real enemy object
+                        return new LevelObject(cls, id, pos, layer, 
+                            scrollFactor, node.attributes, false);
+                    case LevelObject.ID_BOMB_THROWER:
+                        // TODO: switch with real enemy object
+                        return new LevelObject(cls, id, pos, layer,
+                            scrollFactor, node.attributes, false);
+                    default:
+                        trace("Unrecognized enemy id: " + id );
+                        return null;
+                }
+            case LevelObject.CLASS_SPECIAL:
+                switch( id ){
+                    case LevelObject.ID_ACTIVATION_GATE:
+                        return new ActivationGate(pos, node.attributes, this);
+                    case LevelObject.ID_MOVING_PLATFORM:
+                        return new MovingPlatform(pos, node.attributes, this);
+                    default:
+                        trace("Unrecognized special id: " + id);
+                        return null;
+
+                }
+                break;
+            default:
+                // generic LevelObject
+                return new LevelObject(cls, id, pos, layer, scrollFactor, 
+                    node.attributes, false);
         }
     }
     
@@ -908,6 +958,7 @@ class Level {
                     return true;
             }
         }
+        // obstacles
         var rel : Vector = getRelPos(pos);
         for( var i : Number = 0; i < obstacles.length; i++ ){
             if( obstacles[i].mc.hitTest(rel.x, rel.y, 1) ) {
@@ -915,6 +966,15 @@ class Level {
                 return true;
             }
         }
+        // special objects
+        for( var i : Number = 0; i < specialObjects.length; i++ ){
+            var obj : SpecialObject = specialObjects[i];
+            if( obj.hit(pos) ) {
+                lastHitObject = obj;
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -939,7 +999,7 @@ class Level {
         return relPos.plusNew(scrollOffset);
     }
     
-    function dispose() : Void {
+    public function dispose() : Void {
         // remove movie clips from screen and data from memory
         for(var i : Number; i < layers.length; i++)
            root_mc[layers[i]].removeMovieClip();

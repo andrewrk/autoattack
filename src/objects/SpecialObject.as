@@ -26,9 +26,14 @@ class objects.SpecialObject extends LevelObject {
     public function update() : Void {}
 
     // set up movie clips and stuff
-    public function setup() : Void {}
+    public function activate() : Void {}
 
     // destroy movie clips and stuff
-    public function dispose() : Void {}
+    public function deactivate() : Void {}
+
+    // determine if we should still be on the screen
+    public function onScreen() : Boolean {
+        return true;    
+    }
 
 }

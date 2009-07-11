@@ -60,8 +60,10 @@ Classification
     CLASS 1 - SPECIAL - LevelObject.CLASS_SPECIAL
         ID 0 = Activation Gate
         ID 1 = Platforms Moving Up
-            yrange = how far up (pixels) a platform moves before it disappears
-            pspace = the space in between moving platforms
+            range = how far (pixels) a platform moves before it disappears
+            velX = velocity x of the platform
+            velY = velocity y of the platform
+            delay = how many frames to wait before creating another platform
 
     CLASS 2 - STATIONARY PHYSICAL OBJECT - LevelObject.CLASS_OBSTACLE
         * these objects are locked in place and are obstructions

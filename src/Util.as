@@ -37,4 +37,9 @@ class Util {
         return pos.plusNew(
             new Vector(radius * Math.cos(angle), radius * Math.sin(angle)));
     }
+
+    // get the sign of a number: return 1 or -1. (or 0 if 0 is provided)
+    public static function sign(n : Number) : Number {
+        return n == 0 ? 0 : (n / Math.abs(n));
+    }
 }

@@ -215,7 +215,7 @@
 <obj cls="2" id="9" x="144" y="338" sx="6" sy="1" dir="1" destructable="0" />
 <obj cls="2" id="1" x="281" y="297" w="36" h="44" sx="6" sy="1" destructable="1" hp="20" />
 <obj cls="2" id="1" x="280" y="253" w="36" h="44" sx="6" sy="1" destructable="1" hp="20" />
-<obj cls="2" id="7" x="208" y="72" w="294" h="27" yrange="822" pspace="147" sx="8" sy="2" destructable="0" />
+<obj cls="1" id="1" x="208" y="72" w="294" h="27" range="822" velX="0" velY="-3" delay="68" sx="8" sy="2" />
 <obj cls="5" id="2" x="75" y="334" srange="80" erange="280" sx="7" sy="-1" rate="24" />
 <obj cls="0" id="4" layer="4" x="491" y="113" w="46.17" h="55.89" sx="10" sy="0" />
 <obj cls="0" id="4" layer="4" x="41" y="104" w="51.3" h="62.1" sx="11" sy="0" />

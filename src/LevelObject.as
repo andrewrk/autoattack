@@ -21,6 +21,9 @@ class LevelObject {
     public static var ID_CANNON : Number = 3;
     public static var ID_BOMB_THROWER : Number = 4;
 
+    public static var ID_ACTIVATION_GATE : Number = 0;
+    public static var ID_MOVING_PLATFORM : Number = 1;
+
     public static var ID_BULLET : Number = 0;
 
     private static var objectCount : Number = 0;
