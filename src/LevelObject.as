@@ -5,17 +5,15 @@ import org.cove.flade.util.Vector;
 import org.cove.flade.primitives.Particle;
 
 class LevelObject {
-    public static var CLASS_BG_DYN : Number = 0;
-    public static var CLASS_BG_ST : Number = 6;
-    public static var CLASS_FG_ST : Number = 7;
-    public static var CLASS_FG_DYN : Number = 1;
+    public static var CLASS_DECORATION : Number = 0;
+    public static var CLASS_SPECIAL : Number = 1;
     public static var CLASS_OBSTACLE : Number = 2;
-    public static var CLASS_STATIC : Number = 8;
-    public static var CLASS_ENTITY : Number = 9;
     public static var CLASS_POWERUP : Number = 3;
-    public static var CLASS_ENEMY : Number = 5;
     public static var CLASS_TRIGGER : Number = 4;
-    public static var CLASS_PROJECTILE : Number = 10;
+    public static var CLASS_ENEMY : Number = 5;
+    public static var CLASS_STATIC : Number = 6;
+    public static var CLASS_ENTITY : Number = 7;
+    public static var CLASS_PROJECTILE : Number = 0;
 
     public static var ID_SOLDIER : Number = 0;
     public static var ID_HELICOPTER : Number = 1;
@@ -28,59 +26,60 @@ class LevelObject {
     private static var objectCount : Number = 0;
 
     private static var mcMap : Object = {
-        class7id1 : "baseCampEntranceFG",
-        class7id0 : "fence",
-        class6id0 : "baseCampEntranceBG",
-        class1id6 : "bigBlackBar",
-        class7id8 : "bigBlackBar",
-        class1id5 : "bigDeadBush",
-        class7id7 : "bigDeadBush",
-        class8id1 : "bombDroppingVent",
-        class3id1 : "booster",
-        class2id0 : "breakableBoulder",
-        class2id3 : "breakableMountainExit",
-        class1id0 : "cactus",
-        class7id2 : "cactus",
-        class5id3 : "cannon",
-        class1id3 : "christmasTree",
-        class7id5 : "christmasTree",
-        class0id0 : "cloud",
-        class2id1 : "defenseShelf",
-        class2id5 : "downRamp",
-        class9id0 : "explosiveBarrel",
-        class3id0 : "gasCan",
-        class2id10 : "gate",
-        class2id2 : "glassPane",
-        class1id2 : "goodBush",
-        class7id4 : "goodBush",
-        class3id2 : "healthPack",
-        class9id1 : "mine",
-        class2id9 : "oneWaySpike",
-        class2id4 : "ramp",
-        class2id8 : "ramp2",
-        class1id4 : "saguaro",
-        class7id6 : "saguaro",
-        class1id1 : "skeletonBush",
-        class7id3 : "skeletonBush",
-        class3id3 : "timeBonus",
-        class2id6 : "trapDoor",
-        class5id2 : "turret",
-        class2id7 : "upPlatform",
-        class8id0 : "upsideDownSwitch",
+        // decorations
+        class0id0 : "fence",
+        class0id1 : "baseCampEntranceFG",
+        class0id2 : "cactus",
+        class0id3 : "skeletonBush",
+        class0id4 : "goodBush",
+        class0id5 : "christmasTree",
+        class0id6 : "saguaro",
+        class0id7 : "bigDeadBush",
+        class0id8 : "bigBlackBar",
+        class0id9 : "cloud",
+        class0id10 : "baseCampEntranceBG",
 
-        // TODO: create movie clips for these objects
-        // bad guys
-        class5id0 : "debugx",
-        class5id1 : "debugx",
-        class5id2 : "debugx",
-        class5id3 : "debugx",
-        class5id4 : "debugx",
+        // special objects
+
+        // stationary physical objects
+        class2id0 : "breakableBoulder",
+        class2id1 : "defenseShelf",
+        class2id2 : "glassPane",
+        class2id3 : "breakableMountainExit",
+        class2id4 : "ramp",
+        class2id5 : "downRamp",
+        class2id6 : "trapDoor",
+        class2id7 : "upPlatform",
+        class2id8 : "ramp2",
+        class2id9 : "oneWaySpike",
+        class2id10 : "gate",
+
+        // powerups
+        class3id0 : "gasCan",
+        class3id1 : "booster",
+        class3id2 : "healthPack",
+        class3id3 : "timeBonus",
 
         // triggers
         class4id0 : "trigger",
         class4id1 : "trigger",
         class4id2 : "trigger",
-        class4id3 : "trigger"
+        class4id3 : "trigger",
+
+        // TODO: create movie clips for these objects
+        // bad guys
+        class5id0 : "debugx",
+        class5id1 : "debugx",
+        class5id2 : "turret",
+        class5id3 : "debugx",
+        class5id4 : "debugx",
+        class5id3 : "cannon",
+
+        class6id0 : "upsideDownSwitch",
+        class6id1 : "bombDroppingVent",
+
+        class7id0 : "explosiveBarrel",
+        class7id1 : "mine"
     };
 
     public static function mcName(

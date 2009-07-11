@@ -140,12 +140,12 @@ class Level {
         progressVisible = false;
         
         // set up receiver
-        root_mc.attachMovie ("receiver", "transmission_mc", root_mc.getNextHighestDepth ());
+        root_mc.attachMovie("receiver", "transmission_mc", 
+            root_mc.getNextHighestDepth());
         root_mc.transmission_mc._x = movieSize.x / 2 
             - root_mc.transmission_mc._width / 2;
         root_mc.transmission_mc._y = movieSize.y / 2 
             - root_mc.transmission_mc._height / 2;
-
         
         // load intro cinematic
         var loader : MovieClipLoader = new MovieClipLoader();
@@ -699,21 +699,17 @@ class Level {
             parseInt(node.attributes.sy));
         
         var layer : Number;
-        
-        if( cls == LevelObject.CLASS_FG_DYN ) 
-            layer = LAYER_FORE;
-        else if( cls == LevelObject.CLASS_FG_ST ) 
-            layer = LAYER_FOREOBJ;
-        else if( cls == LevelObject.CLASS_BG_DYN || 
-                 cls == LevelObject.CLASS_BG_ST )
-            layer = LAYER_BGOBJ;
-        else 
+
+        if( node.attributes.layer )
+            layer = parseInt(node.attributes.layer);
+        else
             layer = LAYER_OBJ;
 
         var scrollFactor : Vector;
-        if( cls == LevelObject.CLASS_FG_DYN )
+        var scrollVal : Number = parseInt(node.attributes.scroll);
+        if( scrollVal > 0 )
             scrollFactor = new Vector(1.5, 1); // scroll by slightly faster
-        else if( cls == LevelObject.CLASS_BG_DYN )
+        else if( scrollVal < 0 )
             scrollFactor = new Vector(0.5, 0.5);
         else
             scrollFactor = new Vector(1, 1);

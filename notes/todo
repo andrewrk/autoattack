@@ -8,7 +8,7 @@ Andy:
         > implement power ups
 * if the jeep blows up, the soldier gets out and you control him
 * implement death which restarts the level
-* fix background music and provide an option to toggle sound and music, and
+* provide an option to toggle sound and music, and
   remember the option with cookies
 * bullets travel really fast - need to check points in between for hits
 * Optimize/refactor:

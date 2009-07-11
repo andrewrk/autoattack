@@ -33,16 +33,18 @@ Structure:
     </jclevel>
 
 Classification
-    CLASS 0 - BACKGROUND, DYNAMIC - LevelObject.CLASS_BG_DYN
-        * objects are behind the level and scroll by slowly
-        ID 0 = Cloud
-
-    CLASS 6 - BACKGROUND, STATIC - LevelObject.CLASS_BG_ST
-        * objects are stationary and scroll normally, behind the jeep
-        ID 0 = Base camp entrance bg
-
-    CLASS 7 - FOREGROUND, STATIC - LevelObject.CLASS_FG_ST
-        * objects are stationary and scroll normally, in front of the jeep
+    CLASS 0 - DECORATION - LevelObject.CLASS_DECORATION
+        * attributes:
+            layer = 
+                1: background, dynamic - objects behind level and scroll slowly
+                1: background, static - stationary objects behind player
+                4: foreground, static - stationary objects in front of player
+                5: foreground, dynamic - in front of player and scroll quickly
+            scroll = 
+                -1: slow (background)
+                0: normal
+                1: fast (foreground)
+                
         ID 0 = Base camp fence
         ID 1 = Base camp entrance fg
         ID 2 = Cactus
@@ -52,16 +54,14 @@ Classification
         ID 6 = Big Saguaro Cactus
         ID 7 = Big Dead Bush
         ID 8 = Black bar
+        ID 9 = Cloud
+        ID 10 = Base camp entrance bg
 
-    CLASS 1 - FOREGROUND, DYNAMIC - LevelObject.CLASS_FG_DYN
-        * objects are in front of the level and scroll by quickly
-        ID 0 = Cactus
-        ID 1 = Skeleton Bush
-        ID 2 = Good-looking bush
-        ID 3 = Christmas Tree
-        ID 4 = Big Saguaro Cactus
-        ID 5 = Big Dead Bush
-        ID 6 = Black bar
+    CLASS 1 - SPECIAL - LevelObject.CLASS_SPECIAL
+        ID 0 = Mountain Exit
+        ID 1 = Platforms Moving Up
+            yrange = how far up (pixels) a platform moves before it disappears
+            pspace = the space in between moving platforms
 
     CLASS 2 - STATIONARY PHYSICAL OBJECT - LevelObject.CLASS_OBSTACLE
         * these objects are locked in place and are obstructions
@@ -84,20 +84,6 @@ Classification
             rate = how many frames to count before popping back up
         ID 10 = Activation Gate
 
-    CLASS 8 - STATIONARY NON PHYSICAL OBJECTS - LevelObject.CLASS_STATIC
-        * these objects do not move and have no physical presence
-        ID 0 = Upside-down Switch
-            code = number that matches it with something to switch
-        ID 1 = Vent that drops goodies
-            weapon
-            rate = how many frames to count before dropping
-
-    CLASS 9 - DYNAMIC PHYSICAL OBJECTS - LevelObject.CLASS_ENTITY
-        * these suckers get put in the physics engine
-        ID 0 = Explosive Barrel - big firey explosion if damaged
-        ID 1 = Mine - explodes if you get too close
-        ID 2 = Rubble - a little useless piece of rubble
-
     CLASS 3 - POWER UPS - LevelObject.CLASS_POWERUP
         * collectables that you get once and they disappear
         ID 0 = Gas can
@@ -105,6 +91,14 @@ Classification
         ID 2 = Health Pack
         ID 3 = Time Bonus
         ID 4 = Extra life
+
+    CLASS 4 - TRIGGERS - LevelObject.CLASS_TRIGGER
+        ID 0 = Instant Death (jeep explodes)
+        ID 1 = Helicopter attack from above
+            code =  if provided, the helicopter attack is triggered by
+                    a switch rather than a hit area
+        ID 2 = Level complete
+        ID 3 = jeep explodes and but the driver hops out unharmed
 
     CLASS 5 - BAD GUYS - LevelObject.CLASS_ENEMY
         * these are in the physics engine and require AI
@@ -131,13 +125,20 @@ Classification
         ID 3 = Cannon
         ID 4 = Bad guy chucking bombs at the player
             
-    CLASS 4 - TRIGGERS - LevelObject.CLASS_TRIGGER
-        ID 0 = Instant Death (jeep explodes)
-        ID 1 = Helicopter attack from above
-            code =  if provided, the helicopter attack is triggered by
-                    a switch rather than a hit area
-        ID 2 = Level complete
-        ID 3 = jeep explodes and but the driver hops out unharmed
+    CLASS 6 - STATIONARY NON PHYSICAL OBJECTS - LevelObject.CLASS_STATIC
+        * these objects do not move and have no physical presence
+        ID 0 = Upside-down Switch
+            code = number that matches it with something to switch
+        ID 1 = Vent that drops goodies
+            weapon
+            rate = how many frames to count before dropping
 
-    CLASS 10 - PROJECTILES - LevelObject.CLASS_PROJECTILE
+    CLASS 7 - DYNAMIC PHYSICAL OBJECTS - LevelObject.CLASS_ENTITY
+        * these suckers get put in the physics engine
+        ID 0 = Explosive Barrel - big firey explosion if damaged
+        ID 1 = Mine - explodes if you get too close
+        ID 2 = Rubble - a little useless piece of rubble
+
+    CLASS 8 - PROJECTILES - LevelObject.CLASS_PROJECTILE
         ID 0 = Bullet
+
