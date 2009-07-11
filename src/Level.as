@@ -17,14 +17,16 @@ class Level {
     public static var LAYER_BG : Number = 0;
     public static var LAYER_BGOBJ : Number = 1;
     public static var LAYER_LEVEL : Number = 2;
-    public static var LAYER_OBJ : Number = 3;
-    public static var LAYER_FOREOBJ : Number = 4;
-    public static var LAYER_FORE : Number = 5;
+    public static var LAYER_BEHIND_JEEP : Number = 3;
+    public static var LAYER_OBJ : Number = 4;
+    public static var LAYER_FOREOBJ : Number = 5;
+    public static var LAYER_FORE : Number = 6;
 
     public static var layers : Array = [
         "bg_mc",
         "bgobj_mc",
         "level_mc",
+        "behindJeep_mc",
         "obj_mc",
         "foreobj_mc",
         "fore_mc"
@@ -423,18 +425,23 @@ class Level {
             // move projectiles
             projectiles[i].pos.plus(projectiles[i].vel);
 
-            if( hit(projectiles[i].pos) ){
+            if( hitBullet(projectiles[i].pos) ){
                 var objHit : LevelObject = lastHitObject;
 
                 // do actions because of the bullet hitting something
-                if( objHit != null && objHit.attrs.destructable==1 ){
-                    // move the object a little in the direction of the bullet
-                    // commented out. I don't think it's a good feature
-                    //objHit.pos.plus(projectiles[i].primitive.velocity.clone().normalize());
-                    objHit.attrs.hp -= bulletDamage;
-                    if( objHit.attrs.hp <= 0 ){
-                        // destroy the object
-                        destroyObject(objHit);
+                if( objHit != null ) {
+                    if( objHit.classNum == LevelObject.CLASS_SPECIAL ){
+                        // notify the class that it got hit
+                        SpecialObject(objHit).bulletHit(projectiles[i].pos);
+                    } else if( objHit.attrs.destructable==1 ){
+                        // move the object a little in the direction of the bullet
+                        // commented out. I don't think it's a good feature
+                        //objHit.pos.plus(projectiles[i].primitive.velocity.clone().normalize());
+                        objHit.attrs.hp -= bulletDamage;
+                        if( objHit.attrs.hp <= 0 ){
+                            // destroy the object
+                            destroyObject(objHit);
+                        }
                     }
                 }
 
@@ -654,8 +661,8 @@ class Level {
 
     function getScreenRect() : Rectangle {
         var pp : Vector = getPlayerPos();
-        return new Rectangle(pp.x - sectorWidth / 2, pp.y - sectorHeight / 2,
-            sectorWidth, sectorHeight);
+        return new Rectangle(pp.x - sectorWidth, pp.y - sectorHeight,
+            sectorWidth * 2, sectorHeight * 2);
     }
     
     function loadLevelFromXML() : Void {
@@ -737,21 +744,33 @@ class Level {
             parseInt(node.attributes.sy));
         
         var layer : Number;
-
-        if( node.attributes.layer )
-            layer = parseInt(node.attributes.layer);
-        else
-            layer = LAYER_OBJ;
-
         var scrollFactor : Vector;
-        var scrollVal : Number = parseInt(node.attributes.scroll);
-        if( scrollVal > 0 )
-            scrollFactor = new Vector(1.5, 1); // scroll by slightly faster
-        else if( scrollVal < 0 )
-            scrollFactor = new Vector(0.5, 0.5);
-        else
+
+        if( node.attributes.layer ) {
+            switch(parseInt(node.attributes.layer)){
+                case 0:
+                    layer = LAYER_BGOBJ;
+                    scrollFactor = new Vector(0.5, 0.5);
+                    break;
+                case 1:
+                    layer = LAYER_BEHIND_JEEP;
+                    scrollFactor = new Vector(1, 1);
+                case 2:
+                    layer = LAYER_FOREOBJ;
+                    scrollFactor = new Vector(1, 1);
+                    break;
+                case 3:
+                    layer = LAYER_FORE;
+                    scrollFactor = new Vector(1.5, 1); 
+                    break;
+                default:
+                    trace("invalid value for layer in level xml file");
+            }
+        } else {
+            layer = LAYER_OBJ;
             scrollFactor = new Vector(1, 1);
-        
+        }
+
         var pos : Vector = new Vector(sectorWidth * sector.x + offset.x,
             sectorHeight * sector.y + offset.y);
 
@@ -948,7 +967,8 @@ class Level {
         return slope;
     }
     
-    function hit (pos : Vector) : Boolean {
+    // did a bullet hit something solid?
+    function hitBullet (pos : Vector) : Boolean {
         lastHitObject = null;
         for (var sy : Number = curSector.y-1; sy <= curSector.y+1; sy++) {
             for (var sx : Number = curSector.x-1; sx <= curSector.x+1; sx++) {
@@ -969,8 +989,34 @@ class Level {
         // special objects
         for( var i : Number = 0; i < specialObjects.length; i++ ){
             var obj : SpecialObject = specialObjects[i];
-            if( obj.hit(pos) ) {
+            if( obj.solid() && obj.hitBullet(pos) ) {
                 lastHitObject = obj;
+                return true;
+            }
+        }
+
+        return false;
+    }
+    function hit (pos : Vector) : Boolean {
+        for (var sy : Number = curSector.y-1; sy <= curSector.y+1; sy++) {
+            for (var sx : Number = curSector.x-1; sx <= curSector.x+1; sx++) {
+                var checkX : Number = pos.x - sx * sectorWidth;
+                var checkY : Number = pos.y - sy * sectorHeight;
+                if (root_mc.level_mc["mx" + sx + "y" + sy].hitTest(checkX, checkY, 1))
+                    return true;
+            }
+        }
+        // obstacles
+        var rel : Vector = getRelPos(pos);
+        for( var i : Number = 0; i < obstacles.length; i++ ){
+            if( obstacles[i].mc.hitTest(rel.x, rel.y, 1) ) {
+                return true;
+            }
+        }
+        // special objects
+        for( var i : Number = 0; i < specialObjects.length; i++ ){
+            var obj : SpecialObject = specialObjects[i];
+            if( obj.solid() && obj.hit(pos) ) {
                 return true;
             }
         }

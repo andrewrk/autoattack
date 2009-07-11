@@ -19,6 +19,11 @@ class objects.SpecialObject extends LevelObject {
         return false;
     }
 
+    // return true if this location is solid for bullets
+    public function hitBullet(pos : Vector) : Boolean {
+        return hit(pos);
+    }
+
     // notification that a bullet hit this object at this location
     public function bulletHit(pos : Vector) : Void {}
 

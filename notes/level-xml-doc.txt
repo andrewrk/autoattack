@@ -36,15 +36,10 @@ Classification
     CLASS 0 - DECORATION - LevelObject.CLASS_DECORATION
         * attributes:
             layer = 
-                1: background, dynamic - objects behind level and scroll slowly
+                0: background, dynamic - objects behind level and scroll slowly
                 1: background, static - stationary objects behind player
-                4: foreground, static - stationary objects in front of player
-                5: foreground, dynamic - in front of player and scroll quickly
-            scroll = 
-                -1: slow (background)
-                0: normal
-                1: fast (foreground)
-                
+                2: foreground, static - stationary objects in front of player
+                3: foreground, dynamic - in front of player and scroll quickly
         ID 0 = Base camp fence
         ID 1 = Base camp entrance fg
         ID 2 = Cactus
@@ -78,9 +73,7 @@ Classification
         ID 5 = Down Ramp
         ID 6 = Trap door
             code = number that matches it with a switch
-        ID 7 = Platforms Moving Up
-            yrange = how far up (pixels) a platform moves before it disappears
-            pspace = the space in between moving platforms
+        ID 7 = <unused>
         ID 8 = Up Ramp #2
         ID 9 = One-way spike
             rate = how many frames to count before popping back up

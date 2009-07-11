@@ -1,35 +1,35 @@
 <jclevel gameover="0" sx="0" sy="0" sl="0" st="-1" sr="31" sb="2" spx="160" spy="102" bgmusic="anotherone.mp3" scale="1">
-<obj cls="0" id="9" layer="1" scroll="-1" x="364" y="43" w="87" h="44" sx="0" sy="0" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="89" y="-19" w="87" h="44" sx="1" sy="0" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="546" y="4" w="87" h="44" sx="1" sy="0" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="264" y="75" w="87" h="44" sx="2" sy="0" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="462" y="61" w="87" h="44" sx="2" sy="0" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="431" y="353" w="87" h="44" sx="3" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="488" y="133" w="87" h="44" sx="4" sy="0" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="245" y="90" w="87" h="44" sx="4" sy="1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="347" y="293" w="87" h="44" sx="3" sy="1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="273" y="214" w="87" h="44" sx="7" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="107" y="236" w="87" h="44" sx="9" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="454" y="361" w="87" h="44" sx="9" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="472" y="246" w="87" h="44" sx="10" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="333" y="389" w="87" h="44" sx="11" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="304" y="253" w="87" h="44" sx="12" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="510" y="105" w="87" h="44" sx="13" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="195" y="284" w="93" h="55" sx="14" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="546" y="206" w="93" h="55" sx="14" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="395" y="305" w="93" h="55" sx="15" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="422" y="241" w="102" h="60" sx="21" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="186" y="360" w="102" h="60" sx="22" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="172" y="243" w="102" h="60" sx="23" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="333" y="0" w="102" h="60" sx="24" sy="0" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="310" y="316" w="102" h="60" sx="25" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="278" y="98" w="102" h="60" sx="27" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="272" y="36" w="102" h="60" sx="26" sy="0" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="102" y="254" w="102" h="60" sx="28" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="521" y="150" w="102" h="60" sx="28" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="103" y="163" w="115" h="68" sx="29" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="55" y="32" w="115" h="68" sx="30" sy="-1" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="67" y="290" w="115" h="68" sx="31" sy="-1" />
+<obj cls="0" id="9" layer="0" x="364" y="43" w="87" h="44" sx="0" sy="0" />
+<obj cls="0" id="9" layer="0" x="89" y="-19" w="87" h="44" sx="1" sy="0" />
+<obj cls="0" id="9" layer="0" x="546" y="4" w="87" h="44" sx="1" sy="0" />
+<obj cls="0" id="9" layer="0" x="264" y="75" w="87" h="44" sx="2" sy="0" />
+<obj cls="0" id="9" layer="0" x="462" y="61" w="87" h="44" sx="2" sy="0" />
+<obj cls="0" id="9" layer="0" x="431" y="353" w="87" h="44" sx="3" sy="-1" />
+<obj cls="0" id="9" layer="0" x="488" y="133" w="87" h="44" sx="4" sy="0" />
+<obj cls="0" id="9" layer="0" x="245" y="90" w="87" h="44" sx="4" sy="1" />
+<obj cls="0" id="9" layer="0" x="347" y="293" w="87" h="44" sx="3" sy="1" />
+<obj cls="0" id="9" layer="0" x="273" y="214" w="87" h="44" sx="7" sy="-1" />
+<obj cls="0" id="9" layer="0" x="107" y="236" w="87" h="44" sx="9" sy="-1" />
+<obj cls="0" id="9" layer="0" x="454" y="361" w="87" h="44" sx="9" sy="-1" />
+<obj cls="0" id="9" layer="0" x="472" y="246" w="87" h="44" sx="10" sy="-1" />
+<obj cls="0" id="9" layer="0" x="333" y="389" w="87" h="44" sx="11" sy="-1" />
+<obj cls="0" id="9" layer="0" x="304" y="253" w="87" h="44" sx="12" sy="-1" />
+<obj cls="0" id="9" layer="0" x="510" y="105" w="87" h="44" sx="13" sy="-1" />
+<obj cls="0" id="9" layer="0" x="195" y="284" w="93" h="55" sx="14" sy="-1" />
+<obj cls="0" id="9" layer="0" x="546" y="206" w="93" h="55" sx="14" sy="-1" />
+<obj cls="0" id="9" layer="0" x="395" y="305" w="93" h="55" sx="15" sy="-1" />
+<obj cls="0" id="9" layer="0" x="422" y="241" w="102" h="60" sx="21" sy="-1" />
+<obj cls="0" id="9" layer="0" x="186" y="360" w="102" h="60" sx="22" sy="-1" />
+<obj cls="0" id="9" layer="0" x="172" y="243" w="102" h="60" sx="23" sy="-1" />
+<obj cls="0" id="9" layer="0" x="333" y="0" w="102" h="60" sx="24" sy="0" />
+<obj cls="0" id="9" layer="0" x="310" y="316" w="102" h="60" sx="25" sy="-1" />
+<obj cls="0" id="9" layer="0" x="278" y="98" w="102" h="60" sx="27" sy="-1" />
+<obj cls="0" id="9" layer="0" x="272" y="36" w="102" h="60" sx="26" sy="0" />
+<obj cls="0" id="9" layer="0" x="102" y="254" w="102" h="60" sx="28" sy="-1" />
+<obj cls="0" id="9" layer="0" x="521" y="150" w="102" h="60" sx="28" sy="-1" />
+<obj cls="0" id="9" layer="0" x="103" y="163" w="115" h="68" sx="29" sy="-1" />
+<obj cls="0" id="9" layer="0" x="55" y="32" w="115" h="68" sx="30" sy="-1" />
+<obj cls="0" id="9" layer="0" x="67" y="290" w="115" h="68" sx="31" sy="-1" />
 <obj cls="3" id="0" x="547" y="165" sx="1" sy="0" />
 <obj cls="3" id="1" x="180" y="175" sx="2" sy="0" />
 <obj cls="3" id="1" x="146" y="320" sx="3" sy="-1" />
@@ -70,7 +70,7 @@
 <obj cls="7" id="0" x="482" y="63" w="33" h="43" sx="19" sy="0" />
 <obj cls="5" id="2" x="533" y="357" srange="190" erange="350" sx="20" sy="-1" rate="24" />
 <obj cls="5" id="2" x="548" y="86" srange="10" erange="350" sx="20" sy="0" rate="24" />
-<obj cls="2" id="3" x="155" y="364" w="172" h="162" sx="21" sy="-1" />
+<obj cls="2" id="3" x="155" y="364" w="172" h="162" sx="21" sy="-1" destructable="1" hp="50" />
 <obj cls="7" id="0" x="114" y="57" w="31" h="40" sx="21" sy="0" />
 <obj cls="7" id="0" x="112" y="18" w="31" h="40" sx="21" sy="0" />
 <obj cls="7" id="0" x="109" y="380" w="31" h="40" sx="21" sy="-1" />
@@ -127,86 +127,86 @@
 <obj cls="5" id="0" x="237" y="201" sx="27" sy="-1" arrival="2" weapon="2" />
 <obj cls="5" id="0" x="367" y="199" sx="27" sy="-1" arrival="2" weapon="2" />
 <obj cls="5" id="0" x="507" y="198" sx="27" sy="-1" arrival="2" weapon="2" />
-<obj cls="0" id="3" layer="4" x="94" y="208" w="46.98" h="34.83" sx="0" sy="0" />
-<obj cls="0" id="4" layer="4" x="165.5" y="247" w="74.536" h="90.508" sx="0" sy="0" />
-<obj cls="0" id="3" layer="4" x="229" y="199" w="46.98" h="34.83" sx="0" sy="0" />
-<obj cls="0" id="3" layer="4" x="369.75" y="236" w="63" h="47" sx="0" sy="0" />
-<obj cls="0" id="3" layer="4" x="53" y="176" w="41.553" h="30.618" sx="1" sy="0" />
-<obj cls="0" id="3" layer="4" x="530" y="207" w="66" h="49" sx="0" sy="0" />
-<obj cls="0" id="4" layer="4" x="39.75" y="234" w="75" h="90" sx="1" sy="0" />
-<obj cls="0" id="2" layer="4" x="157" y="185" w="49.572" h="60.507" sx="1" sy="0" />
-<obj cls="0" id="4" layer="4" x="294" y="147" w="54.675" h="65.61" sx="1" sy="0" />
-<obj cls="0" id="4" layer="4" x="315.65" y="272" w="75" h="90" sx="1" sy="0" />
-<obj cls="0" id="4" layer="4" x="535" y="179" w="60.75" h="72.9" sx="1" sy="0" />
-<obj cls="0" id="4" layer="4" x="92" y="252" w="75" h="90" sx="2" sy="0" />
-<obj cls="0" id="4" layer="4" x="249" y="203" w="67.797" h="81.648" sx="2" sy="0" />
-<obj cls="0" id="5" layer="5" scroll="1" x="482.5" y="314" w="223" h="250" sx="1" sy="0" />
-<obj cls="0" id="4" layer="4" x="268.25" y="210" w="54.675" h="65.61" sx="3" sy="0" />
-<obj cls="0" id="4" layer="4" x="524" y="192" w="60.75" h="72.9" sx="3" sy="0" />
-<obj cls="0" id="4" layer="4" x="351.25" y="253" w="75" h="90" sx="3" sy="0" />
-<obj cls="0" id="4" layer="4" x="58" y="281" w="75" h="90" sx="4" sy="0" />
-<obj cls="0" id="4" layer="4" x="222" y="241" w="54.675" h="65.61" sx="4" sy="0" />
-<obj cls="0" id="4" layer="4" x="452" y="253" w="49.2075" h="59.049" sx="4" sy="0" />
-<obj cls="0" id="4" layer="4" x="369" y="301" w="71.3242537425" h="85.589104491" sx="4" sy="0" />
-<obj cls="0" id="4" layer="4" x="162" y="308" w="57" h="69" sx="4" sy="1" />
-<obj cls="0" id="4" layer="4" x="421" y="288" w="57" h="69" sx="4" sy="1" />
-<obj cls="0" id="4" layer="4" x="198" y="335" w="77" h="93" sx="4" sy="1" />
-<obj cls="0" id="4" layer="4" x="11" y="325" w="57" h="69" sx="3" sy="1" />
-<obj cls="0" id="4" layer="4" x="231" y="321" w="57" h="69" sx="3" sy="1" />
-<obj cls="0" id="4" layer="4" x="466" y="397" w="57" h="69" sx="3" sy="1" />
-<obj cls="0" id="4" layer="4" x="45.25" y="15" w="95" h="115" sx="5" sy="2" />
-<obj cls="0" id="4" layer="4" x="10" y="245" w="95" h="115" sx="6" sy="2" />
-<obj cls="0" id="2" layer="4" x="359" y="249" w="111" h="136" sx="6" sy="2" />
-<obj cls="0" id="2" layer="4" x="228" y="99" w="75" h="92" sx="9" sy="0" />
-<obj cls="0" id="3" layer="4" x="534" y="130" w="64.8" h="48.6" sx="9" sy="0" />
-<obj cls="0" id="3" layer="4" x="133" y="89" w="64.8" h="48.6" sx="10" sy="0" />
-<obj cls="0" id="3" layer="4" x="209" y="116" w="72" h="54" sx="10" sy="0" />
-<obj cls="0" id="3" layer="4" x="266" y="189" w="87.12" h="65.34" sx="10" sy="0" />
-<obj cls="0" id="5" layer="5" scroll="1" x="98.6750000000002" y="162" w="218.5623" h="245.025" sx="10" sy="0" />
-<obj cls="0" id="4" layer="4" x="313" y="96" w="46.17" h="55.89" sx="11" sy="0" />
-<obj cls="0" id="4" layer="4" x="267" y="56" w="51.3" h="62.1" sx="12" sy="0" />
-<obj cls="0" id="4" layer="4" x="137" y="84" w="57" h="69" sx="12" sy="0" />
-<obj cls="0" id="4" layer="4" x="214" y="116" w="74.3572467" h="90.0114039" sx="12" sy="0" />
-<obj cls="0" id="3" layer="4" x="441" y="55" w="58.32" h="43.74" sx="12" sy="0" />
-<obj cls="0" id="3" layer="4" x="537" y="23" w="52.488" h="39.366" sx="12" sy="0" />
-<obj cls="0" id="2" layer="4" x="476.55" y="64" w="75" h="92" sx="12" sy="0" />
-<obj cls="0" id="4" layer="4" x="301" y="61" w="57" h="69" sx="13" sy="0" />
-<obj cls="0" id="4" layer="4" x="126" y="63" w="57" h="69" sx="13" sy="0" />
-<obj cls="0" id="4" layer="4" x="502" y="116" w="87" h="105" sx="13" sy="0" />
-<obj cls="0" id="2" layer="4" x="107.25" y="93" w="75" h="92" sx="14" sy="0" />
-<obj cls="0" id="6" layer="5" scroll="1" x="429.25" y="368" w="175" h="322" sx="15" sy="-1" />
-<obj cls="0" id="2" layer="4" x="259.674999999999" y="122" w="75" h="92" sx="15" sy="0" />
-<obj cls="0" id="7" layer="5" scroll="1" x="104.75" y="45" w="258" h="199" sx="20" sy="0" />
-<obj cls="0" id="6" layer="5" scroll="1" x="435.75" y="40" w="175" h="322" sx="21" sy="0" />
-<obj cls="0" id="3" layer="4" x="500" y="119" w="72" h="54" sx="21" sy="0" />
-<obj cls="0" id="3" layer="4" x="30" y="82" w="64.8" h="48.6" sx="22" sy="0" />
-<obj cls="0" id="4" layer="4" x="245.25" y="115" w="67.797" h="81.648" sx="23" sy="0" />
-<obj cls="0" id="4" layer="4" x="342.85" y="195" w="93" h="112" sx="23" sy="0" />
-<obj cls="0" id="4" layer="4" x="295.85" y="181" w="83.7" h="100.8" sx="23" sy="0" />
-<obj cls="0" id="4" layer="4" x="492" y="59" w="75.33" h="90.72" sx="24" sy="0" />
-<obj cls="0" id="4" layer="4" x="53.75" y="46" w="88.2" h="107.1" sx="28" sy="0" />
-<obj cls="0" id="4" layer="4" x="165.25" y="81" w="98" h="119" sx="28" sy="0" />
-<obj cls="0" id="4" layer="4" x="263.75" y="66" w="98" h="119" sx="28" sy="0" />
-<obj cls="0" id="4" layer="4" x="5.25" y="98" w="98" h="119" sx="29" sy="0" />
+<obj cls="0" id="3" layer="2" x="94" y="208" w="46.98" h="34.83" sx="0" sy="0" />
+<obj cls="0" id="4" layer="2" x="165.5" y="247" w="74.536" h="90.508" sx="0" sy="0" />
+<obj cls="0" id="3" layer="2" x="229" y="199" w="46.98" h="34.83" sx="0" sy="0" />
+<obj cls="0" id="3" layer="2" x="369.75" y="236" w="63" h="47" sx="0" sy="0" />
+<obj cls="0" id="3" layer="2" x="53" y="176" w="41.553" h="30.618" sx="1" sy="0" />
+<obj cls="0" id="3" layer="2" x="530" y="207" w="66" h="49" sx="0" sy="0" />
+<obj cls="0" id="4" layer="2" x="39.75" y="234" w="75" h="90" sx="1" sy="0" />
+<obj cls="0" id="2" layer="2" x="157" y="185" w="49.572" h="60.507" sx="1" sy="0" />
+<obj cls="0" id="4" layer="2" x="294" y="147" w="54.675" h="65.61" sx="1" sy="0" />
+<obj cls="0" id="4" layer="2" x="315.65" y="272" w="75" h="90" sx="1" sy="0" />
+<obj cls="0" id="4" layer="2" x="535" y="179" w="60.75" h="72.9" sx="1" sy="0" />
+<obj cls="0" id="4" layer="2" x="92" y="252" w="75" h="90" sx="2" sy="0" />
+<obj cls="0" id="4" layer="2" x="249" y="203" w="67.797" h="81.648" sx="2" sy="0" />
+<obj cls="0" id="5" layer="3" x="482.5" y="314" w="223" h="250" sx="1" sy="0" />
+<obj cls="0" id="4" layer="2" x="268.25" y="210" w="54.675" h="65.61" sx="3" sy="0" />
+<obj cls="0" id="4" layer="2" x="524" y="192" w="60.75" h="72.9" sx="3" sy="0" />
+<obj cls="0" id="4" layer="2" x="351.25" y="253" w="75" h="90" sx="3" sy="0" />
+<obj cls="0" id="4" layer="2" x="58" y="281" w="75" h="90" sx="4" sy="0" />
+<obj cls="0" id="4" layer="2" x="222" y="241" w="54.675" h="65.61" sx="4" sy="0" />
+<obj cls="0" id="4" layer="2" x="452" y="253" w="49.2075" h="59.049" sx="4" sy="0" />
+<obj cls="0" id="4" layer="2" x="369" y="301" w="71.3242537425" h="85.589104491" sx="4" sy="0" />
+<obj cls="0" id="4" layer="2" x="162" y="308" w="57" h="69" sx="4" sy="1" />
+<obj cls="0" id="4" layer="2" x="421" y="288" w="57" h="69" sx="4" sy="1" />
+<obj cls="0" id="4" layer="2" x="198" y="335" w="77" h="93" sx="4" sy="1" />
+<obj cls="0" id="4" layer="2" x="11" y="325" w="57" h="69" sx="3" sy="1" />
+<obj cls="0" id="4" layer="2" x="231" y="321" w="57" h="69" sx="3" sy="1" />
+<obj cls="0" id="4" layer="2" x="466" y="397" w="57" h="69" sx="3" sy="1" />
+<obj cls="0" id="4" layer="2" x="45.25" y="15" w="95" h="115" sx="5" sy="2" />
+<obj cls="0" id="4" layer="2" x="10" y="245" w="95" h="115" sx="6" sy="2" />
+<obj cls="0" id="2" layer="2" x="359" y="249" w="111" h="136" sx="6" sy="2" />
+<obj cls="0" id="2" layer="2" x="228" y="99" w="75" h="92" sx="9" sy="0" />
+<obj cls="0" id="3" layer="2" x="534" y="130" w="64.8" h="48.6" sx="9" sy="0" />
+<obj cls="0" id="3" layer="2" x="133" y="89" w="64.8" h="48.6" sx="10" sy="0" />
+<obj cls="0" id="3" layer="2" x="209" y="116" w="72" h="54" sx="10" sy="0" />
+<obj cls="0" id="3" layer="2" x="266" y="189" w="87.12" h="65.34" sx="10" sy="0" />
+<obj cls="0" id="5" layer="3" x="98.6750000000002" y="162" w="218.5623" h="245.025" sx="10" sy="0" />
+<obj cls="0" id="4" layer="2" x="313" y="96" w="46.17" h="55.89" sx="11" sy="0" />
+<obj cls="0" id="4" layer="2" x="267" y="56" w="51.3" h="62.1" sx="12" sy="0" />
+<obj cls="0" id="4" layer="2" x="137" y="84" w="57" h="69" sx="12" sy="0" />
+<obj cls="0" id="4" layer="2" x="214" y="116" w="74.3572467" h="90.0114039" sx="12" sy="0" />
+<obj cls="0" id="3" layer="2" x="441" y="55" w="58.32" h="43.74" sx="12" sy="0" />
+<obj cls="0" id="3" layer="2" x="537" y="23" w="52.488" h="39.366" sx="12" sy="0" />
+<obj cls="0" id="2" layer="2" x="476.55" y="64" w="75" h="92" sx="12" sy="0" />
+<obj cls="0" id="4" layer="2" x="301" y="61" w="57" h="69" sx="13" sy="0" />
+<obj cls="0" id="4" layer="2" x="126" y="63" w="57" h="69" sx="13" sy="0" />
+<obj cls="0" id="4" layer="2" x="502" y="116" w="87" h="105" sx="13" sy="0" />
+<obj cls="0" id="2" layer="2" x="107.25" y="93" w="75" h="92" sx="14" sy="0" />
+<obj cls="0" id="6" layer="3" x="429.25" y="368" w="175" h="322" sx="15" sy="-1" />
+<obj cls="0" id="2" layer="2" x="259.674999999999" y="122" w="75" h="92" sx="15" sy="0" />
+<obj cls="0" id="7" layer="3" x="104.75" y="45" w="258" h="199" sx="20" sy="0" />
+<obj cls="0" id="6" layer="3" x="435.75" y="40" w="175" h="322" sx="21" sy="0" />
+<obj cls="0" id="3" layer="2" x="500" y="119" w="72" h="54" sx="21" sy="0" />
+<obj cls="0" id="3" layer="2" x="30" y="82" w="64.8" h="48.6" sx="22" sy="0" />
+<obj cls="0" id="4" layer="2" x="245.25" y="115" w="67.797" h="81.648" sx="23" sy="0" />
+<obj cls="0" id="4" layer="2" x="342.85" y="195" w="93" h="112" sx="23" sy="0" />
+<obj cls="0" id="4" layer="2" x="295.85" y="181" w="83.7" h="100.8" sx="23" sy="0" />
+<obj cls="0" id="4" layer="2" x="492" y="59" w="75.33" h="90.72" sx="24" sy="0" />
+<obj cls="0" id="4" layer="2" x="53.75" y="46" w="88.2" h="107.1" sx="28" sy="0" />
+<obj cls="0" id="4" layer="2" x="165.25" y="81" w="98" h="119" sx="28" sy="0" />
+<obj cls="0" id="4" layer="2" x="263.75" y="66" w="98" h="119" sx="28" sy="0" />
+<obj cls="0" id="4" layer="2" x="5.25" y="98" w="98" h="119" sx="29" sy="0" />
 <obj cls="0" id="10" layer="1" x="417.5" y="344" w="43.3" h="148.4" sx="29" sy="-1" />
-<obj cls="0" id="1" layer="4" x="512" y="339" w="174.5" h="162" sx="29" sy="-1" />
-<obj cls="0" id="0" layer="4" x="45.5" y="301" w="203" h="170" sx="30" sy="-1" />
-<obj cls="0" id="0" layer="4" x="239" y="300.5" w="203" h="170" sx="30" sy="-1" />
-<obj cls="0" id="0" layer="4" x="432" y="302" w="203" h="170" sx="30" sy="-1" />
-<obj cls="0" id="0" layer="4" x="74" y="302.5" w="203" h="170" sx="31" sy="-1" />
-<obj cls="0" id="0" layer="4" x="269" y="303" w="203" h="170" sx="31" sy="-1" />
+<obj cls="0" id="1" layer="2" x="512" y="339" w="174.5" h="162" sx="29" sy="-1" />
+<obj cls="0" id="0" layer="2" x="45.5" y="301" w="203" h="170" sx="30" sy="-1" />
+<obj cls="0" id="0" layer="2" x="239" y="300.5" w="203" h="170" sx="30" sy="-1" />
+<obj cls="0" id="0" layer="2" x="432" y="302" w="203" h="170" sx="30" sy="-1" />
+<obj cls="0" id="0" layer="2" x="74" y="302.5" w="203" h="170" sx="31" sy="-1" />
+<obj cls="0" id="0" layer="2" x="269" y="303" w="203" h="170" sx="31" sy="-1" />
 <obj cls="4" id="2" x="339" y="337" w="203" h="170" sx="30" sy="-1" />
-<obj cls="0" id="2" layer="5" scroll="1" x="73.15" y="318" w="108.3434" h="131.769" sx="0" sy="0" />
-<obj cls="0" id="9" layer="1" scroll="-1" x="25.075" y="334.175" w="86.13" h="43.56" sx="0" sy="-1" />
-<obj cls="0" id="4" layer="5" scroll="1" x="225.9" y="304" w="122.39876" h="148.16692" sx="0" sy="0" />
-<obj cls="0" id="2" layer="5" scroll="1" x="431.25" y="259" w="119.17774" h="146.55641" sx="0" sy="0" />
-<obj cls="0" id="2" layer="5" scroll="1" x="106.05" y="269" w="124.52302269" h="152.58454893" sx="1" sy="0" />
-<obj cls="0" id="5" layer="5" scroll="1" x="452.375" y="316" w="223" h="250" sx="3" sy="0" />
+<obj cls="0" id="2" layer="3" x="73.15" y="318" w="108.3434" h="131.769" sx="0" sy="0" />
+<obj cls="0" id="9" layer="0" x="25.075" y="334.175" w="86.13" h="43.56" sx="0" sy="-1" />
+<obj cls="0" id="4" layer="3" x="225.9" y="304" w="122.39876" h="148.16692" sx="0" sy="0" />
+<obj cls="0" id="2" layer="3" x="431.25" y="259" w="119.17774" h="146.55641" sx="0" sy="0" />
+<obj cls="0" id="2" layer="3" x="106.05" y="269" w="124.52302269" h="152.58454893" sx="1" sy="0" />
+<obj cls="0" id="5" layer="3" x="452.375" y="316" w="223" h="250" sx="3" sy="0" />
 <obj cls="2" id="0" x="457" y="151" w="91" h="81" sx="1" sy="0" destructable="1" hp="20" />
 <obj cls="2" id="4" x="303" y="173" w="142" h="71" sx="2" sy="0" destructable="0" />
 <obj cls="2" id="5" x="144" y="163" w="143" h="72" sx="3" sy="0" destructable="0" />
 <obj cls="2" id="1" x="293" y="233" w="26" h="32" sx="4" sy="1" destructable="1" hp="20" />
-<obj cls="0" id="5" layer="4" x="401" y="205" w="162.567" h="182.25" sx="4" sy="1" />
+<obj cls="0" id="5" layer="2" x="401" y="205" w="162.567" h="182.25" sx="4" sy="1" />
 <obj cls="2" id="9" x="243" y="343" sx="5" sy="1" dir="1" destructable="0" />
 <obj cls="2" id="9" x="266" y="343" sx="5" sy="1" dir="1" destructable="0" />
 <obj cls="6" id="0" x="105" y="151" w="60" h="31" sx="6" sy="1" code="0" />
@@ -215,24 +215,24 @@
 <obj cls="2" id="9" x="144" y="338" sx="6" sy="1" dir="1" destructable="0" />
 <obj cls="2" id="1" x="281" y="297" w="36" h="44" sx="6" sy="1" destructable="1" hp="20" />
 <obj cls="2" id="1" x="280" y="253" w="36" h="44" sx="6" sy="1" destructable="1" hp="20" />
-<obj cls="1" id="1" x="208" y="72" w="294" h="27" range="822" velX="0" velY="-3" delay="68" sx="8" sy="2" />
+<obj cls="1" id="1" x="208" y="72" w="294" h="27" range="700" velX="0" velY="-4" delay="68" sx="8" sy="2" />
 <obj cls="5" id="2" x="75" y="334" srange="80" erange="280" sx="7" sy="-1" rate="24" />
-<obj cls="0" id="4" layer="4" x="491" y="113" w="46.17" h="55.89" sx="10" sy="0" />
-<obj cls="0" id="4" layer="4" x="41" y="104" w="51.3" h="62.1" sx="11" sy="0" />
-<obj cls="0" id="4" layer="4" x="5" y="143" w="68.97" h="83.49" sx="11" sy="0" />
+<obj cls="0" id="4" layer="2" x="491" y="113" w="46.17" h="55.89" sx="10" sy="0" />
+<obj cls="0" id="4" layer="2" x="41" y="104" w="51.3" h="62.1" sx="11" sy="0" />
+<obj cls="0" id="4" layer="2" x="5" y="143" w="68.97" h="83.49" sx="11" sy="0" />
 <obj cls="2" id="4" x="410" y="48" w="142" h="71" sx="11" sy="0" destructable="0" />
 <obj cls="2" id="0" x="438" y="27" w="133" h="119" sx="13" sy="0" destructable="1" hp="20" />
 <obj cls="2" id="4" x="495" y="388" w="142" h="71" sx="14" sy="-1" destructable="0" />
-<obj cls="2" id="10" x="152" y="260" w="158" h="253" sx="16" sy="-1" />
+<obj cls="1" id="0" x="152" y="260" w="158" h="253" sx="16" sy="-1" />
 <obj cls="2" id="0" x="132" y="68" w="61" h="55" sx="18" sy="0" destructable="1" hp="5" />
 <obj cls="5" id="2" x="445" y="352" srange="190" erange="350" sx="18" sy="-1" rate="24" />
 <obj cls="5" id="2" x="53" y="81" srange="10" erange="170" sx="19" sy="0" rate="24" />
-<obj cls="0" id="8" layer="5" scroll="1" x="417.125" y="174" w="33.275" h="574.992" sx="19" sy="-1" />
-<obj cls="0" id="8" layer="5" scroll="1" x="255.65" y="154" w="25" h="500" sx="18" sy="-1" />
+<obj cls="0" id="8" layer="3" x="417.125" y="174" w="33.275" h="574.992" sx="19" sy="-1" />
+<obj cls="0" id="8" layer="3" x="255.65" y="154" w="25" h="500" sx="18" sy="-1" />
 <obj cls="5" id="0" x="473" y="1" sx="19" sy="0" arrival="0" weapon="0" />
 <obj cls="2" id="2" x="137" y="367" w="13" h="119" sx="20" sy="-1" destructable="1" hp="5" />
 <obj cls="5" id="2" x="458" y="84" srange="190" erange="350" sx="22" sy="0" rate="24" />
 <obj cls="2" id="9" x="94" y="77" sx="24" sy="0" dir="1" destructable="0" />
 <obj cls="2" id="9" x="116" y="76" sx="24" sy="0" dir="1" destructable="0" />
-<obj cls="0" id="5" layer="4" x="51" y="368" w="200.7" h="225" sx="26" sy="-1" />
+<obj cls="0" id="5" layer="2" x="51" y="368" w="200.7" h="225" sx="26" sy="-1" />
 </jclevel>

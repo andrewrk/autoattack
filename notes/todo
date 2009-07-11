@@ -6,6 +6,9 @@ Andy:
       after some specified time it pops back up
     - give the jeep health and gas and a hud display
         > implement power ups
+* if you just sit on the up moving platform it gets glitchy at the top
+* I think turrets broke, they need to be fixed
+* jeep goes in front of the thing it should go behind at the end
 * if the jeep blows up, the soldier gets out and you control him
 * implement death which restarts the level
 * provide an option to toggle sound and music, and
