@@ -547,6 +547,7 @@ class Level {
                 if( inScreenRangeF(obj.pos, obj.scrollFactor) )
                 {
 
+                    
                     var layer_mc : MovieClip = 
                         root_mc[layers[obj.layer]];
                     var str : String = "obj" + obj.objId;
@@ -755,6 +756,7 @@ class Level {
                 case 1:
                     layer = LAYER_BEHIND_JEEP;
                     scrollFactor = new Vector(1, 1);
+                    break;
                 case 2:
                     layer = LAYER_FOREOBJ;
                     scrollFactor = new Vector(1, 1);

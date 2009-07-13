@@ -8,7 +8,6 @@ Andy:
         > implement power ups
 * if you just sit on the up moving platform it gets glitchy at the top
 * I think turrets broke, they need to be fixed
-* jeep goes in front of the thing it should go behind at the end
 * if the jeep blows up, the soldier gets out and you control him
 * implement death which restarts the level
 * provide an option to toggle sound and music, and
@@ -19,12 +18,6 @@ Andy:
     - separate Level, Transmission, and GamePlay. Move user input to GamePlay
     - split LevelObject into a parent and some subclasses, including 
       explosions, projectiles, etc
-* ideas to try fixing physics:
-    - just check the points around the wheel to determine if the wheel is 
-      in the wall. then move it back along the line of of movement until it is
-      no longer in the wall
-    - use the point that is furthest in the wall
-    - create a testing suite to check the resolvecirclecollision fuction
 * level editor:
     - ability to adjust sectors
 * level1.swf
