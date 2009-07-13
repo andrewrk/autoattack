@@ -357,9 +357,9 @@ class Level {
         initializeLevel();
         
         // set up physics engine
-        engine.setDamping(0.99);
-        engine.setGravity(0.0, 1.2);
-        engine.setSurfaceBounce(0.5);
+        engine.setDamping(1);
+        engine.setGravity(0.0, 1.3);
+        engine.setSurfaceBounce(0.4);
         engine.setSurfaceFriction(0.01);
 
         var sw : Number = sectorWidth * (lvlSquRight - lvlSquLeft);

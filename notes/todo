@@ -27,8 +27,10 @@ Andy:
     - create a testing suite to check the resolvecirclecollision fuction
 * level editor:
     - ability to adjust sectors
-* level1.xml
+* level1.swf
     - some sectors need to be adjusted
+* when an activation gate is created you see it on screen in the wrong spot
+  for one frame.
 
 Josh:
 * fix up physics
