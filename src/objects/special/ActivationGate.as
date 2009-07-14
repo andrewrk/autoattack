@@ -65,17 +65,17 @@ class objects.special.ActivationGate extends objects.SpecialObject {
         return mask_mc.hitTest(rel.x, rel.y, 1);
     }
 
-    // return true if this location is solid to bullets
-    public function hitBullet(pos : Vector) : Boolean {
+    // return true if this location is solid to projectiles
+    public function testProjectileHit(pos : Vector) : Boolean {
         var rel : Vector = level.getRelPos(pos);
         return bg_mc.activator_mc.hitTest(rel.x, rel.y, 1) ||
             fg_mc.activator_mc.hitTest(rel.x, rel.y, 1);
     }
 
-    public function bulletHit(pos : Vector) : Void {
+    public function projectileHit(pos : Vector) : Void {
         if( activated ) return;
 
-        // check if the bullet hit an activator
+        // check if the projectile hit an activator
         var rel : Vector = level.getRelPos(pos);
         if( ! fgBtnActive ){
             if( fg_mc.activator_mc.hitTest(rel.x, rel.y, 1) ){

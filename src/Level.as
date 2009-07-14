@@ -7,10 +7,11 @@ import org.cove.flade.surfaces.*;
 
 import objects.*;
 import objects.enemies.*;
+import objects.special.*;
+import objects.projectiles.*;
 
 import flash.geom.Rectangle;
 
-import objects.special.*;
 
 class Level {
     // static constants
@@ -65,10 +66,6 @@ class Level {
     private var sectorWidth : Number, sectorHeight : Number;
     private var defSectorWidth : Number = 550, defSectorHeight : Number = 400;
     private var fps : Number = 30;
-
-    // TODO: this doesn't seem to belong here
-    private var bulletSpeed : Number = 50;
-    private var bulletDamage : Number = 5;
 
     // for scrolling through sectors
     private var curSector : Vector;
@@ -428,61 +425,63 @@ class Level {
     }
 
     function computeObjects() : Void {
-        // remove old explosions
+        // handle explosions
         for( var i : Number = 0; i < explosions.length; i++){
-            if( explosions[i].framesLeft <= 0 ){
-                explosions[i].mc.removeMovieClip();
+            var explosion : Projectile = explosions[i];
+            explosion.stepFrame();
+            if( explosion.doneExploding() ){
+                explosion.dispose();
                 explosions.splice(i, 1);
                 i--;
                 continue;
-            } else {
-                explosions[i].framesLeft--;
             }
         }
 
         // projectiles
         for( var i : Number = 0; i < projectiles.length; i++){
-            // move projectiles
-            projectiles[i].pos.plus(projectiles[i].vel);
+            var projectile : Projectile = projectiles[i];
 
-            if( hitBullet(projectiles[i].pos) ){
+            projectile.stepFrame();
+
+            var dead : Boolean = false;
+
+            // check if projectile hit a wall
+            if( projectileHit(projectile.pos) ){
                 var objHit : LevelObject = lastHitObject;
 
-                // do actions because of the bullet hitting something
+                // do actions because of the projectile hitting something
                 if( objHit != null ) {
-                    if( objHit.classNum == LevelObject.CLASS_SPECIAL ){
-                        // notify the class that it got hit
-                        SpecialObject(objHit).bulletHit(projectiles[i].pos);
-                    } else if( objHit.attrs.destructable==1 ){
-                        // move the object a little in the direction of the bullet
-                        // commented out. I don't think it's a good feature
-                        //objHit.pos.plus(projectiles[i].primitive.velocity.clone().normalize());
-                        objHit.attrs.hp -= bulletDamage;
+                    if( objHit.attrs.destructable == 1 ){
+                        objHit.attrs.hp -= projectile.damage();
                         if( objHit.attrs.hp <= 0 ){
                             // destroy the object
-                            destroyObject(objHit);
+                            destroyObstacle(objHit);
+                        }
+                    } else if( objHit.classNum = LevelObject.CLASS_SPECIAL ){
+                        var special : SpecialObject = SpecialObject(obj);
+                        if( special.solid() && 
+                            special.testProjectileHit(projectile.pos) ) 
+                        {
+                            // notify the class that it got hit
+                            special.projectileHit(projectile.pos);
+                            dead = true;
+                            break;
                         }
                     }
+
                 }
 
-                // remove 
-                projectiles[i].mc.removeMovieClip();
-
-                // switch to explosion mc
-                var layer_mc : MovieClip = root_mc[layers[projectiles[i].layer]];
-                var str : String = "exp" + projectiles[i].objId;
-                layer_mc.attachMovie("bulletExplosion", str,
-                    layer_mc.getNextHighestDepth());
-                
-                projectiles[i].mc = layer_mc[str];
-                // TODO: create a weapon data table
-                projectiles[i].framesLeft = 6; 
+                // switch to explosion
+                projectile.explode();
 
                 // remove from projectiles and add to explosions
-                explosions.push(projectiles.splice(i, 1)[0]);
+                explosions.push(projectile);
+                projectiles.splice(i, 1);
+                
+                // continue with loop
                 i--;
                 continue;
-            }
+            } 
         }
 
         // process special objects
@@ -509,8 +508,6 @@ class Level {
         moveIntoPlace(activeObjects);
         moveIntoPlace(obstacles);
         moveIntoPlace(entities);
-        moveIntoPlace(projectiles);
-        moveIntoPlace(explosions);
 
 
         // perform actions on objects
@@ -639,7 +636,7 @@ class Level {
         }
     }
 
-    function destroyObject(obj : LevelObject){
+    function destroyObstacle(obj : LevelObject){
         for( var i : Number = 0; i < obstacles.length; i++ ){
             if( obstacles[i] == obj ){
                 obj.mc.removeMovieClip();
@@ -756,18 +753,7 @@ class Level {
     }
 
     public function shootBullet(pos : Vector, dir : Vector, extraVel : Vector) {
-        var vel : Vector = dir.clone().normalize().mult(bulletSpeed).plus(
-            extraVel);
-
-        var obj : Projectile = new Projectile(pos, vel);
-        
-        var layer_mc : MovieClip = root_mc[layers[obj.layer]];
-        var str : String = "obj" + obj.objId;
-        layer_mc.attachMovie("bullet", str, layer_mc.getNextHighestDepth());
-        obj.mc = layer_mc[str];
-        moveMC(obj.mc, obj.pos, dir.angle());
-
-        projectiles.push(obj);
+        projectiles.push(new Bullet(pos, dir, extraVel, this));
     }
 
     private function createLevelObject(node : XML) {
@@ -817,9 +803,7 @@ class Level {
             case LevelObject.CLASS_ENEMY:
                 switch( id ){
                     case LevelObject.ID_SOLDIER:
-                        // TODO: switch with real enemy object
-                        return new LevelObject(cls, id, pos, layer, 
-                            scrollFactor, node.attributes, false);
+                        return new Soldier(pos, node.attributes, this); 
                     case LevelObject.ID_HELICOPTER:
                         // TODO: switch with real enemy object
                         return new LevelObject(cls, id, pos, layer, 
@@ -1004,9 +988,8 @@ class Level {
         
         return slope;
     }
-    
-    // did a bullet hit something solid?
-    function hitBullet (pos : Vector) : Boolean {
+
+    function projectileHit (pos : Vector) : Boolean {
         lastHitObject = null;
         for (var sy : Number = curSector.y-1; sy <= curSector.y+1; sy++) {
             for (var sx : Number = curSector.x-1; sx <= curSector.x+1; sx++) {
@@ -1027,7 +1010,7 @@ class Level {
         // special objects
         for( var i : Number = 0; i < specialObjects.length; i++ ){
             var obj : SpecialObject = specialObjects[i];
-            if( obj.solid() && obj.hitBullet(pos) ) {
+            if( obj.solid() && obj.hit(pos) ) {
                 lastHitObject = obj;
                 return true;
             }
@@ -1035,6 +1018,8 @@ class Level {
 
         return false;
     }
+
+    
     function hit (pos : Vector) : Boolean {
         for (var sy : Number = curSector.y-1; sy <= curSector.y+1; sy++) {
             for (var sx : Number = curSector.x-1; sx <= curSector.x+1; sx++) {

@@ -241,10 +241,9 @@ class Jeep {
         var bwVel : Vector = backWheelBody.getVel();
         var fwVel : Vector = frontWheelBody.getVel();
 
-        var addBW : Vector = bwVel.clone().normalize().mult(amount);
-        var addFW : Vector = fwVel.clone().normalize().mult(amount);
+        var jeepVel : Vector = bwVel.plusNew(fwVel).normalize().mult(amount);
 
-        backWheelBody.setVel(bwVel.plus(addBW));
-        frontWheelBody.setVel(fwVel.plus(addFW));
+        backWheelBody.setVel(bwVel.plus(jeepVel));
+        frontWheelBody.setVel(fwVel.plus(jeepVel));
     }
 }

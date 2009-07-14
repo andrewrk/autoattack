@@ -30,3 +30,9 @@
 * make explosive barrels rectangles instead of particles and make them bump 
   into each other
 * implement explosions
+* make it so on that up platform you can't fall through on the right side
+* make the activation gate less glitchy when closed
+* make the jeep take damage when it crashes into something
+* recognize when flipped on the ground, and make the guy come out and un-flip it
+    - hit test the jeep shell
+* if you do a flip in mid-air do some fun thing to recognize it

@@ -63,8 +63,8 @@ class objects.special.MovingPlatform extends objects.SpecialObject {
         return false;
     }
 
-    // notification that a bullet hit this object at this location
-    public function bulletHit(pos : Vector) : Void {}
+    // notification that a projectile hit this object at this location
+    public function projectileHit(pos : Vector) : Void {}
 
     // called by the main loop
     public function update() : Void {

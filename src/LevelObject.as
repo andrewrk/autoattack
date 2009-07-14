@@ -26,6 +26,12 @@ class LevelObject {
 
     public static var ID_BULLET : Number = 0;
 
+    public static var ID_GAS_CAN : Number = 0;
+    public static var ID_SPEED_BOOST : Number = 1;
+    public static var ID_HEALTH_PACK : Number = 2;
+    public static var ID_TIME_BONUS : Number = 3;
+    public static var ID_EXTRA_LIFE : Number = 4;
+
     private static var objectCount : Number = 0;
 
     private static var mcMap : Object = {
@@ -71,7 +77,7 @@ class LevelObject {
 
         // TODO: create movie clips for these objects
         // bad guys
-        class5id0 : "debugx",
+        class5id0 : "enemySoldier",
         class5id1 : "debugx",
         class5id2 : "turret",
         class5id3 : "debugx",
