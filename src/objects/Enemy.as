@@ -8,8 +8,8 @@ class objects.Enemy extends LevelObject {
     private var hp : Number; // health points
     
     function Enemy (
-        idNum : Number, pos : Vector, attrs : Object, 
-        objId : Number, level : Level, hp : Number )
+        idNum : Number, pos : Vector, attrs : Object, level : Level, 
+        hp : Number )
     {
         super(LevelObject.CLASS_ENEMY, idNum, pos, Level.LAYER_OBJ, 
             new Vector(1, 1), attrs, false)

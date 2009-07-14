@@ -31,7 +31,6 @@
 <obj cls="0" id="9" layer="0" x="55" y="32" w="115" h="68" sx="30" sy="-1" />
 <obj cls="0" id="9" layer="0" x="67" y="290" w="115" h="68" sx="31" sy="-1" />
 <obj cls="3" id="0" x="547" y="165" sx="1" sy="0" />
-<obj cls="3" id="1" x="180" y="175" sx="2" sy="0" />
 <obj cls="3" id="1" x="146" y="320" sx="3" sy="-1" />
 <obj cls="3" id="1" x="160" y="324" sx="4" sy="-1" />
 <obj cls="7" id="1" x="0" y="306" sx="3" sy="0" />
@@ -69,7 +68,7 @@
 <obj cls="3" id="1" x="338" y="60" sx="18" sy="0" />
 <obj cls="7" id="0" x="482" y="63" w="33" h="43" sx="19" sy="0" />
 <obj cls="5" id="2" x="533" y="357" srange="190" erange="350" sx="20" sy="-1" rate="24" />
-<obj cls="5" id="2" x="548" y="86" srange="10" erange="350" sx="20" sy="0" rate="24" />
+<obj cls="5" id="2" x="548" y="86" srange="10" erange="170" sx="20" sy="0" rate="24" />
 <obj cls="2" id="3" x="155" y="364" w="172" h="162" sx="21" sy="-1" destructable="1" hp="50" />
 <obj cls="7" id="0" x="114" y="57" w="31" h="40" sx="21" sy="0" />
 <obj cls="7" id="0" x="112" y="18" w="31" h="40" sx="21" sy="0" />
@@ -216,7 +215,7 @@
 <obj cls="2" id="1" x="281" y="297" w="36" h="44" sx="6" sy="1" destructable="1" hp="20" />
 <obj cls="2" id="1" x="280" y="253" w="36" h="44" sx="6" sy="1" destructable="1" hp="20" />
 <obj cls="1" id="1" x="208" y="72" w="294" h="27" range="700" velX="0" velY="-4" delay="68" sx="8" sy="2" />
-<obj cls="5" id="2" x="75" y="334" srange="80" erange="280" sx="7" sy="-1" rate="24" />
+<obj cls="5" id="2" x="75" y="334" srange="-80" erange="80" sx="7" sy="-1" rate="24" />
 <obj cls="0" id="4" layer="2" x="491" y="113" w="46.17" h="55.89" sx="10" sy="0" />
 <obj cls="0" id="4" layer="2" x="41" y="104" w="51.3" h="62.1" sx="11" sy="0" />
 <obj cls="0" id="4" layer="2" x="5" y="143" w="68.97" h="83.49" sx="11" sy="0" />

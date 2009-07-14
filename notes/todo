@@ -1,4 +1,3 @@
-Andy:
 * start implementing individual IDs
     - make bullets hurt breakable objects and eventually destroy them.
         > when a breakable object is destroyed it should shatter into rubble 
@@ -25,10 +24,9 @@ Andy:
 * when an activation gate is created you see it on screen in the wrong spot
   for one frame.
 * implement a crosshair
-
-
-Josh:
-* fix up physics
-    - make it smooth
-    - maybe make it something other than a rod connecting the wheels
-    - make it less springy
+* some kind of visual and audio when you get a booster
+* place the boosters in better locations on the map
+* display bar with health, gas, etc
+* make explosive barrels rectangles instead of particles and make them bump 
+  into each other
+* implement explosions

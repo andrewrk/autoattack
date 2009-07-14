@@ -18,20 +18,23 @@ class objects.enemies.Turret extends objects.Enemy {
     private var angleVel : Number;
     private var maxAngleVel : Number = 0.4;
     private var acceleration : Number = 0.003;
+    private var turretRadius : Number = 58;
 
     private var rate : Number; // frames in between shots
     private var fireDelay : Number; // # frames left till can fire
 
     function Turret(pos : Vector, attrs : Object, level : Level) {
-        super(LevelObject.ID_TURRET, pos, attrs, objId, level, 1);
-        this.angleMin = Util.normalizeAngle(
-            Util.degToRad(parseFloat(attrs.srange)));
-        this.angleMax = Util.normalizeAngle(
-            Util.degToRad(parseFloat(attrs.erange)));
+        super(LevelObject.ID_TURRET, pos, attrs, level, 1);
+        this.angleMin = 
+            Util.degToRad(360-parseFloat(attrs.erange));
+        this.angleMax = 
+            Util.degToRad(360-parseFloat(attrs.srange));
         this.rate = parseInt(attrs.rate);
         this.fireDelay = 0;
         this.posAngle = 0;
         this.angleVel = 0;
+
+        //trace("start: " + parseFloat(attrs.srange) + " end: " + parseFloat(attrs.erange) + ", normstart: " + Util.radToDeg(Util.normalizeAngle(Util.degToRad(parseFloat(attrs.srange)))) + " normend: " + Util.radToDeg(Util.normalizeAngle(Util.degToRad(parseFloat(attrs.erange)))));
     }
 
     function doAI() : Void {
@@ -84,9 +87,10 @@ class objects.enemies.Turret extends objects.Enemy {
         angleVel = Math.min(maxAngleVel, Math.max(-maxAngleVel, angleVel));
 
         // apply velocity to position
-        posAngle = Util.normalizeAngle(angleVel+posAngle);
+        posAngle = angleVel+posAngle;
 
         // limit by min and max range
+        //trace("limiting " + Util.radToDeg(posAngle) + " to " + Util.radToDeg(Math.min(angleMax, Math.max(angleMin, posAngle))));
         posAngle = Math.min(angleMax, Math.max(angleMin, posAngle));
 
         // fire
@@ -94,7 +98,9 @@ class objects.enemies.Turret extends objects.Enemy {
             if( actionFire ) {
                 fireDelay = rate;
                 // create a bullet and put it into action
-                level.shootBullet(pos, new Vector(Math.cos(posAngle), 
+                level.shootBullet(
+                    Util.extendRadius(pos, posAngle, turretRadius), 
+                    new Vector(Math.cos(posAngle), 
                     Math.sin(posAngle)), new Vector(0,0));
             }
         } else {
