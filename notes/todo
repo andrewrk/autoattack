@@ -24,6 +24,8 @@ Andy:
     - some sectors need to be adjusted
 * when an activation gate is created you see it on screen in the wrong spot
   for one frame.
+* implement a crosshair
+
 
 Josh:
 * fix up physics
