@@ -17,21 +17,19 @@ class objects.projectiles.Bullet extends objects.Projectile {
     public function Bullet(pos : Vector, dir : Vector, extraVel : Vector,
         level : Level)
     {
-        super(pos, level);
+        super(LevelObject.ID_BULLET, pos, level);
 
         explodeFramesLeft = NUM_EXPLODE_FRAMES;
         exploding = false;
 
         vel = dir.clone().normalize().mult(INIT_SPEED).plus(extraVel);
 
-        // create the movie clip
-        var layer_mc : MovieClip = level.getMovieClip()[Level.layers[
-            Level.LAYER_OBJ]];
-        var str : String = "bullet" + objId;
-        layer_mc.attachMovie("bullet", str, layer_mc.getNextHighestDepth());
-        mc = layer_mc[str];
         
         paint();
+    }
+
+    private function setupMovieClip() : Void {
+        // do nothing
     }
 
     public function explode() : Void {

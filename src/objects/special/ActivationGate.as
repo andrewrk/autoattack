@@ -19,11 +19,9 @@ class objects.special.ActivationGate extends objects.SpecialObject {
     private var fgBtnActive : Boolean; // did they get the fg one?
     private var bgBtnActive : Boolean; // did they get the bg one?
 
-    public function ActivationGate(pos : Vector, attrs : Object, level : Level)
+    public function ActivationGate(pos : Vector, level : Level)
     {
-        super(pos, attrs);
-
-        this.level = level;
+        super(LevelObject.ID_ACTIVATION_GATE, pos, level);
 
         activated = false;
         fgBtnActive = false;
@@ -96,16 +94,21 @@ class objects.special.ActivationGate extends objects.SpecialObject {
         }
     }
 
-    public function update() : Void {
+    public function paint() : Void {
         // move into place
         level.moveMC_noa(fg_mc, pos);
         level.moveMC_noa(bg_mc, pos);
         level.moveMC_noa(mask_mc, pos);
     }
 
+    public function stepFrame() : Void {
+        // nothing to be done
+    }
+
     public function activate() : Void {
         fg_mc._visible = true;
         bg_mc._visible = true;
+        paint();
     }
 
     public function deactivate() : Void {

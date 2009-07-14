@@ -36,3 +36,8 @@
 * recognize when flipped on the ground, and make the guy come out and un-flip it
     - hit test the jeep shell
 * if you do a flip in mid-air do some fun thing to recognize it
+* make it so you can destroy turrets
+* allow you to specify boost direction and strength in level.xml. use better
+  boost drawing and point it so it's obvious which direction it sends you
+* remove my extraneous needsGravity code from flade
+* make the arrow on MovingPlatform point in the direction of vel

@@ -13,7 +13,8 @@ class LevelObject {
     public static var CLASS_ENEMY : Number = 5;
     public static var CLASS_STATIC : Number = 6;
     public static var CLASS_ENTITY : Number = 7;
-    public static var CLASS_PROJECTILE : Number = 0;
+    public static var CLASS_PROJECTILE : Number = 8;
+    public static var CLASS_EXPLOSION : Number = 9;
 
     public static var ID_SOLDIER : Number = 0;
     public static var ID_HELICOPTER : Number = 1;
@@ -88,54 +89,137 @@ class LevelObject {
         class6id1 : "bombDroppingVent",
 
         class7id0 : "explosiveBarrel",
-        class7id1 : "mine"
+        class7id1 : "mine",
+
+        // projectiles
+        class8id0 : "bullet"
     };
 
-    public static function mcName(
+    public static function getMcString(
         classNum : Number, idNum : Number) : String {
         return mcMap["class" + classNum + "id" + idNum];
     }
 
-    public var classNum : Number;
-    public var idNum : Number;
-    public var pos : Vector; // where is it
-    public var layer : Number; // which layer to display on 
-    public var scrollFactor : Vector; // scroll faster or slower than normal
+    private var classNum : Number;
+    private var idNum : Number;
+    private var mcString : String; // the link name to attach a movie with flash
+    private var objId : Number; // unique number used to reference movie clips
 
-    public var attrs : Object;
-
-    public var mcString : String;
-
-    public var objId : Number; // unique number used to reference movie clips
-
-    public var mc : MovieClip; // the movie clip (if any) used to paint this
-    public var primitive : Particle; // the physics body (if any) used for physics
-
-    public var node : XML; // for level editing
+    private var pos : Vector; // where is it
+    private var width : Number, height : Number;
+    private var direction: Number;
 
     // does this object expire when it goes off screen?
-    public var expires : Boolean;
+    private var expires : Boolean;
 
-    public var active : Boolean; // for level editing
+    private var level : Level;
+    private var mc : MovieClip; // the movie clip used to paint this object
 
-    function LevelObject(
-        classNum : Number, idNum : Number, pos : Vector, layer : Number,
-        scrollFactor : Vector, attrs : Object, expires : Boolean )
+
+    public function LevelObject(
+        classNum : Number, idNum : Number, pos : Vector, width : Number,
+        height : Number, direction : Number, expires : Boolean, level : Level)
     {
         this.classNum = classNum;
         this.idNum = idNum;
         this.pos = pos;
-        this.layer = layer;
-        this.scrollFactor = scrollFactor;
-        this.attrs = attrs;
-        this.mcString = mcName(classNum, idNum);
+        this.width = width;
+        this.height = height;
+        this.direction = direction;
+        this.mcString = getMcString(classNum, idNum);
         this.objId = objectCount++;
         this.mc = null;
-        this.primitive = null;
         this.expires = expires;
+        this.level = level;
         
-        attrs.hp = parseInt(attrs.hp);
-        attrs.destructable = parseInt(attrs.destructable);
+        createMovieClip();
     }
 
+    // show the object on the screen
+    private function createMovieClip() : Void {
+        var container_mc : MovieClip = 
+            level.getMovieClip()[Level.layers[Level.LAYER_OBJ]];
+        var str : String = "obj" + objId;
+
+        container_mc.attachMovie(mcString, str, 
+            container_mc.getNextHighestDepth());
+
+        mc = container_mc[str];
+
+        setupMovieClip();
+    }
+    
+    // configure movie clip settings
+    public function setupMovieClip() : Void {
+        mc._visible = false;
+        
+        // optional attributes
+        if( width )
+            mc._width = width;
+        else
+            width = mc._width;
+
+        if( height )
+            mc._height = height;
+        else
+            height = mc._height;
+
+        if( direction )
+            mc._xscale = 100 * direction;
+        else
+            direction = 1;
+    }
+
+    // show movie clips
+    public function activate() : Void {
+        mc._visible = true;
+        paint();
+    }
+
+    // hide movie clips
+    public function deactivate() : Void {
+        if( expires )
+            dispose();
+        else
+            mc._visible = false;
+    }
+
+    // delete movie clips
+    public function dispose() : Void {
+        mc.removeMovieClip();
+    }
+
+    // are we on the screen?
+    public function onScreen() : Boolean {
+        return level.inScreenRange(pos);
+    }
+
+    // paint
+    public function paint() : Void {
+        level.moveMC_noa(mc, pos);
+    }
+
+    public function getExpires() : Boolean {
+        return expires;
+    }
+
+    public function getMovieClip() : MovieClip {
+        return mc;
+    }
+
+    public function getPos() : Vector {
+        return pos;
+    }
+
+    public function getClassNum() : Number {
+        return classNum;
+    }
+
+    public function getIdNum() : Number {
+        return idNum;
+    }
+
+    public function toString() : String {
+        return mcString;
+    }
 }

@@ -4,11 +4,13 @@ import org.cove.flade.util.Vector;
 
 class objects.SpecialObject extends LevelObject {
 
-    public function SpecialObject(pos : Vector, attrs : Object) {
-        super(LevelObject.CLASS_SPECIAL, -1, pos, Level.LAYER_OBJ, 
-            new Vector(1, 1), attrs, false);
+    public function SpecialObject(idNum : Number, pos : Vector, level : Level) {
+        super(LevelObject.CLASS_SPECIAL, idNum, pos, 0, 0, 0, false, level);
     }
-    
+
+    // do not use
+    private function createMovieClip() : Void {}
+
     // does this object have any physical presence?
     public function solid() : Boolean {
         return false;
@@ -28,17 +30,9 @@ class objects.SpecialObject extends LevelObject {
     public function projectileHit(pos : Vector) : Void {}
 
     // called by the main loop
-    public function update() : Void {}
+    public function stepFrame() : Void {}
 
-    // set up movie clips and stuff
-    public function activate() : Void {}
-
-    // destroy movie clips and stuff
-    public function deactivate() : Void {}
-
-    // determine if we should still be on the screen
-    public function onScreen() : Boolean {
-        return true;    
-    }
-
+    // move movie clips into the correct place
+    public function paint() : Void {}
+    
 }

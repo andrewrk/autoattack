@@ -41,6 +41,8 @@ class Level {
     public static var WEAPON_LAZER_GUN = 5;
     public static var WEAPON_GRENADE = 6;
     public static var WEAPON_SHOTGUN = 7;
+    public static var WEAPON_GUIDED_MISSILE = 8;
+    public static var WEAPON_MINE = 9;
 
     public static var weapons : Array = [
         "Pistol",
@@ -52,6 +54,11 @@ class Level {
         "Grenade",
         "Shotgun"
     ];
+
+    // which array to store an active object in, indexed by class number
+    private var objStore : Array;
+    // function to step a frame in a set of objects
+    private var objComputeFunc : Array;
     
     // variables loaded from level XML file
     private var bg_sound : Sound;
@@ -99,13 +106,17 @@ class Level {
     private var jeep : Jeep;
 
     // a list of all the objects in the level (bad guys, decorations, etc)
-    private var activeObjects : Array;
     private var inactiveObjects : Array;
+    private var decorations : Array;
     private var obstacles : Array;
     private var specialObjects : Array;
     private var entities : Array;
     private var projectiles : Array;
     private var explosions : Array;
+    private var powerups : Array;
+    private var triggers : Array;
+    private var enemies : Array;
+    private var staticObjects : Array;
 
     private var mainInterval; // what the hell is the data type?
 
@@ -114,7 +125,7 @@ class Level {
 
     public var lastHitObject : LevelObject;
 
-    function Level (number : Number, 
+    public function Level (number : Number, 
                     root_mc : MovieClip, 
                     movieWidth : Number, 
                     movieHeight : Number)
@@ -139,12 +150,41 @@ class Level {
         
         this.jeep = null; // we initialize the jeep after the level is loaded
         this.inactiveObjects = new Array();
-        this.activeObjects = new Array();
+        this.decorations = new Array();
         this.obstacles = new Array();
         this.specialObjects = new Array();
         this.entities = new Array();
         this.projectiles = new Array();
         this.explosions = new Array();
+        this.powerups = new Array();
+        this.triggers = new Array();
+        this.enemies = new Array();
+        this.staticObjects = new Array();
+
+        this.objStore = [
+            decorations,
+            specialObjects,
+            obstacles,
+            powerups, // powerup
+            triggers, // trigger
+            enemies, // enemy
+            staticObjects, // static 
+            entities,
+            projectiles,
+            explosions
+        ];
+        this.objComputeFunc = [
+            computeDecorations,
+            computeSpecialObjects,
+            computeObstacles,
+            computePowerups,
+            computeTriggers,
+            computeEnemies,
+            computeStaticObjects,
+            computeEntities,
+            computeProjectiles,
+            computeExplosions
+        ];
         
         this.shootDown = false;
 
@@ -424,8 +464,42 @@ class Level {
         }
     }
 
-    function computeObjects() : Void {
-        // handle explosions
+    private function computeObjects() : Void {
+        for( var i : Number = 0; i < objStore.length; i++ ){
+            removeDistantObjects(objStore[i]);
+            objComputeFunc[i].call(this);
+        }
+        
+        // activate objects that are now in range
+        activateNewObjects();
+    }
+
+    // handle obstacles
+    private function computeObstacles() : Void {
+        // simply call the paint method
+        paintObjects(obstacles);
+    }
+
+    // handle entities
+    private function computeEntities() : Void {
+        // simply call the paint method
+        paintObjects(entities);
+    }
+
+    // handle static objects
+    private function computeStaticObjects() : Void {
+        // simply call the paint method
+        paintObjects(staticObjects);
+    }
+
+    // handle decorations
+    private function computeDecorations() : Void {
+        // simply call the paint method
+        paintObjects(decorations);
+    }
+
+    // handle explosions
+    private function computeExplosions() : Void {
         for( var i : Number = 0; i < explosions.length; i++){
             var explosion : Projectile = explosions[i];
             explosion.stepFrame();
@@ -436,39 +510,25 @@ class Level {
                 continue;
             }
         }
+    }
 
-        // projectiles
+    // handle projectiles
+    private function computeProjectiles() : Void {
         for( var i : Number = 0; i < projectiles.length; i++){
             var projectile : Projectile = projectiles[i];
 
             projectile.stepFrame();
 
-            var dead : Boolean = false;
-
             // check if projectile hit a wall
-            if( projectileHit(projectile.pos) ){
+            if( projectileHit(projectile.getPos()) ){
                 var objHit : LevelObject = lastHitObject;
 
                 // do actions because of the projectile hitting something
                 if( objHit != null ) {
-                    if( objHit.attrs.destructable == 1 ){
-                        objHit.attrs.hp -= projectile.damage();
-                        if( objHit.attrs.hp <= 0 ){
-                            // destroy the object
-                            destroyObstacle(objHit);
-                        }
-                    } else if( objHit.classNum = LevelObject.CLASS_SPECIAL ){
-                        var special : SpecialObject = SpecialObject(obj);
-                        if( special.solid() && 
-                            special.testProjectileHit(projectile.pos) ) 
-                        {
-                            // notify the class that it got hit
-                            special.projectileHit(projectile.pos);
-                            dead = true;
-                            break;
-                        }
-                    }
-
+                    if( objHit.getClassNum() == LevelObject.CLASS_OBSTACLE )
+                        Obstacle(objHit).doDamage(projectile.damage());
+                    else if(objHit.getClassNum() == LevelObject.CLASS_SPECIAL)
+                        SpecialObject(objHit).projectileHit(projectile.getPos());
                 }
 
                 // switch to explosion
@@ -483,11 +543,14 @@ class Level {
                 continue;
             } 
         }
+    }
 
-        // process special objects
+    // handle special objects
+    private function computeSpecialObjects() : Void {
         for( var i : Number = 0; i < specialObjects.length; i++ ){
             var obj : SpecialObject = specialObjects[i];
-            obj.update();
+            obj.stepFrame();
+            obj.paint();
             if( ! obj.onScreen() ){
                 // deactivate
                 obj.deactivate();
@@ -497,149 +560,97 @@ class Level {
                 continue;
             }
         }
+    }
 
-        // if it's no longer relevant, remove the movie clip
-        // and move the element to inactive objects
-        removeDistantObjects(activeObjects);
-        removeDistantObjects(obstacles);
-        removeDistantObjects(entities);
-        removeDistantObjects(projectiles);
+    // handle powerups
+    private function computePowerups() : Void {
+        for( var i : Number = 0; i < powerups.length; i++ ){
+            var obj : LevelObject = powerups[i];
 
-        moveIntoPlace(activeObjects);
-        moveIntoPlace(obstacles);
-        moveIntoPlace(entities);
+            obj.paint();
 
-
-        // perform actions on objects
-        for( var i : Number = 0; i < activeObjects.length; i++){
-            var obj : LevelObject = activeObjects[i];
-            switch( obj.classNum ){
-                case LevelObject.CLASS_POWERUP:
-                    // check if we picked up the powerup
-                    if( jeep.hitMC(obj.mc) ){
-                        switch(obj.idNum){
-                            case LevelObject.ID_GAS_CAN:
-                                // TODO: handle gas cans
-                                break;
-                            case LevelObject.ID_SPEED_BOOST:
-                                jeep.boost(15);
-                                break;
-                            case LevelObject.ID_HEALTH_PACK:
-                                // TODO: handle health pack
-                                break;
-                            case LevelObject.ID_TIME_BONUS:
-                                // TODO: handle time bonus
-                                break;
-                            case LevelObject.ID_EXTRA_LIFE:
-                                // TODO: handle extra life
-                                break;
-                        }
-
-                        // remove from objects
-                        obj.mc.removeMovieClip();
-                        activeObjects.splice(i, 1);
-                        i--;
-                        continue;
-                    }
-                    break;
-                case LevelObject.CLASS_TRIGGER:
-                    // check if we hit the trigger
-                    if( jeep.hitMC(obj.mc) ){
-                        // TODO: do something with this trigger
-                        //trace("hit a trigger: " + obj.idNum);
-
-                        // remove from objects
-                        obj.mc.removeMovieClip();
-                        activeObjects.splice(i, 1);
-                        i--;
-                        continue;
-                    }
-                    
-                    break;
-                case LevelObject.CLASS_ENEMY:
-                    // process bad guy ai
-                    Enemy(obj).doAI();
-                    break;
-            }
-        }
-
-        // loop through inactive objects
-        for( var i : Number = 0; i < inactiveObjects.length; i++) {
-            var obj : LevelObject = inactiveObjects[i];
-
-            // if it should be on screen, add it to active objects
-            // and create a movie clip
-            if( obj.classNum == LevelObject.CLASS_SPECIAL ){
-                if( obj.onScreen() ){
-                    obj.activate();
-                    specialObjects.push(inactiveObjects.splice(i, 1)[0]);
-                    i--;
-                    continue;
+            // check if we picked up the powerup
+            if( jeep.hitObj(obj) ){
+                switch(obj.getIdNum()){
+                    case LevelObject.ID_GAS_CAN:
+                        // TODO: handle gas cans
+                        break;
+                    case LevelObject.ID_SPEED_BOOST:
+                        jeep.boost(15);
+                        break;
+                    case LevelObject.ID_HEALTH_PACK:
+                        // TODO: handle health pack
+                        break;
+                    case LevelObject.ID_TIME_BONUS:
+                        // TODO: handle time bonus
+                        break;
+                    case LevelObject.ID_EXTRA_LIFE:
+                        // TODO: handle extra life
+                        break;
                 }
-            } else {
-                if( inScreenRangeF(obj.pos, obj.scrollFactor) )
-                {
 
-                    
-                    var layer_mc : MovieClip = 
-                        root_mc[layers[obj.layer]];
-                    var str : String = "obj" + obj.objId;
-
-                    layer_mc.attachMovie(obj.mcString, 
-                        str, layer_mc.getNextHighestDepth());
-
-                    obj.mc = layer_mc[str];
-
-                    moveMC(obj.mc, obj.pos, 0);
-
-                    // optional attributes
-                    if( obj.attrs.w ){
-                        obj.mc._width = parseFloat(obj.attrs.w);
-                    }
-                    if( obj.attrs.h ){
-                        obj.mc._height = parseFloat(obj.attrs.h);
-                    }
-                    if( obj.attrs.dir ) {
-                        obj.mc._xscale = 100 * parseFloat(obj.attrs.dir);
-                    }
-
-                    // some classes get added to physics engine
-                    if( obj.classNum == LevelObject.CLASS_ENTITY ){
-                        obj.primitive = new Particle(obj.pos.x, obj.pos.y);
-                        engine.addPrimitive(obj.primitive);
-                    }
-
-                    // triggers are invisible
-                    if( obj.classNum == LevelObject.CLASS_TRIGGER ){
-                        obj.mc._visible = false;
-                    }
-                    
-                    // which array to put active items in 
-                    var dest : Array;
-                    switch( obj.classNum ){
-                        case LevelObject.CLASS_OBSTACLE:
-                            dest = obstacles;
-                            break;
-                        case LevelObject.CLASS_ENTITY:
-                            dest = entities;
-                            break;
-                        default:
-                            dest = activeObjects;
-                    }
-                    
-                    dest.push(inactiveObjects.splice(i, 1)[0]);
-                    i--;
-                    continue;
-
-                }
+                // remove from objects
+                obj.dispose();
+                powerups.splice(i, 1);
+                i--;
+                continue;
             }
         }
     }
 
-    function destroyObstacle(obj : LevelObject){
+    // handle triggers
+    private function computeTriggers() : Void {
+        for( var i : Number = 0; i < triggers.length; i++){
+            var obj : LevelObject = triggers[i];
+
+            // check if we hit the trigger
+            if( jeep.hitObj(obj) ){
+                // TODO: do something with this trigger
+                //trace("hit a trigger: " + obj.idNum);
+
+                // remove from objects
+                obj.dispose();
+                triggers.splice(i, 1);
+                i--;
+                continue;
+            }
+        }
+    }
+
+    private function computeEnemies() : Void {
+        // handle enemies
+        for( var i : Number = 0; i < enemies.length; i++){
+            var obj : Enemy = enemies[i];
+            obj.stepFrame();
+        }
+    }
+
+    // loop through inactive objects and make ones active that are now in range
+    private function activateNewObjects() : Void {
+        for( var i : Number = 0; i < inactiveObjects.length; i++) {
+            var obj : LevelObject = inactiveObjects[i];
+
+            // if it should be on screen, activate it
+            if( obj.onScreen() ){
+                obj.activate();
+
+                // push it to the correct active object array
+                objStore[obj.getClassNum()].push(obj);
+
+                // remove it from the inactive object array 
+                inactiveObjects.splice(i, 1);
+
+                // avoid skipping the next item in the array
+                i--;
+                continue;
+            }
+        }
+    }
+
+    function destroyObstacle(obj : Obstacle){
         for( var i : Number = 0; i < obstacles.length; i++ ){
             if( obstacles[i] == obj ){
-                obj.mc.removeMovieClip();
+                obj.dispose();
                 obstacles.splice(i, 1);
                 return;
             }
@@ -649,35 +660,25 @@ class Level {
 
     function removeDistantObjects(objects : Array) : Void {
         for( var i : Number = 0; i < objects.length; i++ ){
-            if( ! inScreenRangeF(objects[i].pos, objects[i].scrollFactor) ) 
-            {
-                objects[i].mc.removeMovieClip();       
-                if( objects[i].primitive )
-                    engine.removePrimitive(objects[i].primitive);
+            var obj : LevelObject = objects[i];
+            if( ! obj.onScreen() ) {
+                obj.deactivate();
 
-                var obj : LevelObject = objects.splice(i, 1)[0];
-                if( ! obj.expires )
+                if( ! obj.getExpires() ) 
                     inactiveObjects.push(obj);
+
+                objects.splice(i, 1)[0];
+
                 i--;
                 continue;
             }
         }
     }
 
-    function moveIntoPlace(objects : Array) : Void {
+    private function paintObjects(objects : Array) : Void {
         for( var i : Number = 0; i < objects.length; i++ ){
-            if( objects[i].primitive )
-                objects[i].pos = objects[i].primitive.getPos();
-
-            // move the object into place
-            var offset : Vector = objects[i].pos.minusNew(getPlayerPos());
-            var pos : Vector = new Vector(
-                objects[i].pos.x + offset.x * (objects[i].scrollFactor.x - 1),
-                objects[i].pos.y + offset.y * (objects[i].scrollFactor.y - 1)
-            );
-
-
-            moveMC_noa(objects[i].mc, pos);
+            var obj : LevelObject = objects[i];
+            obj.paint();
         }
     }
 
@@ -747,7 +748,6 @@ class Level {
             // get level object and push it into array
             var obj : LevelObject = 
                 createLevelObject(obj_xmlnode.childNodes[i]);
-            obj.node = obj_xmlnode.childNodes[i];
             inactiveObjects.push(obj);
         }
     }
@@ -756,88 +756,115 @@ class Level {
         projectiles.push(new Bullet(pos, dir, extraVel, this));
     }
 
+    // create a LevelObject based on an XML node
     private function createLevelObject(node : XML) {
         var cls : Number = parseInt(node.attributes.cls);
         var id : Number = parseInt(node.attributes.id);
 
+        // global values
         var offset : Vector = new Vector(parseFloat(node.attributes.x),
             parseFloat(node.attributes.y));
 
         var sector : Vector = new Vector(parseInt(node.attributes.sx),
             parseInt(node.attributes.sy));
-        
-        var layer : Number;
-        var scrollFactor : Vector;
-
-        if( node.attributes.layer ) {
-            switch(parseInt(node.attributes.layer)){
-                case 0:
-                    layer = LAYER_BGOBJ;
-                    scrollFactor = new Vector(0.5, 0.5);
-                    break;
-                case 1:
-                    layer = LAYER_BEHIND_JEEP;
-                    scrollFactor = new Vector(1, 1);
-                    break;
-                case 2:
-                    layer = LAYER_FOREOBJ;
-                    scrollFactor = new Vector(1, 1);
-                    break;
-                case 3:
-                    layer = LAYER_FORE;
-                    scrollFactor = new Vector(1.5, 1); 
-                    break;
-                default:
-                    trace("invalid value for layer in level xml file");
-            }
-        } else {
-            layer = LAYER_OBJ;
-            scrollFactor = new Vector(1, 1);
-        }
 
         var pos : Vector = new Vector(sectorWidth * sector.x + offset.x,
             sectorHeight * sector.y + offset.y);
+        
+        var width : Number = parseFloat(node.attributes.w);
+        var height : Number = parseFloat(node.attributes.h);
+        var direction : Number = parseFloat(node.attributes.dir);
+        
 
         // return a level object
         switch( cls ){
             case LevelObject.CLASS_ENEMY:
                 switch( id ){
                     case LevelObject.ID_SOLDIER:
-                        return new Soldier(pos, node.attributes, this); 
+                        return new Soldier(pos, direction, this); 
                     case LevelObject.ID_HELICOPTER:
                         // TODO: switch with real enemy object
-                        return new LevelObject(cls, id, pos, layer, 
-                            scrollFactor, node.attributes, false);
+                        return new LevelObject(cls, id, pos, width, height, 
+                            direction, false, this);
                     case LevelObject.ID_TURRET:
-                        return new Turret(pos, node.attributes, this);
+                        return new Turret(pos, 
+                            parseFloat(node.attributes.srange), 
+                            parseFloat(node.attributes.erange),
+                            parseInt(node.attributes.rate), this);
                     case LevelObject.ID_CANNON:
                         // TODO: switch with real enemy object
-                        return new LevelObject(cls, id, pos, layer, 
-                            scrollFactor, node.attributes, false);
+                        return new LevelObject(cls, id, pos, width, height, 
+                            direction, false, this);
                     case LevelObject.ID_BOMB_THROWER:
                         // TODO: switch with real enemy object
-                        return new LevelObject(cls, id, pos, layer,
-                            scrollFactor, node.attributes, false);
+                        return new LevelObject(cls, id, pos, width, height, 
+                            direction, false, this);
                     default:
                         trace("Unrecognized enemy id: " + id );
                         return null;
                 }
+            case LevelObject.CLASS_ENTITY:
+                return new Entity(id, pos, width, height, direction, this);
+            case LevelObject.CLASS_OBSTACLE:
+                return new Obstacle(id, pos, width, height, direction, this,
+                    parseInt(node.attributes.destructable) == 1,
+                    parseInt(node.attributes.hp))
+            case LevelObject.CLASS_PROJECTILE:
+                trace("TODO: game doesn't handle embedding projectiles yet");
+                return null;
+            case LevelObject.CLASS_DECORATION:
+                var layer : Number;
+                var scrollFactor : Vector;
+
+                if( node.attributes.layer ) {
+                    switch(parseInt(node.attributes.layer)){
+                        case 0:
+                            layer = LAYER_BGOBJ;
+                            scrollFactor = new Vector(0.5, 0.5);
+                            break;
+                        case 1:
+                            layer = LAYER_BEHIND_JEEP;
+                            scrollFactor = new Vector(1, 1);
+                            break;
+                        case 2:
+                            layer = LAYER_FOREOBJ;
+                            scrollFactor = new Vector(1, 1);
+                            break;
+                        case 3:
+                            layer = LAYER_FORE;
+                            scrollFactor = new Vector(1.5, 1); 
+                            break;
+                        default:
+                            trace("invalid value for layer in level xml file");
+                    }
+                } else {
+                    layer = LAYER_OBJ;
+                    scrollFactor = new Vector(1, 1);
+                }
+                return new ScrollingDecoration(id, pos, width, height, 
+                    direction, layer, scrollFactor, this);
             case LevelObject.CLASS_SPECIAL:
                 switch( id ){
                     case LevelObject.ID_ACTIVATION_GATE:
-                        return new ActivationGate(pos, node.attributes, this);
+                        return new ActivationGate(pos, this);
                     case LevelObject.ID_MOVING_PLATFORM:
-                        return new MovingPlatform(pos, node.attributes, this);
+                        return new MovingPlatform(pos, 
+                            parseFloat(node.attributes.range),
+                            parseInt(node.attributes.delay),
+                            new Vector(parseFloat(node.attributes.velX),
+                                parseFloat(node.attributes.velY)),
+                            width, height, this);
                     default:
                         trace("Unrecognized special id: " + id);
                         return null;
 
                 }
-                break;
+            case LevelObject.CLASS_TRIGGER:
+                return new Trigger(id, pos, this);
             default:
                 // generic LevelObject
-                return new LevelObject(cls, id, pos, layer, scrollFactor, 
-                    node.attributes, false);
+                return new LevelObject(cls, id, pos, width, height, direction,
+                    false, this);
         }
     }
     
@@ -1010,7 +1037,7 @@ class Level {
         // special objects
         for( var i : Number = 0; i < specialObjects.length; i++ ){
             var obj : SpecialObject = specialObjects[i];
-            if( obj.solid() && obj.hit(pos) ) {
+            if( obj.solid() && obj.testProjectileHit(pos) ) {
                 lastHitObject = obj;
                 return true;
             }

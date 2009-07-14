@@ -23,17 +23,17 @@ class objects.special.MovingPlatform extends objects.SpecialObject {
 
     private var boundingRect : Rectangle;
 
-    public function MovingPlatform(pos : Vector, attrs : Object, 
+    public function MovingPlatform(pos : Vector, range : Number, delay : Number,
+        platformVel : Vector, platformWidth : Number, platformHeight : Number, 
         level : Level)
     {
-        super(pos, attrs);
-        
-        range = parseFloat(attrs.range);
-        delay = parseFloat(attrs.delay);
-        platformVel = new Vector(parseFloat(attrs.velX),parseFloat(attrs.velY));
+        super(LevelObject.ID_MOVING_PLATFORM, pos, level);
+        this.range = range;
+        this.delay = delay;
+        this.platformVel = platformVel;
 
-        platformWidth = parseFloat(attrs.w);
-        platformHeight = parseFloat(attrs.h);
+        this.platformWidth = platformWidth;
+        this.platformHeight = platformHeight;
 
         framesLeft = 0;
         platforms = new Array();
@@ -67,7 +67,7 @@ class objects.special.MovingPlatform extends objects.SpecialObject {
     public function projectileHit(pos : Vector) : Void {}
 
     // called by the main loop
-    public function update() : Void {
+    public function stepFrame() : Void {
         // create new platforms
         if( framesLeft == 0 ) {
             framesLeft = delay;
@@ -112,18 +112,24 @@ class objects.special.MovingPlatform extends objects.SpecialObject {
         }
     }
 
-    // set up movie clips and stuff
+    // show movie clips
     public function activate() : Void {
         for( var i : Number = 0; i < platforms.length; i++ ){
             platforms[i].mc._visible = true;
         }
     }
 
-    // destroy movie clips and stuff
+    // hide movie clips
     public function deactivate() : Void {
-        // delete all the movie clips
         for( var i : Number = 0; i < platforms.length; i++ ){
             platforms[i].mc._visible = false;
+        }
+    }
+    
+    // actually delete all the movie clips
+    public function dispose() : Void {
+        for( var i : Number = 0; i < platforms.length; i++ ){
+            platforms[i].mc.removeMovieClip();
         }
     }
 

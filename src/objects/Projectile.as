@@ -3,12 +3,9 @@
 import org.cove.flade.util.Vector;
 
 class objects.Projectile extends LevelObject {
-    private var level : Level;
 
-    public function Projectile(pos : Vector, level : Level) {
-        super(LevelObject.CLASS_PROJECTILE, LevelObject.ID_BULLET, pos, 
-            Level.LAYER_OBJ, new Vector(1, 1), null, true );
-        this.level = level;
+    public function Projectile(idNum : Number, pos : Vector, level : Level) {
+        super(LevelObject.CLASS_PROJECTILE, idNum, pos, 0, 0, 0, true, level);
     }
 
     // switch to an explode graphic

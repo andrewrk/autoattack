@@ -3,6 +3,9 @@
 import org.cove.flade.util.Vector;
 
 class objects.enemies.Turret extends objects.Enemy {
+    private static var WIDTH : Number = 68;
+    private static var HEIGHT : Number = 20;
+    private static var HP : Number = 1;
 
     // actions
     private var actionAccelAngle : Number; // 1, 0, or -1
@@ -23,21 +26,22 @@ class objects.enemies.Turret extends objects.Enemy {
     private var rate : Number; // frames in between shots
     private var fireDelay : Number; // # frames left till can fire
 
-    function Turret(pos : Vector, attrs : Object, level : Level) {
-        super(LevelObject.ID_TURRET, pos, attrs, level, 1);
+    function Turret(pos : Vector, rangeStart : Number, rangeEnd : Number, 
+        shootDelay : Number, level : Level)
+    {
+        super(LevelObject.ID_TURRET, pos, WIDTH, HEIGHT, 1, HP, level);
         this.angleMin = 
-            Util.degToRad(360-parseFloat(attrs.erange));
+            Util.degToRad(360-rangeEnd);
         this.angleMax = 
-            Util.degToRad(360-parseFloat(attrs.srange));
-        this.rate = parseInt(attrs.rate);
+            Util.degToRad(360-rangeStart);
+        this.rate = shootDelay;
         this.fireDelay = 0;
         this.posAngle = 0;
         this.angleVel = 0;
 
-        //trace("start: " + parseFloat(attrs.srange) + " end: " + parseFloat(attrs.erange) + ", normstart: " + Util.radToDeg(Util.normalizeAngle(Util.degToRad(parseFloat(attrs.srange)))) + " normend: " + Util.radToDeg(Util.normalizeAngle(Util.degToRad(parseFloat(attrs.erange)))));
     }
 
-    function doAI() : Void {
+    function stepFrame() : Void {
         think();
         physics();
         paint();
@@ -90,7 +94,6 @@ class objects.enemies.Turret extends objects.Enemy {
         posAngle = angleVel+posAngle;
 
         // limit by min and max range
-        //trace("limiting " + Util.radToDeg(posAngle) + " to " + Util.radToDeg(Math.min(angleMax, Math.max(angleMin, posAngle))));
         posAngle = Math.min(angleMax, Math.max(angleMin, posAngle));
 
         // fire
@@ -109,6 +112,7 @@ class objects.enemies.Turret extends objects.Enemy {
     }
 
     function paint() : Void {
-        mc._rotation = Util.radToDeg(posAngle);
+        level.moveMC(mc, pos, posAngle);
     }
+
 }

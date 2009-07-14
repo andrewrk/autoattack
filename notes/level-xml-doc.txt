@@ -104,11 +104,15 @@ Classification
                 2: parachuting from the sky
             weapon =
                 0: Pistol
-                1: Grenade
-                2: Bazooka
-                3: Guided missile launcher
-                4: Bombs
-                5: Mines
+                1: SMG
+                2: M16
+                3: Bazooka
+                4: Flamethrower
+                5: Lazer gun
+                6: Grenade
+                7: Shotgun
+                8: Guided Missile Launcher
+                9: Mines
         ID 1 = Helicopter
             weapon
             weapon2 = same as weapon - helicopters can dual wield

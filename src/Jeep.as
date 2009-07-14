@@ -221,7 +221,11 @@ class Jeep {
         mc._rotation = Util.radToDeg(w.getAngle());
     }
 
-    public function hitMC(target : MovieClip) : Boolean {
+    public function hitObj(obj : LevelObject){
+        return hitMC( obj.getMovieClip() );
+    }
+
+    private function hitMC(target : MovieClip) : Boolean {
         return target.hitTest(jeepBody_mc) || 
             target.hitTest(frontWheel_mc) ||
             target.hitTest(backWheel_mc);
