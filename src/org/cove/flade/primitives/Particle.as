@@ -65,6 +65,14 @@ class org.cove.flade.primitives.Particle {
 		isVisible = true;
 	}
 
+    public function getVel() : Vector {
+        return curr.minusNew(prev);
+    }
+
+    public function setVel(newVel : Vector) : Void {
+        prev = curr.minusNew(newVel);
+    }
+
     public function getPos() : Vector {
         return curr;
     }

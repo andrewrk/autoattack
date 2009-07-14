@@ -31,6 +31,26 @@ class Level {
         "foreobj_mc",
         "fore_mc"
     ];
+
+    public static var WEAPON_PISTOL = 0;
+    public static var WEAPON_SMG = 1;
+    public static var WEAPON_M16 = 2;
+    public static var WEAPON_BAZOOKA = 3;
+    public static var WEAPON_FLAMETHROWER = 4;
+    public static var WEAPON_LAZER_GUN = 5;
+    public static var WEAPON_GRENADE = 6;
+    public static var WEAPON_SHOTGUN = 7;
+
+    public static var weapons : Array = [
+        "Pistol",
+        "SMG",
+        "M16",
+        "Bazooka",
+        "Flamethrower",
+        "Lazer Gun",
+        "Grenade",
+        "Shotgun"
+    ];
     
     // variables loaded from level XML file
     private var bg_sound : Sound;
@@ -495,15 +515,31 @@ class Level {
 
         // perform actions on objects
         for( var i : Number = 0; i < activeObjects.length; i++){
-            switch( activeObjects[i].classNum ){
+            var obj : LevelObject = activeObjects[i];
+            switch( obj.classNum ){
                 case LevelObject.CLASS_POWERUP:
                     // check if we picked up the powerup
-                    if( jeep.hitMC(activeObjects[i].mc) ){
-                        // TODO: do something with this powerup
-                        //trace("got a powerup: " + activeObjects[i].idNum);
+                    if( jeep.hitMC(obj.mc) ){
+                        switch(obj.idNum){
+                            case LevelObject.ID_GAS_CAN:
+                                // TODO: handle gas cans
+                                break;
+                            case LevelObject.ID_SPEED_BOOST:
+                                jeep.boost(15);
+                                break;
+                            case LevelObject.ID_HEALTH_PACK:
+                                // TODO: handle health pack
+                                break;
+                            case LevelObject.ID_TIME_BONUS:
+                                // TODO: handle time bonus
+                                break;
+                            case LevelObject.ID_EXTRA_LIFE:
+                                // TODO: handle extra life
+                                break;
+                        }
 
                         // remove from objects
-                        activeObjects[i].mc.removeMovieClip();
+                        obj.mc.removeMovieClip();
                         activeObjects.splice(i, 1);
                         i--;
                         continue;
@@ -511,12 +547,12 @@ class Level {
                     break;
                 case LevelObject.CLASS_TRIGGER:
                     // check if we hit the trigger
-                    if( jeep.hitMC(activeObjects[i].mc) ){
+                    if( jeep.hitMC(obj.mc) ){
                         // TODO: do something with this trigger
-                        //trace("hit a trigger: " + activeObjects[i].idNum);
+                        //trace("hit a trigger: " + obj.idNum);
 
                         // remove from objects
-                        activeObjects[i].mc.removeMovieClip();
+                        obj.mc.removeMovieClip();
                         activeObjects.splice(i, 1);
                         i--;
                         continue;
@@ -525,7 +561,7 @@ class Level {
                     break;
                 case LevelObject.CLASS_ENEMY:
                     // process bad guy ai
-                    activeObjects[i].doAI();
+                    Enemy(obj).doAI();
                     break;
             }
         }
