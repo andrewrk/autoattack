@@ -894,7 +894,7 @@ class Level {
     function paintBackground() : Void {
         //background
         root_mc.bg_mc.bgcenter_mc._x = 
-            - (scrollOffset.x % (movieSize.x * 4)) / 4 ;
+            - ((scrollOffset.x + movieSize.x * 4) % (movieSize.x * 4)) / 4 ;
         root_mc.bg_mc.bgright_mc._x = 
             root_mc.bg_mc.bgcenter_mc._x + movieSize.x;
     }
