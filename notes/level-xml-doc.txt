@@ -83,7 +83,7 @@ Classification
         ID 0 = Gas can
         ID 1 = Speed Booster
         ID 2 = Health Pack
-        ID 3 = Time Bonus
+        ID 3 = <unused>
         ID 4 = Extra life
 
     CLASS 4 - TRIGGERS - LevelObject.CLASS_TRIGGER
@@ -124,7 +124,6 @@ Classification
             erange = ending angle (degrees) at which the object can point
             rate = how many frames to wait in between firing
         ID 3 = Cannon
-        ID 4 = Bad guy chucking bombs at the player
             
     CLASS 6 - STATIONARY NON PHYSICAL OBJECTS - LevelObject.CLASS_STATIC
         * these objects do not move and have no physical presence
