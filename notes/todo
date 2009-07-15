@@ -6,7 +6,6 @@
     - give the jeep health and gas and a hud display
         > implement power ups
 * if you just sit on the up moving platform it gets glitchy at the top
-* I think turrets broke, they need to be fixed
 * if the jeep blows up, the soldier gets out and you control him
 * implement death which restarts the level
 * provide an option to toggle sound and music, and
@@ -41,3 +40,9 @@
   boost drawing and point it so it's obvious which direction it sends you
 * remove my extraneous needsGravity code from flade
 * make the arrow on MovingPlatform point in the direction of vel
+* something weird is happening at the end
+* give soldiers the ability to run
+* make soldiers seem smarter
+* make blood come out of the soldiers when you hit them once
+* make it so you can run soldiers over
+* use a better graphic for enemy soldiers

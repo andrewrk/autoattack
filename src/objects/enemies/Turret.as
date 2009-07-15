@@ -44,7 +44,6 @@ class objects.enemies.Turret extends objects.Enemy {
     function stepFrame() : Void {
         think();
         physics();
-        paint();
     }
 
     function think() : Void {

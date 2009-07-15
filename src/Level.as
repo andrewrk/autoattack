@@ -622,6 +622,7 @@ class Level {
         for( var i : Number = 0; i < enemies.length; i++){
             var obj : Enemy = enemies[i];
             obj.stepFrame();
+            obj.paint();
         }
     }
 
@@ -781,7 +782,10 @@ class Level {
             case LevelObject.CLASS_ENEMY:
                 switch( id ){
                     case LevelObject.ID_SOLDIER:
-                        return new Soldier(pos, direction, this); 
+                        return new Soldier(pos, direction, 
+                            parseInt(node.attributes.weapon),
+                            parseInt(node.attributes.arrival), 
+                            parseInt(node.attributes.canRun)==1, this); 
                     case LevelObject.ID_HELICOPTER:
                         // TODO: switch with real enemy object
                         return new LevelObject(cls, id, pos, width, height, 

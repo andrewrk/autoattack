@@ -113,6 +113,9 @@ Classification
                 7: Shotgun
                 8: Guided Missile Launcher
                 9: Mines
+            canRun = 
+                0: The soldier has to stay there until he dies
+                1: The soldier can try to move around for a better position
         ID 1 = Helicopter
             weapon
             weapon2 = same as weapon - helicopters can dual wield

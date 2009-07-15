@@ -29,9 +29,9 @@ class Jeep {
 
     private var level : Level;
 
-    private var shootRate : Number = 2; // frames to skip in between shots
+    private var shootRate : Number = 1; // frames to skip in between shots
     private var fireDelay : Number;
-    private var keySpeed : Number = 16.0; // how fast the wheels accelerate
+    private var keySpeed : Number = 14.0; // how fast the wheels accelerate
 
     private var prevGunPos : Vector; // so we know our velocity
     

@@ -50,7 +50,7 @@ class org.cove.flade.surfaces.LevelSurface extends AbstractTile
     }
 	
     private function isCircleColliding(p : CircleParticle) : Boolean {
-        var angCheck : Number = 0.20 * Math.PI;
+        var angCheck : Number = 0.18 * Math.PI;
 
         if( level.hit(p.prev) ) {
             trace("circle collision failed to resolve");   
