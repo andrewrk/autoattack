@@ -9,7 +9,7 @@ package objects {
         public function Trigger(idNum : Number, pos : MathVector,
             level : Level)
         {
-            super(LevelObject.CLASS_TRIGGER, idNum, pos, 0, 0, 0, false,
+            super(LevelObjectEnum.TRIGGER, idNum, pos, 0, 0, 0, false,
                 level);
         }
 

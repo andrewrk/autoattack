@@ -6,6 +6,9 @@ package objects.enemies {
     import org.cove.flade.DynamicsEngine;
     import org.cove.flade.primitives.*;
     import objects.Enemy;
+    import objects.EnemyEnum;
+
+    import flash.display.MovieClip;
 
     public class Soldier extends Enemy {
         private static var WIDTH : Number = 48;
@@ -31,9 +34,11 @@ package objects.enemies {
         private var arrival : Number;
         private var weapon : Number;
 
+        private var gun_mc : MovieClip;
+
         public function Soldier(pos : MathVector, direction : Number, weapon : Number,
             arrival : Number, canRun : Boolean, level : Level) {
-            super(LevelObject.ID_SOLDIER, pos, WIDTH, HEIGHT, direction, HP, level);
+            super(EnemyEnum.SOLDIER, pos, WIDTH, HEIGHT, direction, HP, level);
             
             this.part = null;
             this.engine = level.getEngine();
@@ -49,6 +54,8 @@ package objects.enemies {
             this.weapon = weapon;
             this.arrival = arrival;
             this.canRun = canRun;
+
+            this.gun_mc = MovieClip(MovieClip(mc).getChildByName("gun_mc"));
         }
 
         public override function stepFrame() : void {
@@ -102,8 +109,8 @@ package objects.enemies {
                 if( actionShoot ) {
                     fireDelay = shootRate;
                     // create a bullet and put it into action
-                    var shootPos : MathVector = (new MathVector(mc.gun_mc._x, 
-                        mc.gun_mc._y)).plus(pos);
+                    var shootPos : MathVector = (new MathVector(gun_mc.x, 
+                        gun_mc.y)).plus(pos);
 
                     level.shootBullet(
                         Util.extendRadius(shootPos, armAngle, ARM_RADIUS), 
@@ -121,21 +128,21 @@ package objects.enemies {
             level.moveMC_noa(mc, pos);
 
             if( kneeling ){
-                mc.gotoAndStop("kneel");
+                MovieClip(mc).gotoAndStop("kneel");
             } else if( actionRunInDir != 0 ){
-                mc.gotoAndStop("run");
+                MovieClip(mc).gotoAndStop("run");
             } else {
-                mc.gotoAndStop("still");
+                MovieClip(mc).gotoAndStop("still");
             }
 
             armAngle = Util.normalizeAngle(armAngle);
             if( armAngle > Math.PI / 2 && armAngle < 3 * Math.PI / 2 ){
                 // flip
-                mc._xscale = -100;
-                mc.gun_mc._rotation = 180-Util.radToDeg(armAngle);
+                mc.scaleX = -100;
+                gun_mc.rotation = 180-Util.radToDeg(armAngle);
             } else {
-                mc._xscale = 100;
-                mc.gun_mc._rotation = Util.radToDeg(armAngle);
+                mc.scaleX = 100;
+                gun_mc.rotation = Util.radToDeg(armAngle);
             }
 
         }

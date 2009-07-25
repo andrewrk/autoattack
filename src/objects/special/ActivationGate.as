@@ -5,12 +5,10 @@ package objects.special {
 
     import org.cove.flade.util.MathVector;
     import objects.SpecialObject;
+    import objects.SpecialObjectEnum;
+    import flash.display.MovieClip;
 
     public class ActivationGate extends SpecialObject {
-
-        private static var bgLinkName : String = "activationGateBG";
-        private static var fgLinkName : String = "activationGateFG";
-        private static var maskLinkName : String = "activationGateMask";
 
         private var bg_mc : MovieClip;
         private var fg_mc : MovieClip;
@@ -20,48 +18,36 @@ package objects.special {
         private var fgBtnActive : Boolean; // did they get the fg one?
         private var bgBtnActive : Boolean; // did they get the bg one?
 
+        private var bgCont_mc : MovieClip;
+        private var fgCont_mc : MovieClip;
+
         public function ActivationGate(pos : MathVector, level : Level)
         {
-            super(LevelObject.ID_ACTIVATION_GATE, pos, level);
+            super(SpecialObjectEnum.ACTIVATION_GATE, pos, level);
 
             activated = false;
             fgBtnActive = false;
             bgBtnActive = false;
 
             // add the movie clips
-            var level_mc : MovieClip = level.getMovieClip();
-            var bgStr : String = bgLinkName + "_" + objId;
-            var fgStr : String = fgLinkName + "_" + objId;
-            var maskStr : String = maskLinkName + "_" + objId;
+            bgCont_mc = level.layers[LevelLayer.BEHIND_JEEP];
+            fgCont_mc = level.layers[LevelLayer.FOREOBJ];
 
-            var bgCont_mc : MovieClip = 
-                level_mc[Level.layers[Level.LAYER_BEHIND_JEEP]];
-            var fgCont_mc : MovieClip = level_mc[Level.layers[Level.LAYER_FOREOBJ]];
+            bg_mc = new ActivationGateBgAsset();
+            fg_mc = new ActivationGateFgAsset();
+            mask_mc = new ActivationGateMaskAsset();
 
-            bgCont_mc.attachMovie(bgLinkName, bgStr, 
-                bgCont_mc.getNextHighestDepth());
-            fgCont_mc.attachMovie(fgLinkName, fgStr, 
-                fgCont_mc.getNextHighestDepth());
-            bgCont_mc.attachMovie(maskLinkName, maskStr, 
-                bgCont_mc.getNextHighestDepth());
-
-            bg_mc = bgCont_mc[bgStr];
-            fg_mc = fgCont_mc[fgStr];
-            mask_mc = bgCont_mc[maskStr];
-
-            bg_mc._visible = false;
-            fg_mc._visible = false;
-            mask_mc._visible = false;
+            mask_mc.visible = false;
 
         }
 
         public override function solid() : Boolean {
-            return !activated;
+            return (! activated);
         }
 
         public override function hit(pos : MathVector) : Boolean {
             var rel : MathVector = level.getRelPos(pos);
-            return mask_mc.hitTest(rel.x, rel.y, 1);
+            return mask_mc.hitTestPoint(rel.x, rel.y, true);
         }
 
         // return true if this location is solid to projectiles
@@ -107,14 +93,17 @@ package objects.special {
         }
 
         public override function activate() : void {
-            fg_mc._visible = true;
-            bg_mc._visible = true;
+            bgCont_mc.addChild(bg_mc);
+            bgCont_mc.addChild(mask_mc);
+            fgCont_mc.addChild(fg_mc);
+
             paint();
         }
 
         public override function deactivate() : void {
-            fg_mc._visible = false;
-            bg_mc._visible = false;
+            bgCont_mc.removeChild(bg_mc);
+            bgCont_mc.removeChild(mask_mc);
+            fgCont_mc.removeChild(fg_mc);
         }
 
         public override function onScreen() : Boolean {

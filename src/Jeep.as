@@ -9,6 +9,7 @@ package {
     import org.cove.flade.composites.*;
 
     import flash.display.MovieClip;
+    import flash.display.DisplayObject;
     import flash.events.KeyboardEvent;
     import flash.ui.Keyboard;
 
@@ -51,9 +52,9 @@ package {
             // create the frame and the wheels
             // attach movie clips
             var cont_mc : MovieClip = level.layers[LevelLayer.OBJ];
-            backWheel_mc = new JeepWheel();
-            frontWheel_mc = new JeepWheel();
-            jeepBody_mc = new JeepBody();
+            backWheel_mc = new JeepWheelAsset();
+            frontWheel_mc = new JeepWheelAsset();
+            jeepBody_mc = new JeepBodyAsset();
             cont_mc.addChild(backWheel_mc);
             cont_mc.addChild(frontWheel_mc);
             cont_mc.addChild(jeepBody_mc);
@@ -253,10 +254,14 @@ package {
             mc.rotation = Util.radToDeg(w.getAngle());
         }
 
-        public function hitMC(target : MovieClip) : Boolean {
-            return target.hitTest(jeepBody_mc) || 
-                target.hitTest(frontWheel_mc) ||
-                target.hitTest(backWheel_mc);
+        public function hitObj(obj : LevelObject){
+            return hitMC( obj.getMC() );
+        }
+
+        public function hitMC(target : DisplayObject) : Boolean {
+            return target.hitTestObject(jeepBody_mc) || 
+                target.hitTestObject(frontWheel_mc) ||
+                target.hitTestObject(backWheel_mc);
         }
 
         public function getPos() : MathVector {

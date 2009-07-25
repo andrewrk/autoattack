@@ -4,6 +4,7 @@ package objects.enemies {
 
     import org.cove.flade.util.MathVector;
     import objects.Enemy;
+    import objects.EnemyEnum;
 
     public class Turret extends Enemy {
         private static var WIDTH : Number = 68;
@@ -32,7 +33,7 @@ package objects.enemies {
         public function Turret(pos : MathVector, rangeStart : Number,
             rangeEnd : Number, shootDelay : Number, level : Level)
         {
-            super(LevelObject.ID_TURRET, pos, WIDTH, HEIGHT, 1, HP, level);
+            super(EnemyEnum.TURRET, pos, WIDTH, HEIGHT, 1, HP, level);
             this.angleMin = 
                 Util.degToRad(360-rangeEnd);
             this.angleMax = 

@@ -9,7 +9,7 @@ package objects {
         public function Projectile(idNum : Number, pos : MathVector,
             level : Level)
         {
-            super(LevelObject.CLASS_PROJECTILE, idNum, pos, 0, 0, 0, true,
+            super(LevelObjectEnum.PROJECTILE, idNum, pos, 0, 0, 0, true,
                 level);
         }
 

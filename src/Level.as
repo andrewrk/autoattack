@@ -29,6 +29,10 @@ package {
     import flash.utils.setInterval;
     import flash.utils.clearInterval;
 
+    import flash.xml.XMLDocument;
+
+    import flash.net.URLLoader;
+
     public class Level extends MovieClip {
         public var layers : Vector.<MovieClip>;
 
@@ -59,9 +63,6 @@ package {
         private var scrollOffset : MathVector;
         
         private var number : Number;
-        
-        // for loading xml files
-        private var my_xml : XML;
         
         private var movieSize : MathVector;
         
@@ -100,8 +101,8 @@ package {
         private var mainInterval : uint;
         private var loadLevelInterval : uint;
 
-        private var transmission_mc : Receiver;
-        private var progress_mc : MissionProgressBar;
+        private var transmission_mc : ReceiverAsset;
+        private var progress_mc : MissionProgressBarAsset;
         
         public var shootDown : Boolean;
 
@@ -182,10 +183,6 @@ package {
                 this.addChild(nmc);
             }
             
-            //initialize XML object
-            my_xml = new XML();
-            my_xml.ignoreWhite = true;
-
 
             // start loading the intro cinematic
             beginLoadIntro();
@@ -197,7 +194,7 @@ package {
             progressVisible = false;
             
             // set up receiver
-            transmission_mc = new Receiver();
+            transmission_mc = new ReceiverAsset();
             this.addChild(transmission_mc);
 
             transmission_mc.x = movieSize.x / 2 - transmission_mc.width / 2;
@@ -254,11 +251,20 @@ package {
                 progressBG = 0.0;
                 
                 //begin load process
-                my_xml.onLoad = function(success : Boolean) {
-                    level.loadedXML = true;
-                    level.loadLevelFromXML();
-                }
-                my_xml.load ("levels/level" + number + ".xml");
+                var xmlLoader : URLLoader = new URLLoader();
+                var xmlUrl : String = "levels/level" + number + ".xml";
+
+                xmlLoader.addEventListener(Event.COMPLETE, function(e : Event){
+                    loadedXML = true;
+                    loadLevelFromXML(xmlLoader.data);
+                });
+                xmlLoader.addEventListener(ProgressEvent.PROGRESS,
+                    function(e : ProgressEvent) {
+                        progressXML = e.bytesLoaded / e.bytesTotal;
+                        updateLoadProgress();
+                    }
+                );
+                xmlLoader.load(new URLRequest(xmlUrl));
                 
                 var lvloader : Loader = new Loader();
                 lvloader.contentLoaderInfo.addEventListener(
@@ -339,7 +345,7 @@ package {
             beginLoadLevel();
             if ( ! (loadedXML && loadedBG && loadedSWF))
             {
-                progress_mc = new MissionProgressBar();
+                progress_mc = new MissionProgressBarAsset();
                 this.addChild(progress_mc);
                 progress_mc.x = movieSize.x / 2 - progress_mc.width / 2;
                 progress_mc.y = movieSize.y / 2 - progress_mc.height / 2;
@@ -565,7 +571,7 @@ package {
                 obj.paint();
 
                 // check if we picked up the powerup
-                if( jeep.hitMC(obj) ){
+                if( jeep.hitObj(obj) ){
                     switch(obj.getIdNum()){
                         case PowerUpEnum.GAS_CAN:
                             // TODO: handle gas cans
@@ -599,7 +605,7 @@ package {
                 var obj : LevelObject = triggers[i];
 
                 // check if we hit the trigger
-                if( jeep.hitMC(obj) ){
+                if( jeep.hitObj(obj) ){
                     // TODO: do something with this trigger
                     //trace("hit a trigger: " + obj.idNum);
 
@@ -698,40 +704,42 @@ package {
                 sectorWidth * 2, sectorHeight * 2);
         }
         
-        private function loadLevelFromXML() : void {
+        private function loadLevelFromXML(xmlData : String) : void {
+            var doc : XMLDocument = new XMLDocument(xmlData);
             //parse the xml file and get ready
             //look for "jclevel" tag
+            var i : int;
             var foundLevelTag : Boolean = false;
-            for (var i : Number = 0; i < my_xml.childNodes.length; i++)
+            for (i = 0; i < doc.childNodes.length; i++)
             {
-                if (my_xml.childNodes[i].nodeName == "jclevel")
+                if (doc.childNodes[i].nodeName == "jclevel")
                 {
                     //read level properties
                     //is the game over?
-                    var gameOver = parseInt (my_xml.childNodes[i].attributes.gameover);
+                    var gameOver = parseInt (doc.childNodes[i].attributes.gameover);
                     if (gameOver == 1)
                     {
                         gotoAndStop ("winGame");
                         return;
                     }
                     //level propertes
-                    bgMusicURL = my_xml.childNodes[i].attributes.bgmusic;
-                    lvlScale = parseFloat (my_xml.childNodes[i].attributes.scale);
+                    bgMusicURL = doc.childNodes[i].attributes.bgmusic;
+                    lvlScale = parseFloat (doc.childNodes[i].attributes.scale);
                     sectorWidth = lvlScale * defSectorWidth;
                     sectorHeight = lvlScale * defSectorHeight;
                     startSector = new MathVector(
-                        parseInt(my_xml.childNodes[i].attributes.sx),
-                        parseInt(my_xml.childNodes[i].attributes.sy) );
+                        parseInt(doc.childNodes[i].attributes.sx),
+                        parseInt(doc.childNodes[i].attributes.sy) );
                     
                     startPos = (new MathVector(
-                        parseInt(my_xml.childNodes[i].attributes.spx),
-                        parseInt (my_xml.childNodes[i].attributes.spy))
+                        parseInt(doc.childNodes[i].attributes.spx),
+                        parseInt (doc.childNodes[i].attributes.spy))
                     ).multNew(lvlScale);
 
-                    lvlSquLeft = parseInt(my_xml.childNodes[i].attributes.sl);
-                    lvlSquRight = parseInt(my_xml.childNodes[i].attributes.sr);
-                    lvlSquTop = parseInt(my_xml.childNodes[i].attributes.st);
-                    lvlSquBottom = parseInt(my_xml.childNodes[i].attributes.sb);
+                    lvlSquLeft = parseInt(doc.childNodes[i].attributes.sl);
+                    lvlSquRight = parseInt(doc.childNodes[i].attributes.sr);
+                    lvlSquTop = parseInt(doc.childNodes[i].attributes.st);
+                    lvlSquBottom = parseInt(doc.childNodes[i].attributes.sb);
                     foundLevelTag = true;
                     break;
                 }
@@ -741,8 +749,8 @@ package {
                 errorLoadingLevel();
                 return;
             }
-            var obj_xmlnode : XML = my_xml.childNodes[i];
-            for (var i : Number = 0; i < obj_xmlnode.childNodes.length; i++) {
+            var obj_xmlnode : XMLDocument = doc.childNodes[i];
+            for (i = 0; i < obj_xmlnode.childNodes.length; i++) {
                 // get level object and push it into array
                 var obj : LevelObject = 
                     createLevelObject(obj_xmlnode.childNodes[i]);
@@ -757,30 +765,66 @@ package {
         }
 
         // create a LevelObject based on an XML node
-        private function createLevelObject(node : XML) {
+        private function createLevelObject(node : XMLDocument) {
             var cls : Number = parseInt(node.attributes.cls);
             var id : Number = parseInt(node.attributes.id);
 
             // global values
-            var offset : MathVector = new MathVector(parseFloat(
-                node.attributes.x), parseFloat(node.attributes.y));
+            var offset : MathVector = new MathVector(
+                parseFloat(node.attributes.x), parseFloat(node.attributes.y));
 
-            var sector : MathVector = new MathVector(parseInt(
-                node.attributes.sx), parseInt(node.attributes.sy));
+            var sector : MathVector = new MathVector(
+                parseInt(node.attributes.sx), parseInt(node.attributes.sy));
 
             var pos : MathVector = new MathVector(sectorWidth * sector.x
                 + offset.x, sectorHeight * sector.y + offset.y);
             
-            var w : Number = parseFloat(node.attributes.w);
-            var h : Number = parseFloat(node.attributes.h);
-            var dir : Number = parseFloat(node.attributes.dir);
+            var width : Number = parseFloat(node.attributes.w);
+            var height : Number = parseFloat(node.attributes.h);
+            var direction : Number = parseFloat(node.attributes.dir);
             
 
             // return a level object
-            var ret : LevelObject;
             switch( cls ){
+                case LevelObjectEnum.ENEMY:
+                    switch( id ){
+                        case EnemyEnum.SOLDIER:
+                            return new Soldier(pos, direction, 
+                                parseInt(node.attributes.weapon),
+                                parseInt(node.attributes.arrival), 
+                                parseInt(node.attributes.canRun)==1, this); 
+                        case EnemyEnum.HELICOPTER:
+                            // TODO: switch with real enemy object
+                            return new LevelObject(cls, id, pos, width, height, 
+                                direction, false, this);
+                        case EnemyEnum.TURRET:
+                            return new Turret(pos, 
+                                parseFloat(node.attributes.srange), 
+                                parseFloat(node.attributes.erange),
+                                parseInt(node.attributes.rate), this);
+                        case EnemyEnum.CANNON:
+                            // TODO: switch with real enemy object
+                            return new LevelObject(cls, id, pos, width, height, 
+                                direction, false, this);
+                        case EnemyEnum.BOMB_THROWER:
+                            // TODO: switch with real enemy object
+                            return new LevelObject(cls, id, pos, width, height, 
+                                direction, false, this);
+                        default:
+                            trace("Unrecognized enemy id: " + id );
+                            return null;
+                    }
+                case LevelObjectEnum.ENTITY:
+                    return new Entity(id, pos, width, height, direction, this);
+                case LevelObjectEnum.OBSTACLE:
+                    return new Obstacle(id, pos, width, height, direction, this,
+                        parseInt(node.attributes.destructable) == 1,
+                        parseInt(node.attributes.hp))
+                case LevelObjectEnum.PROJECTILE:
+                    trace("TODO: game doesn't handle embedding projectiles yet");
+                    return null;
                 case LevelObjectEnum.DECORATION:
-                    var layer : int;
+                    var layer : Number;
                     var scrollFactor : MathVector;
 
                     if( node.attributes.layer ) {
@@ -808,37 +852,8 @@ package {
                         layer = LevelLayer.OBJ;
                         scrollFactor = new MathVector(1, 1);
                     }
-
-                    switch(id){
-                        case ScrollingDecorationEnum.BASE_CAMP_FENCE:
-                            ret = new BaseCampFence();
-                        case ScrollingDecorationEnum.BASE_CAMP_ENTRANCE_FG:
-                            ret = new BaseCampEntranceFg();
-                        case ScrollingDecorationEnum.CACTUS:
-                            ret = new Cactus();
-                        case ScrollingDecorationEnum.SKELETON_BUSH:
-                            ret = new SkeletonBush();
-                        case ScrollingDecorationEnum.GOOD_BUSH:
-                            ret = new GoodBush();
-                        case ScrollingDecorationEnum.CHRISTMAS_TREE:
-                            ret = new ChristmasTree();
-                        case ScrollingDecorationEnum.BIG_SAGUARO_CACTUS:
-                            ret = new BigSaguaroCactus();
-                        case ScrollingDecorationEnum.BIG_DEAD_BUSH:
-                            ret = new BigDeadBush();
-                        case ScrollingDecorationEnum.BLACK_BAR:
-                            ret = new BigBlackBar();
-                        case ScrollingDecorationEnum.CLOUD:
-                            ret = new Cloud();
-                        case ScrollingDecorationEnum.BASE_CAMP_ENTRANCE_BG:
-                            ret = new BaseCampEntranceBg();
-                        default:
-                            trace("unknown scrolling decoration id: ", id);
-                            return null;
-                    }
-                    ret.construct(id, pos, w, h, dir, layer,
-                        scrollFactor, this);
-                    return ret;
+                    return new ScrollingDecoration(id, pos, width, height, 
+                        direction, layer, scrollFactor, this);
                 case LevelObjectEnum.SPECIAL:
                     switch( id ){
                         case SpecialObjectEnum.ACTIVATION_GATE:
@@ -849,111 +864,18 @@ package {
                                 parseInt(node.attributes.delay),
                                 new MathVector(parseFloat(node.attributes.velX),
                                     parseFloat(node.attributes.velY)),
-                                    w, h, this);
+                                width, height, this);
                         default:
                             trace("Unrecognized special id: " + id);
                             return null;
 
                     }
-                case LevelObjectEnum.OBSTACLE:
-                    var destroy : Boolean =
-                        parseInt(node.attributes.destructable) == 1;
-                    var hp : int = parseInt(node.attributes.hp);
-
-                    switch(id){
-                        case ObstacleEnum.BOULDER:
-                            ret = new BreakableBoulder();
-                        case ObstacleEnum.DEFENSE_SHELF:
-                            ret = new DefenseShelf();
-                        case ObstacleEnum.GLASS_PANE:
-                            ret = new GlassPane();
-                        case ObstacleEnum.MOUNTAIN_EXIT:
-                            ret = new MountainExit();
-                        case ObstacleEnum.UP_RAMP:
-                            ret = new UpRamp();
-                        case ObstacleEnum.DOWN_RAMP:
-                            ret = new DownRamp();
-                        case ObstacleEnum.TRAP_DOOR:
-                            ret = new TrapDoor();
-                        case ObstacleEnum.UP_RAMP_2:
-                            ret = new TriangleRamp();
-                        case ObstacleEnum.ONE_WAY_SPIKE:
-                            ret = new OneWaySpike();
-                    }
-                    Obstacle(ret).construct(id, pos, w, h, dir, this, destroy, hp);
-                    return ret;
-                case LevelObjectEnum.POWERUP:
-                    switch(id){
-                        case PowerUpEnum.GAS_CAN:
-                            ret = new GasCan();
-                        case PowerUpEnum.SPEED_BOOST:
-                            ret = new SpeedBooster();
-                        case PowerUpEnum.HEALTH_PACK:
-                            ret = new HealthPack();
-                        case PowerUpEnum.TIME_BONUS:
-                            ret = new TimeBonus();
-                        case PowerUpEnum.EXTRA_LIFE:
-                            ret = new ExtraLife();
-                    }
-                    ret.construct(cls, id, pos, w, h, dir, false, this);
-                    return ret;
                 case LevelObjectEnum.TRIGGER:
                     return new Trigger(id, pos, this);
-                case LevelObjectEnum.ENEMY:
-                    switch( id ){
-                        case EnemyEnum.SOLDIER:
-                            return new Soldier(pos, dir, 
-                                parseInt(node.attributes.weapon),
-                                parseInt(node.attributes.arrival), 
-                                parseInt(node.attributes.canRun)==1, this); 
-                        case EnemyEnum.HELICOPTER:
-                            // TODO: switch with real enemy object
-                            trace("TODO: helicopters not implemented");
-                            return null;
-                        case EnemyEnum.TURRET:
-                            return new Turret(pos, 
-                                parseFloat(node.attributes.srange), 
-                                parseFloat(node.attributes.erange),
-                                parseInt(node.attributes.rate), this);
-                        case EnemyEnum.CANNON:
-                            return new Cannon(pos, dir,
-                                parseInt(node.attributes.rate), this);
-                        case EnemyEnum.BOMB_THROWER:
-                            trace("TODO: bomb throwers not implemented");
-                            return null;
-                        default:
-                            trace("Unrecognized enemy id: " + id );
-                            return null;
-                    }
-                case LevelObjectEnum.STATIC:
-                    switch(id){
-                        case StaticEnum.SWITCH:
-                            ret = new Switch();
-                        case StaticEnum.VENT:
-                            ret = new Vent();
-                    }
-                    ret.construct(cls, id, pos, w, h, dir, false, this);
-                    return ret;
-                case LevelObjectEnum.ENTITY:
-                    switch(id){
-                        case EntityEnum.EXPLOSIVE_BARREL:
-                            ret = new ExplosiveBarrel();
-                        case EntityEnum.MINE:
-                            ret = new Mine();
-                        case EntityEnum.RUBBLE:
-                            ret = new Rubble();
-                    }
-                    Entity(ret).construct(id, pos, w, h, dir, this);
-                    return ret;
-                case LevelObjectEnum.PROJECTILE:
-                    trace("TODO: game doesn't handle embedding projectiles yet");
-                    return null;
-                case LevelObjectEnum.EXPLOSION:
-                    trace("TODO: game doesn't handle embedding explosions yet");
-                    return null;
                 default:
-                    trace("Error: Unhandled class: ", cls, " (id ", id, ")");
-                    return null;
+                    // generic LevelObject
+                    return new LevelObject(cls, id, pos, width, height, direction,
+                        false, this);
             }
         }
         
@@ -965,7 +887,7 @@ package {
             bgSoundChannel.stop();
             clearInterval(loadLevelInterval);
 
-            var error_mc : LoadLevelError = new LoadLevelError();
+            var error_mc : LoadLevelErrorAsset = new LoadLevelErrorAsset();
             this.addChild(error_mc);
             error_mc.x = movieSize.x / 2 - error_mc.width / 2;
             error_mc.y = movieSize.y / 2 - error_mc.height / 2;
@@ -1007,9 +929,9 @@ package {
                     if (x == vbegin.x || x == vend.x || 
                         y == vbegin.y || y == vend.y)
                     {
-                        mc._visible = false;
+                        mc.visible = false;
                     } else {
-                        mc._visible = true;
+                        mc.visible = true;
                         moveMC(mc, new MathVector(x * sectorWidth,
                             y * sectorHeight),0);
                     }
@@ -1126,7 +1048,7 @@ package {
                     
                     var mc : MovieClip = MovieClip(level_mc.getChildByName(
                         "mx" + sx + "y" + sy));
-                    if (mc.hitTest(checkX, checkY, 1))
+                    if (mc.hitTestPoint(checkX, checkY, true))
                         return true;
                 }
             }
@@ -1134,7 +1056,7 @@ package {
             var i : int;
             var rel : MathVector = getRelPos(pos);
             for( i = 0; i < obstacles.length; i++ ){
-                if( MovieClip(obstacles[i]).hitTest(rel.x, rel.y, 1) ) {
+                if( MovieClip(obstacles[i]).hitTestPoint(rel.x, rel.y, true) ) {
                     lastHitObject = obstacles[i];
                     return true;
                 }
@@ -1162,7 +1084,7 @@ package {
 
                     var mc : MovieClip = MovieClip(level_mc.getChildByName(
                         "mx" + sx + "y" + sy));
-                    if (mc.hitTest(checkX, checkY, 1))
+                    if (mc.hitTestPoint(checkX, checkY, true))
                         return true;
                 }
             }
@@ -1170,7 +1092,7 @@ package {
             var rel : MathVector = getRelPos(pos);
             var i : int;
             for( i = 0; i < obstacles.length; i++ ){
-                if( MovieClip(obstacles[i]).hitTest(rel.x, rel.y, 1) ) {
+                if( MovieClip(obstacles[i]).hitTestPoint(rel.x, rel.y, true) ) {
                     return true;
                 }
             }
@@ -1185,13 +1107,13 @@ package {
             return false;
         }
 
-        public function moveMC_noa(mc : MovieClip, pos : MathVector) {
+        public function moveMC_noa(mc : DisplayObject, pos : MathVector) {
             var rel : MathVector = getRelPos(pos);
             mc.x = rel.x;
             mc.y = rel.y;
         }
         
-        public function moveMC(mc : MovieClip, pos : MathVector, angle : Number) {
+        public function moveMC(mc : DisplayObject, pos : MathVector, angle : Number) {
             var rel : MathVector = getRelPos(pos);
             mc.x = rel.x;
             mc.y = rel.y;

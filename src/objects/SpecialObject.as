@@ -7,11 +7,11 @@ package objects {
     public class SpecialObject extends LevelObject {
 
         public function SpecialObject(idNum : Number, pos : MathVector, level : Level) {
-            super(LevelObject.CLASS_SPECIAL, idNum, pos, 0, 0, 0, false, level);
+            super(LevelObjectEnum.SPECIAL, idNum, pos, 0, 0, 0, false, level);
         }
 
         // do not use
-        private function createMovieClip() : void {}
+        protected override function createMovieClip() : void {}
 
         // does this object have any physical presence?
         public function solid() : Boolean {

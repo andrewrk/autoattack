@@ -10,19 +10,13 @@ package objects {
         private var part : Particle;
         private var engine : DynamicsEngine;
 
-        public override function construct(idNum : Number, pos : MathVector,
-            width : Number, height : Number, direction : Number,
-            level : Level) : void
-        {
-            super.construct(LevelObject.CLASS_ENTITY, idNum, pos, width,
-                height, direction, false, level);
-            this.part = null;
-            this.engine = level.getEngine();
-        }
         public function Entity(idNum : Number, pos : MathVector,
             width : Number, height : Number, direction : Number, level : Level)
         {
-            construct(idNum, pos, width, height, direction, level);
+            super(LevelObjectEnum.ENTITY, idNum, pos, width, height,
+                direction, false, level);
+            this.part = null;
+            this.engine = level.getEngine();
         }
 
         public override function activate() : void {

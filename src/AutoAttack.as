@@ -9,8 +9,8 @@ package {
     public class AutoAttack extends MovieClip {
 
         private var preload : Preloader;
-        private var introMovie : IntroMovie;
-        private var titleScreen : TitleScreen;
+        private var introMovie : IntroMovieAsset;
+        private var titleScreen : TitleScreenAsset;
 
         private var level : Level;
 
@@ -29,7 +29,7 @@ package {
 
         private function createIntroMovie() : void {
             preload = null; 
-            introMovie = new IntroMovie();
+            introMovie = new IntroMovieAsset();
             introMovie.addEventListener(Event.EXIT_FRAME, checkIntroMovieOver);
 
             this.addChild(introMovie);
@@ -48,7 +48,7 @@ package {
             introMovie = null;
             
             // create title screen
-            titleScreen = new TitleScreen();
+            titleScreen = new TitleScreenAsset();
             this.addChild(titleScreen);
 
             titleScreen.inner_mc.play_btn.addEventListener(MouseEvent.MOUSE_UP, 

@@ -8,7 +8,7 @@ package objects {
         public static const DOWN_RAMP : int = 5;
         public static const TRAP_DOOR : int = 6;
         //public static const UNUSED : int = 7;
-        public static const UP_RAMP_2 : int = 8;
+        public static const TRIANGLE_RAMP : int = 8;
         public static const ONE_WAY_SPIKE : int = 9;
     }
 }

@@ -4,6 +4,7 @@ package objects.projectiles {
 
     import org.cove.flade.util.MathVector;
     import objects.Projectile;
+    import objects.ProjectileEnum;
 
     public class Bullet extends Projectile {
 
@@ -21,7 +22,7 @@ package objects.projectiles {
         public function Bullet(pos : MathVector, dir : MathVector, extraVel : MathVector,
             level : Level)
         {
-            super(LevelObject.ID_BULLET, pos, level);
+            super(ProjectileEnum.BULLET, pos, level);
 
             explodeFramesLeft = NUM_EXPLODE_FRAMES;
             exploding = false;
@@ -37,19 +38,13 @@ package objects.projectiles {
         }
 
         public override function explode() : void {
-            var parent_mc : MovieClip = mc._parent;
-            var name_string : String = mc._name;
-            var depth : Number = mc.getDepth();
+            // swap graphic with explosion
+            container_mc.removeChild(mc);
+            mc = new BulletExplosionAsset();
+            container_mc.addChild(mc);
 
-            mc.removeMovieClip();
-
-            parent_mc.attachMovie("bulletExplosion", name_string,
-                parent_mc.getNextHighestDepth());
-
-            mc = parent_mc[name_string];
-            
+            // we're now an explosion. tone down speed.
             exploding = true;
-
             vel.normalize().mult(EXPLODE_SPEED);
         }
 

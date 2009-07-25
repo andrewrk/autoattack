@@ -7,62 +7,65 @@ package {
     import org.cove.flade.primitives.Particle;
 
     import flash.display.MovieClip;
+    import flash.display.DisplayObject;
+    import flash.display.DisplayObjectContainer;
 
-    public class LevelObject extends MovieClip {
+    public class LevelObject {
         protected var classNum : Number;
         protected var idNum : Number;
 
         protected var pos : MathVector; // where is it
-        protected var objWidth : Number, objHeight : Number;
+        protected var width : Number, height : Number;
         protected var direction: Number;
 
         // does this object expire when it goes off screen?
         protected var expires : Boolean;
         protected var level : Level;
-        protected var container_mc : MovieClip;
-
-        public function construct(
-            classNum : Number, idNum : Number, pos : MathVector, width : Number,
-            height : Number, direction : Number, expires : Boolean,
-            level : Level) : void
-        {
-            this.classNum = classNum;
-            this.idNum = idNum;
-            this.pos = pos;
-            this.objWidth = width;
-            this.objHeight = height;
-            this.direction = direction;
-            this.expires = expires;
-            this.level = level;
-            this.container_mc = level.layers[LevelLayer.OBJ];
-            
-            setupMovieClip();
-        }
+        protected var mc : DisplayObject; // movie clip used to paint this object
+        // parent (we won't always have the parent attached, so must rememmber)
+        protected var container_mc : DisplayObjectContainer; 
 
         public function LevelObject(
             classNum : Number, idNum : Number, pos : MathVector, width : Number,
             height : Number, direction : Number, expires : Boolean,
             level : Level)
         {
-            construct(classNum, idNum, pos, width, height, direction, expires,
-                level);
+            this.classNum = classNum;
+            this.idNum = idNum;
+            this.pos = pos;
+            this.width = width;
+            this.height = height;
+            this.direction = direction;
+            this.expires = expires;
+            this.level = level;
+            this.container_mc = level.layers[LevelLayer.OBJ];
+            
+            createMovieClip();
+        }
+
+        // show the object on the screen
+        protected function createMovieClip() : void {
+            mc = LevelObjectFactory.createObject(classNum, idNum);
+            container_mc.addChild(mc);
+
+            setupMovieClip();
         }
 
         // configure movie clip settings
         protected function setupMovieClip() : void {
             // optional attributes
-            if( objWidth )
-                this.width = objWidth;
+            if( width )
+                mc.width = width;
             else
-                objWidth = this.width;
+                width = mc.width;
 
-            if( objHeight )
-                this.height = objHeight;
+            if( height )
+                mc.height = height;
             else
-                objHeight = this.height;
+                height = mc.height;
 
             if( direction )
-                this.scaleX = direction;
+                mc.scaleX = direction;
             else
                 direction = 1;
         }
@@ -70,13 +73,13 @@ package {
         // show movie clips
         public function activate() : void {
             // put on display list
-            container_mc.addChild(this);
+            container_mc.addChild(mc);
             paint();
         }
 
         // hide movie clips
         public function deactivate() : void {
-            container_mc.removeChild(this);
+            container_mc.removeChild(mc);
         }
 
         // are we on the screen?
@@ -86,7 +89,7 @@ package {
 
         // paint
         public function paint() : void {
-            level.moveMC_noa(this, pos);
+            level.moveMC_noa(mc, pos);
         }
 
         public function getExpires() : Boolean {
@@ -104,5 +107,10 @@ package {
         public function getIdNum() : Number {
             return idNum;
         }
+
+        public function getMC() : DisplayObject {
+            return mc;
+        }
+
     }
 }

@@ -5,6 +5,7 @@ package objects.special {
     import flash.geom.Rectangle;
     import org.cove.flade.util.MathVector;
     import objects.SpecialObject;
+    import objects.SpecialObjectEnum;
 
     import flash.display.MovieClip;
 
@@ -21,15 +22,13 @@ package objects.special {
 
         private var platforms : Array;
 
-        private static var MovingPlatformCount : Number = 0;
-
         private var boundingRect : Rectangle;
 
-        public function MovingPlatform(pos : MathVector, range : Number, delay : Number,
-            platformVel : MathVector, platformWidth : Number, platformHeight : Number, 
-            level : Level)
+        public function MovingPlatform(pos : MathVector, range : Number,
+            delay : Number, platformVel : MathVector, platformWidth : Number,
+            platformHeight : Number, level : Level)
         {
-            super(LevelObject.ID_MOVING_PLATFORM, pos, level);
+            super(SpecialObjectEnum.MOVING_PLATFORM, pos, level);
             this.range = range;
             this.delay = delay;
             this.platformVel = platformVel;
@@ -39,9 +38,6 @@ package objects.special {
 
             framesLeft = 0;
             platforms = new Array();
-
-
-            mcString = "upPlatform";
 
             createBoundingRect();
         }
@@ -73,19 +69,18 @@ package objects.special {
                 framesLeft = delay;
 
                 // create a platform
-                var mpname : String = "MovingPlatform_" + MovingPlatformCount++;
-                var container_mc : MovieClip = 
-                    level[Level.layers[Level.LAYER_OBJ]];
-                container_mc.attachMovie(mcString, mpname, 
-                    container_mc.getNextHighestDepth());
-
+                // TODO: create a class for this instead of using Object
                 var newPlatform : Object = new Object();
-                newPlatform.mc = container_mc[mpname];
+                newPlatform.mc = new UpPlatformAsset();
 
                 newPlatform.pos = pos.clone();
 
                 newPlatform.mc._width = platformWidth;
                 newPlatform.mc._height = platformHeight;
+
+
+                container_mc.addChild(newPlatform.mc);
+
 
                 platforms.push(newPlatform);
             } else {
@@ -109,6 +104,20 @@ package objects.special {
                     // paint
                     level.moveMC_noa(platform.mc, platform.pos);
                 }
+            }
+        }
+
+        // show movie clips
+        public override function activate() : void {
+            for( var i : int = 0; i < platforms.length; i++ ){
+                container_mc.addChild(platforms[i].mc);
+            }
+        }
+
+        // hide movie clips
+        public override function deactivate() : void {
+            for( var i : int = 0; i < platforms.length; i++ ){
+                container_mc.removeChild(platforms[i].mc);
             }
         }
         
