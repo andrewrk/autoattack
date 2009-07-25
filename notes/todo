@@ -1,3 +1,15 @@
+* Convert to AS3
+    - one main object loaded by flash. controls preloading, title screen,
+      game play, etc
+    - const keyword
+    - private / protected / public
+    - int, uint
+    - movieclips / sprites / etc
+    - loaders
+    - display list and visible display list
+    - event handling
+    - restructure code layout?
+* preloader doesn't show progress
 * implement a crosshair
 * remove my extraneous needsGravity code from flade
 * bullets travel really fast - need to check points in between for hits
@@ -48,6 +60,7 @@
 * Optimize/refactor:
     - change inactive LevelObject array to indexed by square x,y
     - separate Level, Transmission, and GamePlay. Move user input to GamePlay
+    - adjust swf quality for speed
 * level1.swf
     - some sectors need to be adjusted
 * make explosive barrels rectangles instead of particles and make them bump 

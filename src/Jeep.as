@@ -134,7 +134,21 @@ class Jeep {
         fireDelay = 0;
         prevGunPos = getGunRelPos();
 
+
+        // capture keyboard
+        addEventListener(KeyEvent.KEY_DOWN, handleKeyDown);
+        addEventListener(KeyEvent.KEY_UP, handleKeyUp);
+
     }
+
+    private function handleKeyDown() : Void {
+        trace("key down");
+    }
+    
+    private function handleKeyUp() : Void {
+        trace("key up");
+    }
+    
 
     public function doInput() : Void {
         if( Key.isDown(Key.LEFT) ){

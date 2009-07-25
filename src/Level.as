@@ -243,6 +243,10 @@ class Level {
         loader.loadClip("levels/level" + number + "intro.swf",
             root_mc.transmission_mc.cutscene_mc);
 
+        root_mc.transmission_mc.accept_btn.onRelease = function(){
+            level.acceptTransmission();
+        }
+
     }
     
     function beginLoadLevel() : Void {
@@ -427,6 +431,11 @@ class Level {
 
         // add jeep to physics engine
         jeep = new Jeep(startPos, 0, this);
+
+        // input listeners
+        addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
+        addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+        addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         
         // initialize display
         scroll();
@@ -438,7 +447,19 @@ class Level {
         // begin listening to music
         startStreamingSong();
     }
+
+    private function handleMouseDown() : Void {
+        shootDown = true;
+    }
     
+    private function handleMouseUp() : Void {
+        shootDown = false;
+    }
+
+    private function handleMouseMove() : Void {
+        // TODO: cross hair
+    }
+
     private function main() : Void {
         // keyboard input
         jeep.doInput();
