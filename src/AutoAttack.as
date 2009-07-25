@@ -61,7 +61,8 @@ package {
             closeTitleScreen();
 
             // start gameplay
-            level = Level(1, this, stage.stageWidth, stage.stageHeight);
+            level = new Level(1);
+            this.addChild(level);
         }
 
         private function closeTitleScreen() : void {

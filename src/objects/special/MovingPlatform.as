@@ -1,168 +1,147 @@
 // MovingPlatform - SpecialObject that does that mario thing
 
-import flash.geom.Rectangle;
-import org.cove.flade.util.Vector;
+package objects.special {
 
-class objects.special.MovingPlatform extends objects.SpecialObject {
+    import flash.geom.Rectangle;
+    import org.cove.flade.util.MathVector;
+    import objects.SpecialObject;
 
-    private var range : Number;
-    private var platformVel : Vector;
-    private var delay : Number;
+    import flash.display.MovieClip;
 
-    private var platformWidth : Number;
-    private var platformHeight : Number;
+    public class MovingPlatform extends SpecialObject {
 
-    private var framesLeft : Number; // how many frames until new platform
+        private var range : Number;
+        private var platformVel : MathVector;
+        private var delay : Number;
 
-    private var platforms : Array;
+        private var platformWidth : Number;
+        private var platformHeight : Number;
 
-    private var level : Level;
-    private var level_mc : MovieClip;
+        private var framesLeft : Number; // how many frames until new platform
 
-    private static var MovingPlatformCount : Number = 0;
+        private var platforms : Array;
 
-    private var boundingRect : Rectangle;
+        private static var MovingPlatformCount : Number = 0;
 
-    public function MovingPlatform(pos : Vector, range : Number, delay : Number,
-        platformVel : Vector, platformWidth : Number, platformHeight : Number, 
-        level : Level)
-    {
-        super(LevelObject.ID_MOVING_PLATFORM, pos, level);
-        this.range = range;
-        this.delay = delay;
-        this.platformVel = platformVel;
+        private var boundingRect : Rectangle;
 
-        this.platformWidth = platformWidth;
-        this.platformHeight = platformHeight;
+        public function MovingPlatform(pos : MathVector, range : Number, delay : Number,
+            platformVel : MathVector, platformWidth : Number, platformHeight : Number, 
+            level : Level)
+        {
+            super(LevelObject.ID_MOVING_PLATFORM, pos, level);
+            this.range = range;
+            this.delay = delay;
+            this.platformVel = platformVel;
 
-        framesLeft = 0;
-        platforms = new Array();
+            this.platformWidth = platformWidth;
+            this.platformHeight = platformHeight;
 
-        this.level = level;
-        level_mc = level.getMovieClip();
+            framesLeft = 0;
+            platforms = new Array();
 
-        mcString = "upPlatform";
 
-        createBoundingRect();
-    }
+            mcString = "upPlatform";
 
-    // does this object have any physical presence?
-    public function solid() : Boolean {
-        return true;
-    }
-
-    // return true if this location is solid
-    public function hit(pos : Vector) : Boolean {
-        var rel : Vector = level.getRelPos(pos);
-
-        for( var i : Number = 0; i < platforms.length; i++ ){
-            if( platforms[i].mc.hitTest(rel.x, rel.y, 1) )
-                return true;
-        }
-        
-        return false;
-    }
-
-    // notification that a projectile hit this object at this location
-    public function projectileHit(pos : Vector) : Void {}
-
-    // called by the main loop
-    public function stepFrame() : Void {
-        // create new platforms
-        if( framesLeft == 0 ) {
-            framesLeft = delay;
-
-            // create a platform
-            var mpname : String = "MovingPlatform_" + MovingPlatformCount++;
-            var container_mc : MovieClip = 
-                level_mc[Level.layers[Level.LAYER_OBJ]];
-            container_mc.attachMovie(mcString, mpname, 
-                container_mc.getNextHighestDepth());
-
-            var platform : Object = new Object();
-            platform.mc = container_mc[mpname];
-
-            platform.pos = pos.clone();
-
-            platform.mc._width = platformWidth;
-            platform.mc._height = platformHeight;
-
-            platforms.push(platform);
-        } else {
-            framesLeft--;
+            createBoundingRect();
         }
 
-        // loop through platforms
-        for(var i : Number = 0; i < platforms.length; i++ ){
-            var platform : Object = platforms[i];
+        // does this object have any physical presence?
+        public override function solid() : Boolean {
+            return true;
+        }
 
-            // move 
-            platform.pos.plus(platformVel);
+        // return true if this location is solid
+        public override function hit(pos : MathVector) : Boolean {
+            var rel : MathVector = level.getRelPos(pos);
 
-            // delete if old
-            if( platforms.pos.distance(pos) > range ) {
-                platform.mc.removeMovieClip();
-                platforms.splice(i, 1);
-                i--;
-                continue;
+            for( var i : Number = 0; i < platforms.length; i++ ){
+                if( platforms[i].mc.hitTest(rel.x, rel.y, 1) )
+                    return true;
+            }
+            
+            return false;
+        }
+
+        // notification that a projectile hit this object at this location
+        public override function projectileHit(pos : MathVector) : void {}
+
+        // called by the main loop
+        public override function stepFrame() : void {
+            // create new platforms
+            if( framesLeft == 0 ) {
+                framesLeft = delay;
+
+                // create a platform
+                var mpname : String = "MovingPlatform_" + MovingPlatformCount++;
+                var container_mc : MovieClip = 
+                    level[Level.layers[Level.LAYER_OBJ]];
+                container_mc.attachMovie(mcString, mpname, 
+                    container_mc.getNextHighestDepth());
+
+                var newPlatform : Object = new Object();
+                newPlatform.mc = container_mc[mpname];
+
+                newPlatform.pos = pos.clone();
+
+                newPlatform.mc._width = platformWidth;
+                newPlatform.mc._height = platformHeight;
+
+                platforms.push(newPlatform);
             } else {
-                // paint
-                level.moveMC_noa(platform.mc, platform.pos);
+                framesLeft--;
+            }
+
+            // loop through platforms
+            for(var i : Number = 0; i < platforms.length; i++ ){
+                var platform : Object = platforms[i];
+
+                // move 
+                platform.pos.plus(platformVel);
+
+                // delete if old
+                if( platforms.pos.distance(pos) > range ) {
+                    platform.mc.removeMovieClip();
+                    platforms.splice(i, 1);
+                    i--;
+                    continue;
+                } else {
+                    // paint
+                    level.moveMC_noa(platform.mc, platform.pos);
+                }
             }
         }
-    }
+        
+        private function createBoundingRect() : void {
+            // create two rectangles and check if they intersect
+            var x1 : Number = pos.x;
+            var y1 : Number = pos.y;
+            var x2 : Number = pos.x + Util.sign(platformVel.x) * range 
+                + platformWidth;
+            var y2 : Number = pos.y + Util.sign(platformVel.y) * range
+                + platformHeight;
 
-    // show movie clips
-    public function activate() : Void {
-        for( var i : Number = 0; i < platforms.length; i++ ){
-            platforms[i].mc._visible = true;
-        }
-    }
+            // switcheroo
+            // TODO: test if we can remove this code
+            var temp : Number;
+            if( x1 > x2 ) {
+                temp = x1;
+                x1 = x2;
+                x2 = temp;
+            }
+            if( y1 > y2 ) {
+                temp = y1;
+                y1 = y2;
+                y2 = temp;
+            }
 
-    // hide movie clips
-    public function deactivate() : Void {
-        for( var i : Number = 0; i < platforms.length; i++ ){
-            platforms[i].mc._visible = false;
-        }
-    }
-    
-    // actually delete all the movie clips
-    public function dispose() : Void {
-        for( var i : Number = 0; i < platforms.length; i++ ){
-            platforms[i].mc.removeMovieClip();
-        }
-    }
-
-
-    private function createBoundingRect() : Void {
-        // create two rectangles and check if they intersect
-        var x1 : Number = pos.x;
-        var y1 : Number = pos.y;
-        var x2 : Number = pos.x + Util.sign(platformVel.x) * range 
-            + platformWidth;
-        var y2 : Number = pos.y + Util.sign(platformVel.y) * range
-            + platformHeight;
-
-        // switcheroo
-        // TODO: test if we can remove this code
-        var temp : Number;
-        if( x1 > x2 ) {
-            temp = x1;
-            x1 = x2;
-            x2 = temp;
-        }
-        if( y1 > y2 ) {
-            temp = y1;
-            y1 = y2;
-            y2 = temp;
+            boundingRect = new Rectangle(x1, y1, x2-x1, y2-y1);
         }
 
-        boundingRect = new Rectangle(x1, y1, x2-x1, y2-y1);
-    }
+        // determine if we should still be on the screen
+        public override function onScreen() : Boolean {
+            return boundingRect.intersects(level.getScreenRect());
+        }
 
-    // determine if we should still be on the screen
-    public function onScreen() : Boolean {
-        return boundingRect.intersects(level.getScreenRect());
     }
-
 }

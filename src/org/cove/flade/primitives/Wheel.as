@@ -23,116 +23,117 @@
  * Flash is a registered trademark of Macromedia
  */
 
-import org.cove.flade.util.*;
-import org.cove.flade.graphics.*;
+package org.cove.flade.primitives {
 
-import org.cove.flade.primitives.*;
-import org.cove.flade.DynamicsEngine;
+    import org.cove.flade.util.*;
 
-
-class org.cove.flade.primitives.Wheel extends CircleParticle {
-							
-	public var rp:RimParticle;
-	private var coeffSlip:Number;				
-	
-
-	public function Wheel(x:Number, y:Number, r:Number) {
-	
-		super(x,y,r);
-		
-		// TBD: set max torque?
-		// rim particle (radius, max torque)
-		rp = new RimParticle(r, 2); 		
-
-		// TBD:Review this for a higher level of friction
-		// 1 = totally slippery, 0 = full friction
-		coeffSlip = 0.0;	
-	}
+    import org.cove.flade.primitives.*;
+    import org.cove.flade.DynamicsEngine;
 
 
-	public function verlet(sysObj:DynamicsEngine):Void {
-		rp.verlet(sysObj);
-		super.verlet(sysObj);
-	}
+    public class Wheel extends CircleParticle {
+                                
+        public var rp:RimParticle;
+        private var coeffSlip:Number;				
+        
+
+        public function Wheel(x:Number, y:Number, r:Number) {
+        
+            super(x,y,r);
+            
+            // TBD: set max torque?
+            // rim particle (radius, max torque)
+            rp = new RimParticle(r, 2); 		
+
+            // TBD:Review this for a higher level of friction
+            // 1 = totally slippery, 0 = full friction
+            coeffSlip = 0.0;	
+        }
 
 
-	public function resolveCollision(normal:Vector, sysObj:DynamicsEngine):Void {
-		super.resolveCollision(normal, sysObj);
-		resolve(normal);
-	}
+        public override function verlet(sysObj:DynamicsEngine):void {
+            rp.verlet(sysObj);
+            super.verlet(sysObj);
+        }
 
 
-	public function paint(level : Level):Void {
-		if (isVisible) {
-            var relP : Vector = level.getRelPos(curr);
-			// draw wheel circle
-			var px:Number = relP.x;
-			var py:Number = relP.y;
-			var rx:Number = rp.curr.x;
-			var ry:Number = rp.curr.y;
+        public override function resolveCollision(normal:MathVector, sysObj:DynamicsEngine):void {
+            super.resolveCollision(normal, sysObj);
+            resolve(normal);
+        }
 
 
-			dmc.clear();
-			dmc.lineStyle(0, 0x222288, 100);
-			Graphics.paintCircle(dmc, px, py, radius);
-
-			// draw rim cross
-			dmc.lineStyle(0, 0x999999, 100);
-			Graphics.paintLine(dmc, rx + px, ry + py, px, py);
-			Graphics.paintLine(dmc, -rx + px, -ry + py, px, py);
-			Graphics.paintLine(dmc, -ry + px, rx + py, px, py);
-			Graphics.paintLine(dmc, ry + px, -rx + py, px, py);
-		}
-	}
+        //public override function paint(level : Level):void {
+            //if (isVisible) {
+                //var relP : MathVector = level.getRelPos(curr);
+                //// draw wheel circle
+                //var px:Number = relP.x;
+                //var py:Number = relP.y;
+                //var rx:Number = rp.curr.x;
+                //var ry:Number = rp.curr.y;
 
 
-	public function setTraction(t:Number):Void {
-		coeffSlip = t;
-	}
+                //dmc.clear();
+                //dmc.lineStyle(0, 0x222288, 100);
+                //Graphics.paintCircle(dmc, px, py, radius);
+
+                //// draw rim cross
+                //dmc.lineStyle(0, 0x999999, 100);
+                //Graphics.paintLine(dmc, rx + px, ry + py, px, py);
+                //Graphics.paintLine(dmc, -rx + px, -ry + py, px, py);
+                //Graphics.paintLine(dmc, -ry + px, rx + py, px, py);
+                //Graphics.paintLine(dmc, ry + px, -rx + py, px, py);
+            //}
+        //}
 
 
-	/**
-	 * simulates torque/wheel-ground interaction - n is the surface normal
-	 */
-	private function resolve(n:Vector):Void {
+        public function setTraction(t:Number):void {
+            coeffSlip = t;
+        }
 
-		// this is the tangent vector at the rim particle
-		var rx:Number = -rp.curr.y;
-		var ry:Number = rp.curr.x;
 
-		// normalize so we can scale by the rotational speed
-		var len:Number = Math.sqrt(rx * rx + ry * ry);
-		rx /= len;
-		ry /= len;
+        /**
+         * simulates torque/wheel-ground interaction - n is the surface normal
+         */
+        private function resolve(n:MathVector):void {
 
-		// sx,sy is the velocity of the wheel's surface relative to the wheel
-		var sx:Number = rx * rp.speed;
-		var sy:Number = ry * rp.speed;
+            // this is the tangent vector at the rim particle
+            var rx:Number = -rp.curr.y;
+            var ry:Number = rp.curr.x;
 
-		// tx,ty is the velocity of the wheel relative to the world
-		var tx:Number = curr.x - prev.x;
-		var ty:Number = curr.y - prev.y;
+            // normalize so we can scale by the rotational speed
+            var len:Number = Math.sqrt(rx * rx + ry * ry);
+            rx /= len;
+            ry /= len;
 
-		// vx,vy is the velocity of the wheel's surface relative to the ground
-		var vx:Number = tx + sx;
-		var vy:Number = ty + sy;
+            // sx,sy is the velocity of the wheel's surface relative to the wheel
+            var sx:Number = rx * rp.speed;
+            var sy:Number = ry * rp.speed;
 
-		// dp is the the wheel's surfacevel projected onto the ground's tangent
-		var dp:Number = -n.y * vx + n.x * vy;
+            // tx,ty is the velocity of the wheel relative to the world
+            var tx:Number = curr.x - prev.x;
+            var ty:Number = curr.y - prev.y;
 
-		// set the wheel's spinspeed to track the ground
-		rp.prev.x = rp.curr.x - dp * rx;
-		rp.prev.y = rp.curr.y - dp * ry;
+            // vx,vy is the velocity of the wheel's surface relative to the ground
+            var vx:Number = tx + sx;
+            var vy:Number = ty + sy;
 
-		// some of the wheel's torque is removed and converted into linear displacement
-		var w0:Number = 1 - coeffSlip;
-		curr.x += w0 * rp.speed * -n.y;
-		curr.y += w0 * rp.speed * n.x;
-		rp.speed *= coeffSlip;
-	}	
+            // dp is the the wheel's surfacevel projected onto the ground's tangent
+            var dp:Number = -n.y * vx + n.x * vy;
 
-    public function getAngle() : Number {
-        return rp.curr.angle();
+            // set the wheel's spinspeed to track the ground
+            rp.prev.x = rp.curr.x - dp * rx;
+            rp.prev.y = rp.curr.y - dp * ry;
+
+            // some of the wheel's torque is removed and converted into linear displacement
+            var w0:Number = 1 - coeffSlip;
+            curr.x += w0 * rp.speed * -n.y;
+            curr.y += w0 * rp.speed * n.x;
+            rp.speed *= coeffSlip;
+        }	
+
+        public function getAngle() : Number {
+            return rp.curr.angle();
+        }
     }
 }
-

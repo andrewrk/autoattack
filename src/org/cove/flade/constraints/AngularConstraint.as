@@ -23,110 +23,113 @@
  * Flash is a registered trademark of Macromedia
  */
  
-import org.cove.flade.util.*;
-import org.cove.flade.primitives.Particle;
-import org.cove.flade.constraints.Constraint;
+package org.cove.flade.constraints {
 
-class org.cove.flade.constraints.AngularConstraint implements Constraint {
+    import org.cove.flade.util.*;
+    import org.cove.flade.primitives.Particle;
+    import org.cove.flade.constraints.Constraint;
 
-	public var targetTheta:Number;
+    public class AngularConstraint implements Constraint {
 
-	private var pA:Vector;
-	private var pB:Vector;
-	private var pC:Vector;
-	private var pD:Vector
+        public var targetTheta:Number;
 
-	private var lineA:Line;
-	private var lineB:Line;
-	private var lineC:Line;
+        private var pA:MathVector;
+        private var pB:MathVector;
+        private var pC:MathVector;
+        private var pD:MathVector
 
-	private var stiffness:Number;
-	
-	public function AngularConstraint(p1:Particle, p2:Particle, p3:Particle) {
+        private var lineA:Line;
+        private var lineB:Line;
+        private var lineC:Line;
 
-		pA = p1.curr;
-		pB = p2.curr;
-		pC = p3.curr;
+        private var stiffness:Number;
+        
+        public function AngularConstraint(p1:Particle, p2:Particle, p3:Particle) {
 
-		lineA = new Line(pA, pB);
-		lineB = new Line(pB, pC);
+            pA = p1.curr;
+            pB = p2.curr;
+            pC = p3.curr;
 
-		// lineC is the reference line for getting the angle of the line segments
-		pD = new Vector(pB.x + 0, pB.y - 1);
-		lineC = new Line(pB, pD);
+            lineA = new Line(pA, pB);
+            lineB = new Line(pB, pC);
 
-		// theta to constrain to -- domain is -Math.PI to Math.PI
-		targetTheta = calcTheta(pA, pB, pC);
+            // lineC is the reference line for getting the angle of the line segments
+            pD = new MathVector(pB.x + 0, pB.y - 1);
+            lineC = new Line(pB, pD);
 
-		// coefficient of stiffness
-		stiffness = 1;
-	}
+            // theta to constrain to -- domain is -Math.PI to Math.PI
+            targetTheta = calcTheta(pA, pB, pC);
 
-
-	public function resolve():Void {
-
-		var center:Vector = getCentroid();
-
-		// make sure the reference line position gets updated
-		lineC.p2.x = lineC.p1.x + 0;
-		lineC.p2.y = lineC.p1.y - 1;
-
-		var abRadius:Number = pA.distance(pB);
-		var bcRadius:Number = pB.distance(pC);
-
-		var thetaABC:Number = calcTheta(pA, pB, pC);
-		var thetaABD:Number = calcTheta(pA, pB, pD);
-		var thetaCBD:Number = calcTheta(pC, pB, pD);
-
-		var halfTheta:Number = (targetTheta - thetaABC) / 2;
-		var paTheta:Number = thetaABD + halfTheta * stiffness;
-		var pcTheta:Number = thetaCBD - halfTheta * stiffness;
-
-		pA.x = abRadius * Math.sin(paTheta) + pB.x;
-		pA.y = abRadius * Math.cos(paTheta) + pB.y;
-		pC.x = bcRadius * Math.sin(pcTheta) + pB.x;
-		pC.y = bcRadius * Math.cos(pcTheta) + pB.y;
-
-		// move corrected angle to pre corrected center
-		var newCenter:Vector = getCentroid();
-		var dfx:Number = newCenter.x - center.x;
-		var dfy:Number = newCenter.y - center.y;
-
-		pA.x -= dfx; 
-		pA.y -= dfy;
-		pB.x -= dfx;  
-		pB.y -= dfy;
-		pC.x -= dfx;  
-		pC.y -= dfy; 
-	}
+            // coefficient of stiffness
+            stiffness = 1;
+        }
 
 
-	public function paint(level : Level):Void {	
-		// maintain the constraint interface. angular constraints are
-		// painted by their two component SpringConstraints.
-	}
+        public function resolve():void {
+
+            var center:MathVector = getCentroid();
+
+            // make sure the reference line position gets updated
+            lineC.p2.x = lineC.p1.x + 0;
+            lineC.p2.y = lineC.p1.y - 1;
+
+            var abRadius:Number = pA.distance(pB);
+            var bcRadius:Number = pB.distance(pC);
+
+            var thetaABC:Number = calcTheta(pA, pB, pC);
+            var thetaABD:Number = calcTheta(pA, pB, pD);
+            var thetaCBD:Number = calcTheta(pC, pB, pD);
+
+            var halfTheta:Number = (targetTheta - thetaABC) / 2;
+            var paTheta:Number = thetaABD + halfTheta * stiffness;
+            var pcTheta:Number = thetaCBD - halfTheta * stiffness;
+
+            pA.x = abRadius * Math.sin(paTheta) + pB.x;
+            pA.y = abRadius * Math.cos(paTheta) + pB.y;
+            pC.x = bcRadius * Math.sin(pcTheta) + pB.x;
+            pC.y = bcRadius * Math.cos(pcTheta) + pB.y;
+
+            // move corrected angle to pre corrected center
+            var newCenter:MathVector = getCentroid();
+            var dfx:Number = newCenter.x - center.x;
+            var dfy:Number = newCenter.y - center.y;
+
+            pA.x -= dfx; 
+            pA.y -= dfy;
+            pB.x -= dfx;  
+            pB.y -= dfy;
+            pC.x -= dfx;  
+            pC.y -= dfy; 
+        }
 
 
-	public function setStiffness(s:Number):Void {
-		stiffness = s;
-	}
+        public function paint(level : Level):void {	
+            // maintain the constraint interface. angular constraints are
+            // painted by their two component SpringConstraints.
+        }
 
 
-	private function calcTheta(pa:Vector, pb:Vector, pc:Vector):Number {
-
-		var AB:Vector = new Vector(pb.x - pa.x, pb.y - pa.y);
-		var BC:Vector = new Vector(pc.x - pb.x, pc.y - pb.y);
-
-		var dotProd:Number = AB.dot(BC);
-		var crossProd:Number = AB.cross(BC);
-		return Math.atan2(crossProd, dotProd);
-	}
+        public function setStiffness(s:Number):void {
+            stiffness = s;
+        }
 
 
-	private function getCentroid():Vector {
-		var avgX:Number = (pA.x + pB.x + pC.x) / 3;
-		var avgY:Number = (pA.y + pB.y + pC.y) / 3;
-		return new Vector(avgX, avgY);
-	}
-	
+        private function calcTheta(pa:MathVector, pb:MathVector, pc:MathVector):Number {
+
+            var AB:MathVector = new MathVector(pb.x - pa.x, pb.y - pa.y);
+            var BC:MathVector = new MathVector(pc.x - pb.x, pc.y - pb.y);
+
+            var dotProd:Number = AB.dot(BC);
+            var crossProd:Number = AB.cross(BC);
+            return Math.atan2(crossProd, dotProd);
+        }
+
+
+        private function getCentroid():MathVector {
+            var avgX:Number = (pA.x + pB.x + pC.x) / 3;
+            var avgY:Number = (pA.y + pB.y + pC.y) / 3;
+            return new MathVector(avgX, avgY);
+        }
+        
+    }
 }

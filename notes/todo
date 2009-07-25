@@ -9,6 +9,7 @@
     - display list and visible display list
     - event handling
     - restructure code layout?
+    - use vectors instead of array
 * preloader doesn't show progress
 * implement a crosshair
 * remove my extraneous needsGravity code from flade

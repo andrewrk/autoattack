@@ -22,18 +22,20 @@
  *
  * Flash is a registered trademark of Macromedia
  */
- 
-import org.cove.flade.primitives.*;
-import org.cove.flade.DynamicsEngine;
 
-interface org.cove.flade.surfaces.Surface {
-	
-	public function paint(level : Level):Void
+package org.cove.flade.surfaces {
+    import org.cove.flade.primitives.*;
+    import org.cove.flade.DynamicsEngine;
 
-	public function getActiveState():Boolean
-	public function setActiveState(s:Boolean):Void
-	
-	public function resolveCircleCollision(p:CircleParticle, sysObj:DynamicsEngine):Void
-	public function resolveRectangleCollision(p:RectangleParticle, sysObj:DynamicsEngine):Void
-	public function resolveParticleCollision(p:Particle, sysObj:DynamicsEngine):Void
+    public interface Surface {
+        
+        function paint(level : Level):void
+
+        function getActiveState():Boolean
+        function setActiveState(s:Boolean):void
+        
+        function resolveCircleCollision(p:CircleParticle, sysObj:DynamicsEngine):void
+        function resolveRectangleCollision(p:RectangleParticle, sysObj:DynamicsEngine):void
+        function resolveParticleCollision(p:Particle, sysObj:DynamicsEngine):void
+    }
 }

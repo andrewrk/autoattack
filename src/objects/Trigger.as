@@ -1,19 +1,25 @@
 // Trigger class - invisible block that does something
 
-import org.cove.flade.util.Vector;
+package objects {
 
-class objects.Trigger extends LevelObject {
+    import org.cove.flade.util.MathVector;
 
-    public function Trigger(idNum : Number, pos : Vector, level : Level){
-        super(LevelObject.CLASS_OBSTACLE, idNum, pos, 0, 0, 0, false, level);
+    public class Trigger extends LevelObject {
+
+        public function Trigger(idNum : Number, pos : MathVector,
+            level : Level)
+        {
+            super(LevelObject.CLASS_TRIGGER, idNum, pos, 0, 0, 0, false,
+                level);
+        }
+
+        public override function activate() : void {
+            // do nothing
+        }
+
+        public override function deactivate() : void {
+            // do nothing
+        }
+
     }
-
-    public function activate() : Void {
-        // do nothing
-    }
-
-    public function deactivate() : Void {
-        // do nothing
-    }
-
 }

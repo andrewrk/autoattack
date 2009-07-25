@@ -23,156 +23,138 @@
  * Flash is a registered trademark of Macromedia
  */
 
-import org.cove.flade.util.*;
-import org.cove.flade.surfaces.*;
-import org.cove.flade.primitives.*;
-import org.cove.flade.constraints.*;
+package org.cove.flade {
 
-class org.cove.flade.DynamicsEngine {
+    import org.cove.flade.util.*;
+    import org.cove.flade.surfaces.*;
+    import org.cove.flade.primitives.*;
+    import org.cove.flade.constraints.*;
 
-	public var gravity:Vector;
-	public var coeffRest:Number;
-	public var coeffFric:Number;
-	public var coeffDamp:Number;	
+    public class DynamicsEngine {
 
-	public var primitives:Array;
-	public var surfaces:Array;
-	public var constraints:Array;
+        public var gravity:MathVector;
+        public var coeffRest:Number;
+        public var coeffFric:Number;
+        public var coeffDamp:Number;	
 
-	public function DynamicsEngine() {
-			
-		primitives = new Array();
-		surfaces = new Array();
-		constraints = new Array();
+        public var primitives:Array;
+        public var surfaces:Array;
+        public var constraints:Array;
 
-		// default values
-		gravity = new Vector(0,1);	
-		coeffRest = 1 + 0.5;
-		coeffFric = 0.01;	// surface friction
-		coeffDamp = 0.99; 	// global damping
-	}
-	
-	
-	public function addPrimitive(p:Particle):Void {
-		primitives.push(p);
-	}
+        public function DynamicsEngine() {
+                
+            primitives = new Array();
+            surfaces = new Array();
+            constraints = new Array();
 
-    public function removePrimitive(p:Particle):Void {
-        for(var i : Number = 0; i < primitives.length; i++ ){
-            if( primitives[i] == p ){
-                primitives.splice(i,1);
-                return;
+            // default values
+            gravity = new MathVector(0,1);	
+            coeffRest = 1 + 0.5;
+            coeffFric = 0.01;	// surface friction
+            coeffDamp = 0.99; 	// global damping
+        }
+        
+        
+        public function addPrimitive(p:Particle):void {
+            primitives.push(p);
+        }
+
+        public function removePrimitive(p:Particle):void {
+            for(var i : Number = 0; i < primitives.length; i++ ){
+                if( primitives[i] == p ){
+                    primitives.splice(i,1);
+                    return;
+                }
+            }
+
+            trace("ERROR: removePrimitive failed");
+        }
+
+
+        public function addSurface(s:Surface):void {
+            surfaces.push(s);
+        }
+
+        public function removeSurface(s:Surface):void {
+            for(var i : Number = 0; i < surfaces.length; i++ ){
+                if( surfaces[i] == s ){
+                    surfaces.splice(i,1);
+                    return;
+                }
+            }
+
+            trace("ERROR: removeSurface failed");
+        }
+        
+        public function addConstraint(c:Constraint):void {
+            constraints.push(c);
+        }
+        
+        public function removeConstraint(c:Constraint):void {
+            for(var i : Number = 0; i < constraints.length; i++ ){
+                if( constraints[i] == c ){
+                    constraints.splice(i,1);
+                    return;
+                }
+            }
+
+            trace("ERROR: removeConstraint failed");
+        }
+        
+        public function timeStep():void {
+            verlet();
+            satisfyConstraints();
+            checkCollisions();
+        }
+        
+        
+        // TBD: Property of surface, not system
+        public function setSurfaceBounce(kfr:Number):void {
+            coeffRest = 1 + kfr;
+        }
+        
+        
+        // TBD: Property of surface, not system
+        public function setSurfaceFriction(f:Number):void {
+            coeffFric = f;
+        }
+
+
+        public function setDamping(d:Number):void {
+            coeffDamp = d;
+        }
+
+
+        public function setGravity(gx:Number, gy:Number):void {
+            gravity.x = gx;
+            gravity.y = gy;
+        }
+
+        
+        private function verlet():void {
+            for (var i:Number = 0; i < primitives.length; i++) {
+                primitives[i].verlet(this);		
             }
         }
 
-        trace("ERROR: removePrimitive failed");
-    }
 
-
-	public function addSurface(s:Surface):Void {
-		surfaces.push(s);
-	}
-
-    public function removeSurface(s:Surface):Void {
-        for(var i : Number = 0; i < surfaces.length; i++ ){
-            if( surfaces[i] == s ){
-                surfaces.splice(i,1);
-                return;
+        private function satisfyConstraints():void {
+            for (var n:Number = 0; n < constraints.length; n++) {
+                constraints[n].resolve();
             }
         }
 
-        trace("ERROR: removeSurface failed");
-    }
-	
-	public function addConstraint(c:Constraint):Void {
-		constraints.push(c);
-	}
-	
-    public function removeConstraint(c:Constraint):Void {
-        for(var i : Number = 0; i < constraints.length; i++ ){
-            if( constraints[i] == c ){
-                constraints.splice(i,1);
-                return;
+
+        private function checkCollisions():void {
+
+            for (var j:Number = 0; j < surfaces.length; j++) {
+                var s:Surface = surfaces[j];
+                if (s.getActiveState()) {
+                    for (var i:Number = 0; i < primitives.length; i++) {	
+                        primitives[i].checkCollision(s, this);
+                    }
+                }
             }
-        }
-
-        trace("ERROR: removeConstraint failed");
+        }	
     }
-	
-	public function paintSurfaces(level : Level):Void {
-		for (var j:Number = 0; j < surfaces.length; j++) {
-			surfaces[j].paint(level);
-		}
-	}
-
-
-	public function paintPrimitives(level : Level):Void {
-		for (var j:Number = 0; j < primitives.length; j++) {
-			primitives[j].paint(level);
-		}
-	}
-
-
-	public function paintConstraints(level : Level):Void {
-		for (var j:Number = 0; j < constraints.length; j++) {
-			constraints[j].paint(level);
-		}
-	}
-
-
-	public function timeStep():Void {
-		verlet();
-		satisfyConstraints();
-		checkCollisions();
-	}
-	
-	
-	// TBD: Property of surface, not system
-	public function setSurfaceBounce(kfr:Number):Void {
-		coeffRest = 1 + kfr;
-	}
-	
-	
-	// TBD: Property of surface, not system
-	public function setSurfaceFriction(f:Number):Void {
-		coeffFric = f;
-	}
-
-
-	public function setDamping(d:Number):Void {
-		coeffDamp = d;
-	}
-
-
-	public function setGravity(gx:Number, gy:Number):Void {
-		gravity.x = gx;
-		gravity.y = gy;
-	}
-
-	
-	private function verlet():Void {
-		for (var i:Number = 0; i < primitives.length; i++) {
-			primitives[i].verlet(this);		
-		}
-	}
-
-
-	private function satisfyConstraints():Void {
-		for (var n:Number = 0; n < constraints.length; n++) {
-			constraints[n].resolve();
-		}
-	}
-
-
-	private function checkCollisions():Void {
-
-		for (var j:Number = 0; j < surfaces.length; j++) {
-			var s:Surface = surfaces[j];
-			if (s.getActiveState()) {
-				for (var i:Number = 0; i < primitives.length; i++) {	
-					primitives[i].checkCollision(s, this);
-				}
-			}
-		}
-	}	
 }

@@ -1,85 +1,86 @@
 // Bullet class - the most basic projectile
-import org.cove.flade.util.Vector;
 
-class objects.projectiles.Bullet extends objects.Projectile {
+package objects.projectiles {
 
-    private static var NUM_EXPLODE_FRAMES = 6;
-    private static var FORCE = 4;
-    private static var INIT_SPEED = 50;
-    private static var EXPLODE_SPEED = 4;
-    private static var DAMAGE = 5;
+    import org.cove.flade.util.MathVector;
+    import objects.Projectile;
 
-    private var explodeFramesLeft : Number;
-    private var exploding : Boolean;
+    public class Bullet extends Projectile {
 
-    private var vel : Vector;
+        private static var NUM_EXPLODE_FRAMES = 6;
+        private static var FORCE = 4;
+        private static var INIT_SPEED = 50;
+        private static var EXPLODE_SPEED = 4;
+        private static var DAMAGE = 5;
 
-    public function Bullet(pos : Vector, dir : Vector, extraVel : Vector,
-        level : Level)
-    {
-        super(LevelObject.ID_BULLET, pos, level);
+        private var explodeFramesLeft : Number;
+        private var exploding : Boolean;
 
-        explodeFramesLeft = NUM_EXPLODE_FRAMES;
-        exploding = false;
+        private var vel : MathVector;
 
-        vel = dir.clone().normalize().mult(INIT_SPEED).plus(extraVel);
+        public function Bullet(pos : MathVector, dir : MathVector, extraVel : MathVector,
+            level : Level)
+        {
+            super(LevelObject.ID_BULLET, pos, level);
 
-        
-        paint();
-    }
+            explodeFramesLeft = NUM_EXPLODE_FRAMES;
+            exploding = false;
 
-    private function setupMovieClip() : Void {
-        // do nothing
-    }
+            vel = dir.clone().normalize().mult(INIT_SPEED).plus(extraVel);
 
-    public function explode() : Void {
-        var parent_mc : MovieClip = mc._parent;
-        var name_string : String = mc._name;
-        var depth : Number = mc.getDepth();
-
-        mc.removeMovieClip();
-
-        parent_mc.attachMovie("bulletExplosion", name_string,
-            parent_mc.getNextHighestDepth());
-
-        mc = parent_mc[name_string];
-        
-        exploding = true;
-
-        vel.normalize().mult(EXPLODE_SPEED);
-    }
-
-    public function explodeForce(objPos : Vector) : Vector {
-        if( objPos.distance(pos) < 2 ){
-            return vel.clone().normalize().mult(FORCE);
-        } else {
-            return new Vector(0,0);
+            
+            paint();
         }
-    }
 
-    public function stepFrame() : Void {
-        pos.plus(vel);
+        protected override function setupMovieClip() : void {
+            // do nothing
+        }
 
-        if( exploding ) 
-            explodeFramesLeft--;
-        
-        paint();
-    }
+        public override function explode() : void {
+            var parent_mc : MovieClip = mc._parent;
+            var name_string : String = mc._name;
+            var depth : Number = mc.getDepth();
 
-    public function paint() : Void {
-        level.moveMC(mc, pos, vel.angle());
-    }
+            mc.removeMovieClip();
 
-    public function doneExploding() : Boolean {
-        return explodeFramesLeft <= 0;
-    }
+            parent_mc.attachMovie("bulletExplosion", name_string,
+                parent_mc.getNextHighestDepth());
 
-    public function damage() : Number {
-        return DAMAGE;
-    }
+            mc = parent_mc[name_string];
+            
+            exploding = true;
 
-    public function dispose() : Void {
-        mc.removeMovieClip();
+            vel.normalize().mult(EXPLODE_SPEED);
+        }
+
+        public override function explodeForce(objPos : MathVector) : MathVector {
+            if( objPos.distance(pos) < 2 ){
+                return vel.clone().normalize().mult(FORCE);
+            } else {
+                return new MathVector(0,0);
+            }
+        }
+
+        public override function stepFrame() : void {
+            pos.plus(vel);
+
+            if( exploding ) 
+                explodeFramesLeft--;
+            
+            paint();
+        }
+
+        public override function paint() : void {
+            level.moveMC(mc, pos, vel.angle());
+        }
+
+        public override function doneExploding() : Boolean {
+            return explodeFramesLeft <= 0;
+        }
+
+        public override function damage() : Number {
+            return DAMAGE;
+        }
+
     }
-    
 }

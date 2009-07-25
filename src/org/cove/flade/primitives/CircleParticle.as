@@ -23,41 +23,41 @@
  * Flash is a registered trademark of Macromedia
  */
 
-import org.cove.flade.util.*;
-import org.cove.flade.graphics.*;
-import org.cove.flade.surfaces.Surface;
-import org.cove.flade.primitives.Particle;
-import org.cove.flade.DynamicsEngine;
- 
-class org.cove.flade.primitives.CircleParticle extends Particle {
+package org.cove.flade.primitives {
 
-	public var radius:Number;
-	public var closestPoint:Vector;
-	public var contactRadius:Number;
-	
-	
-	public function CircleParticle(px:Number, py:Number, r:Number) {
-		super(px, py);
-		radius = r;
-		contactRadius = r;
-		
-		extents = new Vector(r, r); 
-		closestPoint = new Vector(0,0);
-	}
-	
-	
-	public function paint(level : Level):Void {
-		dmc.clear();
-		dmc.lineStyle(0, 0x666666, 100);
-        var rel : Vector = level.getRelPos(curr);
-		Graphics.paintCircle(dmc, rel.x, rel.y, radius);
-	}
+    import org.cove.flade.util.*;
+    import org.cove.flade.surfaces.Surface;
+    import org.cove.flade.primitives.Particle;
+    import org.cove.flade.DynamicsEngine;
+     
+    public class CircleParticle extends Particle {
+
+        public var radius:Number;
+        public var closestPoint:MathVector;
+        public var contactRadius:Number;
+        
+        
+        public function CircleParticle(px:Number, py:Number, r:Number) {
+            super(px, py);
+            radius = r;
+            contactRadius = r;
+            
+            extents = new MathVector(r, r); 
+            closestPoint = new MathVector(0,0);
+        }
+        
+        
+        //public override function paint(level : Level):void {
+            //dmc.clear();
+            //dmc.lineStyle(0, 0x666666, 100);
+            //var rel : MathVector = level.getRelPos(curr);
+            //Graphics.paintCircle(dmc, rel.x, rel.y, radius);
+        //}
 
 
-	public function checkCollision(surface:Surface, sysObj:DynamicsEngine):Void {
-		surface.resolveCircleCollision(this, sysObj);
-	}
+        public override function checkCollision(surface:Surface, sysObj:DynamicsEngine):void {
+            surface.resolveCircleCollision(this, sysObj);
+        }
 
+    }
 }
-
-

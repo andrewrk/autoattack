@@ -23,7 +23,9 @@
  * Flash is a registered trademark of Macromedia
  */
 
-interface org.cove.flade.constraints.Constraint {
-	public function paint(level : Level):Void;
-	public function resolve():Void;
+package org.cove.flade.constraints {
+    public interface Constraint {
+        //function paint(level : Level):void;
+        function resolve():void;
+    }
 }

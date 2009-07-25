@@ -22,16 +22,18 @@
  *
  * Flash is a registered trademark of Macromedia
  */
- 
-import org.cove.flade.util.Vector;
- 
-class org.cove.flade.util.Line {
-	
-	public var p1:Vector;
-	public var p2:Vector;
-	
-	public function Line(p1:Vector, p2:Vector) {
-		this.p1 = p1;
-		this.p2 = p2;
-	}
+
+package org.cove.flade.util {
+    import org.cove.flade.util.MathVector;
+     
+    public class Line {
+        
+        public var p1:MathVector;
+        public var p2:MathVector;
+        
+        public function Line(p1:MathVector, p2:MathVector) {
+            this.p1 = p1;
+            this.p2 = p2;
+        }
+    }
 }

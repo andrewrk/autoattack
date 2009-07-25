@@ -23,43 +23,47 @@
  * Flash is a registered trademark of Macromedia
  */
 
-import org.cove.flade.util.*;
-import org.cove.flade.graphics.*;
-import org.cove.flade.surfaces.Surface;
-import org.cove.flade.primitives.Particle;
-import org.cove.flade.DynamicsEngine;
- 
-class org.cove.flade.primitives.RectangleParticle extends Particle {
+package org.cove.flade.primitives {
 
-	public var width:Number;
-	public var height:Number;
-	public var vertex:Vector;
-	
-	public function RectangleParticle(px:Number, py:Number, w:Number, h:Number) {
-		
-		super(px, py);
-		width = w;
-		height = h;
-		
-		vertex = new Vector(0, 0);
-		extents = new Vector(w/2, h/2);
-	}
-	
-	
-	public function paint(level : Level):Void {
-		if (isVisible) {
-			dmc.clear();
-			dmc.lineStyle(0, 0x666666, 100);
-            var rel : Vector = level.getRelPos(curr);
-			Graphics.paintRectangle(dmc, rel.x, rel.y, width, height);
-		}
-	}
+    import org.cove.flade.util.*;
+    import org.cove.flade.surfaces.Surface;
+    import org.cove.flade.primitives.Particle;
+    import org.cove.flade.DynamicsEngine;
+     
+    public class RectangleParticle extends Particle {
+
+        public var width:Number;
+        public var height:Number;
+        public var vertex:MathVector;
+        
+        public function RectangleParticle(px:Number, py:Number, w:Number,
+            h:Number)
+        {
+            
+            super(px, py);
+            width = w;
+            height = h;
+            
+            vertex = new MathVector(0, 0);
+            extents = new MathVector(w/2, h/2);
+        }
+        
+        
+        //public override function paint(level : Level):void {
+            //if (isVisible) {
+                //dmc.clear();
+                //dmc.lineStyle(0, 0x666666, 100);
+                //var rel : MathVector = level.getRelPos(curr);
+                //Graphics.paintRectangle(dmc, rel.x, rel.y, width, height);
+            //}
+        //}
 
 
-	public function checkCollision(surface:Surface, sysObj:DynamicsEngine):Void {
-		surface.resolveRectangleCollision(this, sysObj);
-	}
+        public override function checkCollision(surface:Surface,
+            sysObj:DynamicsEngine):void
+        {
+            surface.resolveRectangleCollision(this, sysObj);
+        }
 
+    }
 }
-
-

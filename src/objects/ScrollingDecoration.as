@@ -1,49 +1,61 @@
 // ScrollingDecoration - a decoration that is on a special layer with a special
 // scroll factor
 
-import org.cove.flade.util.Vector;
+package objects {
 
-class objects.ScrollingDecoration extends LevelObject {
-    private var layer : Number; // which layer to display on 
-    private var scrollFactor : Vector; // scroll faster or slower than normal
+    import org.cove.flade.util.MathVector;
 
-    public function ScrollingDecoration(idNum : Number, pos : Vector, 
-        width : Number, height : Number, direction : Number, layer : Number,
-        scrollFactor : Vector, level : Level)
-    {
-        super(LevelObject.CLASS_DECORATION, idNum, pos, width, height, 
-            direction, false, level);
-        this.layer = layer;
-        this.scrollFactor = scrollFactor;
+    import flash.display.MovieClip;
 
-        // create the movie clip
-        var container_mc : MovieClip = 
-            level.getMovieClip()[Level.layers[layer]];
-        var str : String = "scrollObj" + objId;
+    public class ScrollingDecoration extends LevelObject {
+        private var layer : Number; // which layer to display on 
+        private var scrollFactor : MathVector; // scroll faster or slower than normal
 
-        container_mc.attachMovie(mcString, str,
-            container_mc.getNextHighestDepth());
+        public override function construct(idNum : Number, pos : MathVector, 
+            width : Number, height : Number, direction : Number, layer : Number,
+            scrollFactor : MathVector, level : Level) : void
+        {
+            super.construct(LevelObject.CLASS_DECORATION, idNum, pos,
+                width, height, direction, false, level);
+            this.layer = layer;
+            this.scrollFactor = scrollFactor;
 
-        mc = container_mc[str];
+            // create the movie clip
+            var container_mc : MovieClip = level[Level.layers[layer]];
+            var str : String = "scrollObj" + objId;
 
-        setupMovieClip();
-    }
+            container_mc.attachMovie(mcString, str,
+                container_mc.getNextHighestDepth());
 
-    private function createMovieClip() : Void {
-        // don't use the base class's method
-    }
+            mc = container_mc[str];
 
-    private function paint() : Void {
-        var offset : Vector = pos.minusNew(level.getPlayerPos());
-        var newPos : Vector = new Vector(
-            pos.x + offset.x * (scrollFactor.x - 1),
-            pos.y + offset.y * (scrollFactor.y - 1)
-        );
+            setupMovieClip();
+        }
 
-        level.moveMC_noa(mc, newPos);
-    }
+        public function ScrollingDecoration(idNum : Number, pos : MathVector, 
+            width : Number, height : Number, direction : Number, layer : Number,
+            scrollFactor : MathVector, level : Level)
+        {
+            construct(idNum, pos, width, height, direction, layer, 
+                scrollFactor, level);
+        }
 
-    public function onScreen() : Boolean {
-        return level.inScreenRangeF(pos, scrollFactor);
+        private function createMovieClip() : void {
+            // don't use the base class's method
+        }
+
+        public override function paint() : void {
+            var offset : MathVector = pos.minusNew(level.getPlayerPos());
+            var newPos : MathVector = new MathVector(
+                pos.x + offset.x * (scrollFactor.x - 1),
+                pos.y + offset.y * (scrollFactor.y - 1)
+            );
+
+            level.moveMC_noa(mc, newPos);
+        }
+
+        public override function onScreen() : Boolean {
+            return level.inScreenRangeF(pos, scrollFactor);
+        }
     }
 }
