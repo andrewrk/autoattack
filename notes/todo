@@ -1,18 +1,12 @@
 * Convert to AS3
-    - one main object loaded by flash. controls preloading, title screen,
-      game play, etc
     - const keyword
     - private / protected / public
     - int, uint
     - movieclips / sprites / etc
-    - loaders
-    - display list and visible display list
-    - event handling
-    - restructure code layout?
     - use vectors instead of array
 * preloader doesn't show progress
 * implement a crosshair
-* remove my extraneous needsGravity code from flade
+* upgrade from flade to ape or box2dflash
 * bullets travel really fast - need to check points in between for hits
 * MovingPlatform:
     - if you just sit on the up moving platform it gets glitchy at the top
@@ -72,6 +66,5 @@
     - if you get flipped, the wheels should be suspended useless in the air.
       the dude can come out and flip it over.
 * if you do a flip in mid-air do some fun thing to recognize it
-* something weird is happening at the end
 * sound effects for EVERYTHING
 * button over effects on title screen

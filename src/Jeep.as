@@ -60,12 +60,12 @@ package {
             cont_mc.addChild(jeepBody_mc);
 
             // adjust width/height
-            cont_mc.jeep_mc._width = jeepWidth;
-            cont_mc.jeep_mc._height = jeepHeight;
-            cont_mc.wheelFront_mc._width = wheelWidth;
-            cont_mc.wheelFront_mc._height = wheelHeight;
-            cont_mc.wheelBack_mc._width = wheelWidth;
-            cont_mc.wheelBack_mc._height = wheelHeight;
+            jeepBody_mc.width = jeepWidth;
+            jeepBody_mc.height = jeepHeight;
+            frontWheel_mc.width = wheelWidth;
+            frontWheel_mc.height = wheelHeight;
+            backWheel_mc.width = wheelWidth;
+            backWheel_mc.height = wheelHeight;
 
             // add to physics engine
             var engine : DynamicsEngine = level.getEngine();

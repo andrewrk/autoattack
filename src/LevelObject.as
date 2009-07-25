@@ -46,7 +46,6 @@ package {
         // show the object on the screen
         protected function createMovieClip() : void {
             mc = LevelObjectFactory.createObject(classNum, idNum);
-            container_mc.addChild(mc);
 
             setupMovieClip();
         }
@@ -73,13 +72,20 @@ package {
         // show movie clips
         public function activate() : void {
             // put on display list
-            container_mc.addChild(mc);
-            paint();
+            if( mc.parent == null ){
+                container_mc.addChild(mc);
+                paint();
+            } else {
+                trace("activate called twice");
+            }
         }
 
         // hide movie clips
         public function deactivate() : void {
-            container_mc.removeChild(mc);
+            if( mc.parent == null )
+                trace("deactivate called twice");
+            else
+                container_mc.removeChild(mc);
         }
 
         // are we on the screen?

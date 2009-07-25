@@ -61,7 +61,7 @@ package {
             closeTitleScreen();
 
             // start gameplay
-            level = new Level(1);
+            level = new Level(1, stage.stageWidth, stage.stageHeight);
             this.addChild(level);
         }
 

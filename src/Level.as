@@ -30,6 +30,7 @@ package {
     import flash.utils.clearInterval;
 
     import flash.xml.XMLDocument;
+    import flash.xml.XMLNode;
 
     import flash.net.URLLoader;
 
@@ -37,7 +38,7 @@ package {
         public var layers : Vector.<MovieClip>;
 
         // which array to store an active object in, indexed by class number
-        private var objStore : Vector.<Vector>;
+        private var objStore : Array;
         // function to step a frame in a set of objects
         private var objComputeFunc : Vector.<Function>;
         
@@ -99,7 +100,6 @@ package {
         private var staticObjects : Vector.<LevelObject>;
 
         private var mainInterval : uint;
-        private var loadLevelInterval : uint;
 
         private var transmission_mc : ReceiverAsset;
         private var progress_mc : MissionProgressBarAsset;
@@ -108,12 +108,13 @@ package {
 
         public var lastHitObject : LevelObject;
 
-        public function Level (number : Number) {
+        public function Level (number : int, stageWidth : Number,
+            stageHeight : Number)
+        {
             // constants
 
             this.number = number;
-            this.movieSize = new MathVector(stage.stageWidth,
-                stage.stageHeight);
+            this.movieSize = new MathVector(stageWidth, stageHeight);
             
             this.loadedSWF = false;
             this.loadedXML = false;
@@ -140,7 +141,7 @@ package {
             this.enemies = new Vector.<Enemy>();
             this.staticObjects = new Vector.<LevelObject>();
 
-            this.objStore = Vector.<Vector>([
+            this.objStore = [
                 decorations,
                 specialObjects,
                 obstacles,
@@ -151,7 +152,7 @@ package {
                 entities,
                 projectiles,
                 explosions
-            ]);
+            ];
             this.objComputeFunc = Vector.<Function>([
                 computeDecorations,
                 computeSpecialObjects,
@@ -170,7 +171,6 @@ package {
             this.progress_mc = null;
 
             this.mainInterval = 0;
-            this.loadLevelInterval = 0;
 
             this.bg_sound = null;
             this.bgSoundChannel = null;
@@ -208,21 +208,22 @@ package {
             loader.contentLoaderInfo.addEventListener(Event.INIT,
                 function(e : Event) {
                     // called when we can first tell it to do stuff
-                    e.target.stop();
+                    MovieClip(loader.getChildAt(0)).stop();
                 }
             );
             loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS,
                 function(e : ProgressEvent) {
                     // called to update a percent
-                    transmission_mc.loader_mc.bar_mc.xscale = e.bytesLoaded /
-                        e.bytesTotal;
+                    MovieClip(MovieClip(transmission_mc.getChildByName(
+                        "loader_mc")).getChildByName("bar_mc")).scaleX =
+                        e.bytesLoaded / e.bytesTotal;
                 }
             );
 
             loader.contentLoaderInfo.addEventListener(Event.COMPLETE,
                 function(e : Event){
                     // called when completely done loading
-                    e.target.play();
+                    MovieClip(loader.getChildAt(0)).play();
                     
                     //start loading the rest of the level
                     beginLoadLevel();
@@ -236,8 +237,6 @@ package {
         }
         
         private function beginLoadLevel() : void {
-            var level = this;
-            
             if ( ! startedLoad) {
                 // make sure this code only runs once
                 startedLoad = true;
@@ -257,6 +256,8 @@ package {
                 xmlLoader.addEventListener(Event.COMPLETE, function(e : Event){
                     loadedXML = true;
                     loadLevelFromXML(xmlLoader.data);
+
+                    checkLoadLevelProgress();
                 });
                 xmlLoader.addEventListener(ProgressEvent.PROGRESS,
                     function(e : ProgressEvent) {
@@ -277,13 +278,17 @@ package {
                     function(e : Event) {
                         loadedSWF = true;
                         
+                        var level_mc : MovieClip = layers[LevelLayer.LEVEL];
+                        level_mc.addChild(lvloader);
+
                         //hide for now
-                        layers[LevelLayer.LEVEL].visible = false;
+                        level_mc.visible = false;
+
+                        checkLoadLevelProgress();
                     }
                 );
                 var lvUrl : String = "levels/level" + number + ".swf";
                 lvloader.load(new URLRequest(lvUrl)); 
-                layers[LevelLayer.LEVEL].addChild(lvloader);
                 
                 var bgloader : Loader = new Loader();
                 bgloader.contentLoaderInfo.addEventListener(
@@ -298,19 +303,22 @@ package {
 
                         var bg_mc : MovieClip = layers[LevelLayer.BG];
 
-                        // duplicate the background
-                        bg_mc.addChild(bg_mc.getChildAt[0].MovieClip());
+                        bg_mc.addChild(bgloader);
+
+                        // TODO: duplicate the background
+                        //bg_mc.addChild(MovieClip(bgloader.getChildAt(0)
+                            //).MovieClip());
                         
                         // hide for now
                         bg_mc.visible = false;
+
+                        checkLoadLevelProgress();
                     }
                 );
                 
                 var bgUrl : String = "levels/level" + this.number + "bg.swf";
                 bgloader.load(new URLRequest(bgUrl));
-                layers[LevelLayer.BG].addChild(bgloader);
                 
-                loadLevelInterval = setInterval(checkLoadLevelProgress, 50);
             } else {
                 if (loadedXML && loadedBG && loadedSWF)
                     startGamePlay();
@@ -321,7 +329,6 @@ package {
             if (loadedXML && loadedBG && loadedSWF ) {
                 if (progressVisible)
                 {
-                    clearInterval(loadLevelInterval);
                     this.removeChild(progress_mc);
                     progress_mc = null;
                     progressVisible = false;
@@ -334,12 +341,12 @@ package {
         
         private function updateLoadProgress() : void {
             if (progressVisible) {
-                progress_mc.bar_mc.xscale = (progressSWF + progressXML +
-                    progressBG) / 3;
+                MovieClip(progress_mc.getChildByName("bar_mc")).scaleX = 
+                    (progressSWF + progressXML + progressBG) / 3;
             }
         }
         
-        private function acceptTransmission() : void {
+        private function acceptTransmission(e : MouseEvent) : void {
             this.removeChild(transmission_mc);
             transmission_mc = null;
             beginLoadLevel();
@@ -363,7 +370,7 @@ package {
             //set up squares and mask
             var levelOuter : MovieClip = layers[LevelLayer.LEVEL]
             var level_mc : DisplayObjectContainer = DisplayObjectContainer(
-                levelOuter.getChildAt(0));
+                DisplayObjectContainer(levelOuter.getChildAt(0)).getChildAt(0));
 
             level_mc.visible = true;
             levelOuter.visible = true;
@@ -374,25 +381,21 @@ package {
                     var mmc : DisplayObject = level_mc.getChildByName(maskName);
                     var smc : DisplayObject = level_mc.getChildByName(sqName);
 
-                    if (mmc == null) {
-                        mmc = new MovieClip();
-                        smc = new MovieClip();
-                        mmc.name = maskName;
-                        smc.name = sqName;
-                        level_mc.addChild(mmc);
-                        level_mc.addChild(smc);
+                    if( smc != null ) {
+                        trace("hiding object");
+                        smc.visible = false;
+                        smc.scaleX = lvlScale;
+                        smc.scaleY = lvlScale;
                     }
+                    
+                    if( mmc != null ){
+                        mmc.visible = false;
+                        mmc.scaleX = lvlScale;
+                        mmc.scaleY = lvlScale;
 
-                    smc.visible = false;
-                    smc.scaleX = lvlScale;
-                    smc.scaleY = lvlScale;
-
-                    mmc.visible = false;
-                    mmc.scaleX = lvlScale;
-                    mmc.scaleY = lvlScale;
-
-                    mmc.x = 0;
-                    mmc.y = 0;
+                        mmc.x = 0;
+                        mmc.y = 0;
+                    }
                 }
             }
 
@@ -435,15 +438,15 @@ package {
             startStreamingSong();
         }
 
-        private function handleMouseDown() : void {
+        private function handleMouseDown(e : MouseEvent) : void {
             shootDown = true;
         }
         
-        private function handleMouseUp() : void {
+        private function handleMouseUp(e : MouseEvent) : void {
             shootDown = false;
         }
 
-        private function handleMouseMove() : void {
+        private function handleMouseMove(e : MouseEvent) : void {
             // TODO: cross hair
         }
 
@@ -749,7 +752,7 @@ package {
                 errorLoadingLevel();
                 return;
             }
-            var obj_xmlnode : XMLDocument = doc.childNodes[i];
+            var obj_xmlnode : XMLNode = doc.childNodes[i];
             for (i = 0; i < obj_xmlnode.childNodes.length; i++) {
                 // get level object and push it into array
                 var obj : LevelObject = 
@@ -765,7 +768,7 @@ package {
         }
 
         // create a LevelObject based on an XML node
-        private function createLevelObject(node : XMLDocument) {
+        private function createLevelObject(node : XMLNode) {
             var cls : Number = parseInt(node.attributes.cls);
             var id : Number = parseInt(node.attributes.id);
 
@@ -885,7 +888,6 @@ package {
             }
 
             bgSoundChannel.stop();
-            clearInterval(loadLevelInterval);
 
             var error_mc : LoadLevelErrorAsset = new LoadLevelErrorAsset();
             this.addChild(error_mc);
@@ -910,30 +912,33 @@ package {
         private function paintBackground() : void {
             //background
             var bg_mc : MovieClip = layers[LevelLayer.BG];
-            bg_mc.getChildAt(0).x = 
+            DisplayObjectContainer(bg_mc.getChildAt(0)).getChildAt(0).x = 
                 - ((scrollOffset.x + movieSize.x * 4) % (movieSize.x * 4)) / 4 ;
-            bg_mc.getChildAt(1).x = bg_mc.getChildAt(0).x + movieSize.x;
+            // TODO:
+            //bg_mc.getChildAt(1).x = bg_mc.getChildAt(0).x + movieSize.x;
         }
 
         private function paintSectors() : void {
             //move sectors into place
             var level_mc : DisplayObjectContainer = DisplayObjectContainer(
-                layers[LevelLayer.LEVEL].getChildAt(0));
+                DisplayObjectContainer(
+                    layers[LevelLayer.LEVEL].getChildAt(0)).getChildAt(0));
             var vbegin : MathVector = curSector.minusNew(new MathVector(2,2));
             var vend : MathVector = curSector.plusNew(new MathVector(2,2));
             for (var y : Number = vbegin.y; y <= vend.y; y++) {
                 for (var x : Number = vbegin.x; x <= vend.x; x++){
                     var mc : MovieClip = MovieClip(level_mc.getChildByName(
                         "sx" + x + "y" + y));
-
-                    if (x == vbegin.x || x == vend.x || 
-                        y == vbegin.y || y == vend.y)
-                    {
-                        mc.visible = false;
-                    } else {
-                        mc.visible = true;
-                        moveMC(mc, new MathVector(x * sectorWidth,
-                            y * sectorHeight),0);
+                    if( mc != null ){
+                        if (x == vbegin.x || x == vend.x || 
+                            y == vbegin.y || y == vend.y)
+                        {
+                            mc.visible = false;
+                        } else {
+                            mc.visible = true;
+                            moveMC(mc, new MathVector(x * sectorWidth,
+                                y * sectorHeight),0);
+                        }
                     }
                 }
             }
@@ -1039,16 +1044,16 @@ package {
 
         private function projectileHit (pos : MathVector) : Boolean {
             var level_mc : DisplayObjectContainer = DisplayObjectContainer(
-                layers[LevelLayer.LEVEL].getChildAt(0));
+                DisplayObjectContainer(layers[LevelLayer.LEVEL].getChildAt(0)));
             lastHitObject = null;
             for (var sy : int = curSector.y-1; sy <= curSector.y+1; sy++) {
                 for (var sx : int = curSector.x-1; sx <= curSector.x+1; sx++) {
                     var checkX : Number = pos.x - sx * sectorWidth;
                     var checkY : Number = pos.y - sy * sectorHeight;
                     
-                    var mc : MovieClip = MovieClip(level_mc.getChildByName(
-                        "mx" + sx + "y" + sy));
-                    if (mc.hitTestPoint(checkX, checkY, true))
+                    var mc : DisplayObject = level_mc.getChildByName(
+                        "mx" + sx + "y" + sy);
+                    if (mc == null || mc.hitTestPoint(checkX, checkY, true))
                         return true;
                 }
             }
@@ -1076,15 +1081,15 @@ package {
         
         public function hit (pos : MathVector) : Boolean {
             var level_mc : DisplayObjectContainer = DisplayObjectContainer(
-                layers[LevelLayer.LEVEL].getChildAt(0));
+                DisplayObjectContainer(layers[LevelLayer.LEVEL].getChildAt(0)));
             for (var sy : int = curSector.y-1; sy <= curSector.y+1; sy++) {
                 for (var sx : int = curSector.x-1; sx <= curSector.x+1; sx++) {
                     var checkX : Number = pos.x - sx * sectorWidth;
                     var checkY : Number = pos.y - sy * sectorHeight;
 
-                    var mc : MovieClip = MovieClip(level_mc.getChildByName(
-                        "mx" + sx + "y" + sy));
-                    if (mc.hitTestPoint(checkX, checkY, true))
+                    var mc : DisplayObject = level_mc.getChildByName(
+                        "mx" + sx + "y" + sy);
+                    if (mc == null || mc.hitTestPoint(checkX, checkY, true))
                         return true;
                 }
             }

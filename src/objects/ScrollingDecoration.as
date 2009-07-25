@@ -19,12 +19,7 @@ package objects {
                 direction, false, level);
             this.layer = layer;
             this.scrollFactor = scrollFactor;
-        }
-
-        protected override function createMovieClip() : void {
-            // don't use default layer
             this.container_mc = level.layers[layer];
-            super.createMovieClip();
         }
 
         public override function paint() : void {
